@@ -103,11 +103,13 @@ export default function PortfolioPage() {
     );
   }
 
-  const allProducts = products ?? [];
-  const totalMrr = allProducts.reduce((s, p) => s + p.mrr, 0);
+  type PortfolioProduct = NonNullable<typeof products>[number];
+
+  const allProducts: PortfolioProduct[] = products ?? [];
+  const totalMrr = allProducts.reduce((sum, product) => sum + product.mrr, 0);
   const totalArr = totalMrr * 12;
-  const totalUsers = allProducts.reduce((s, p) => s + p.activeUsers, 0);
-  const avgHealth = allProducts.length > 0 ? Math.round(allProducts.reduce((s, p) => s + (p.healthScore ?? 0), 0) / allProducts.length) : 0;
+  const totalUsers = allProducts.reduce((sum, product) => sum + (product.activeUsers ?? 0), 0);
+  const avgHealth = allProducts.length > 0 ? Math.round(allProducts.reduce((sum, product) => sum + (product.healthScore ?? 0), 0) / allProducts.length) : 0;
 
   const containerVariants = {
     hidden: { opacity: 0 },

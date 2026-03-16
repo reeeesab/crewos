@@ -50,11 +50,16 @@ export default function ProductDashboard() {
     </div>
   );
 
-  const data = snapshots || [];
-  const allCosts = costs || [];
-  const totalCosts = allCosts.reduce((s: any, c: any) => s + c.amount, 0);
+  type RevenueSnapshot = NonNullable<typeof snapshots>[number];
+  type CostItem = NonNullable<typeof costs>[number];
+
+  const data: RevenueSnapshot[] = snapshots ?? [];
+  const allCosts: CostItem[] = costs ?? [];
+  const totalCosts = allCosts.reduce((sum, cost) => sum + cost.amount, 0);
   const netMargin = product.mrr - totalCosts;
   const openBugs = product.issues?.filter((i: any) => i.type === "BUG" && i.status !== "CLOSED").length || product.openBugs || 0;
+  const recentData = data.slice(-12);
+  const maxMrr = Math.max(...recentData.map((snapshot) => snapshot.mrr), 10);
 
   const healthScore = product.healthScore ?? 0;
   const isHealthy = healthScore >= 75;
@@ -145,13 +150,12 @@ export default function ProductDashboard() {
                 <p className="text-xs font-medium">{integration ? "Awaiting initial data sync..." : "No payment provider configured."}</p>
               </div>
             ) : (
-              data.slice(-12).map((s, i) => {
-                const max = Math.max(...data.slice(-12).map((x: any) => x.mrr), 10);
-                const pct = (s.mrr / max) * 100;
+              recentData.map((snapshot, i) => {
+                const pct = (snapshot.mrr / maxMrr) * 100;
                 return (
-                  <div key={s.id} className="group/bar flex flex-1 flex-col items-center gap-2 relative">
+                  <div key={snapshot.id} className="group/bar flex flex-1 flex-col items-center gap-2 relative">
                     <div className="absolute -top-10 opacity-0 group-hover/bar:opacity-100 transition-opacity rounded-lg bg-[#0F141F] border border-sf-border-subtle px-2.5 py-1.5 text-[11px] font-mono font-bold text-white shadow-xl z-20 pointer-events-none whitespace-nowrap">
-                      ${s.mrr.toLocaleString()}
+                      ${snapshot.mrr.toLocaleString()}
                     </div>
                     
                     <motion.div 
@@ -162,7 +166,7 @@ export default function ProductDashboard() {
                     >
                        <div className="absolute top-0 inset-x-0 h-1 bg-sf-accent-cyan" />
                     </motion.div>
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-sf-text-muted">{new Date(s.date).toLocaleDateString("en-US", { month: "short" })}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-sf-text-muted">{new Date(snapshot.date).toLocaleDateString("en-US", { month: "short" })}</span>
                   </div>
                 );
               })
