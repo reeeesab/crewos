@@ -114,7 +114,7 @@ export default function CostsPage() {
             <AlertTriangle className="h-4 w-4 text-sf-amber" />
             <span className="text-xs font-medium text-sf-amber">Budget exceeded on {overBudget.length} line item{overBudget.length > 1 ? "s" : ""}</span>
           </div>
-          {overBudget.map((c) => (
+          {overBudget.map((c: any) => (
             <div key={c.id} className="flex items-center justify-between text-xs">
               <span className="text-sf-text-secondary">{c.name}</span>
               <span className="font-mono text-sf-red">
@@ -134,7 +134,7 @@ export default function CostsPage() {
           {costs.length === 0 && (
             <div className="py-8 text-center text-xs text-sf-text-muted">No costs tracked for this product.</div>
           )}
-          {costs.map((cost) => {
+          {costs.map((cost: any) => {
             const pct = total > 0 ? (cost.amount / total) * 100 : 0;
             const budgetPct = cost.budget ? (cost.amount / cost.budget) * 100 : 0;
             const isOver = cost.budget && cost.amount > cost.budget;
@@ -227,7 +227,7 @@ export default function CostsPage() {
                     onChange={(e) => setForm({ ...form, category: e.target.value as CostCategory })}
                     className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all appearance-none"
                   >
-                    {["LLM", "CLOUD", "PAYMENTS", "EMAIL", "TOOLING", "OTHER"].map((c) => (
+                    {["LLM", "CLOUD", "PAYMENTS", "EMAIL", "TOOLING", "OTHER"].map((c: string) => (
                       <option key={c} value={c} className="bg-sf-elevated">{c}</option>
                     ))}
                   </select>
@@ -288,7 +288,7 @@ export default function CostsPage() {
                     className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all appearance-none"
                   >
                     <option value="" className="bg-sf-elevated">None</option>
-                    {issues?.map((issue) => (
+                    {issues?.map((issue: any) => (
                       <option key={issue.id} value={issue.id} className="bg-sf-elevated">
                         {issue.type === "BUG" ? "🐛" : "✨"} {issue.title}
                       </option>
