@@ -35,9 +35,10 @@ export default function HealthPage() {
 
   if (!product) return <div>Product not found</div>;
 
+  type CostItem = { amount: number };
   const allSnapshots = snapshots || [];
-  const allCosts = costs || [];
-  const totalCosts = allCosts.reduce((s: any, c: any) => s + c.amount, 0);
+  const allCosts: CostItem[] = costs || [];
+  const totalCosts = allCosts.reduce((sum, cost) => sum + cost.amount, 0);
 
   // --- Revenue Health (40%) ---
   let revenueScore = 0;
