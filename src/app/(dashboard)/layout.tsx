@@ -58,11 +58,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const pathParts = pathname?.split("/") || [];
   const urlProductId = pathParts[1] && pathParts[1] !== "portfolio" ? pathParts[1] : null;
+  type ProductSummary = NonNullable<typeof products>[number];
+  const allProducts: ProductSummary[] = products ?? [];
 
   const currentProduct = useMemo(() => {
-    if (!products) return null;
-    return products.find((p) => p.id === urlProductId) || products[0];
-  }, [products, urlProductId]);
+    if (allProducts.length === 0) return null;
+    return allProducts.find((product) => product.id === urlProductId) || allProducts[0];
+  }, [allProducts, urlProductId]);
 
   const productId = currentProduct?.id;
 
@@ -91,8 +93,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
-
-  const allProducts = products ?? [];
 
   return (
     <div className="flex h-screen w-full bg-sf-bg-base text-sf-text-primary font-sans overflow-hidden">
