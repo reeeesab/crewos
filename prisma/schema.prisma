@@ -1,0 +1,228 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String          @id @default(cuid())
+  clerkId        String          @unique
+  email          String          @unique
+  name           String?
+  createdAt      DateTime        @default(now())
+  products       ProductMember[]
+  assignedIssues Issue[]         @relation("AssignedIssues")
+}
+
+model Product {
+  id                 String              @id @default(cuid())
+  name               String
+  description        String?
+  status             ProductStatus       @default(BETA)
+  type               String?
+  website            String?
+  mrr                Float               @default(0)
+  arr                Float               @default(0)
+  activeUsers        Int                 @default(0)
+  activeSubscriptions Int                @default(0)
+  churnRate          Float               @default(0)
+  netMargin          Float               @default(0)
+  openBugs           Int                 @default(0)
+  healthScore        Int                 @default(0)
+  newMrr             Float               @default(0)
+  churnedMrr         Float               @default(0)
+  lastChangelogAt    DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  members            ProductMember[]
+  integration        IntegrationConfig?
+  issues             Issue[]
+  costs              Cost[]
+  socialAccounts     SocialAccount[]
+  changelogs         Changelog[]
+  snapshots          RevenueSnapshot[]
+  buildInPublicPosts BuildInPublicPost[]
+}
+
+enum ProductStatus {
+  LIVE
+  BETA
+  ARCHIVED
+}
+
+model ProductMember {
+  id          String     @id @default(cuid())
+  userId      String
+  productId   String
+  role        MemberRole @default(VIEWER)
+  permissions Json
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+enum MemberRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum RevenueProvider {
+  STRIPE
+  DODO_PAYMENTS
+}
+
+model IntegrationConfig {
+  id              String          @id @default(cuid())
+  productId       String          @unique
+  provider        RevenueProvider @default(STRIPE)
+
+  // Stripe
+  stripeAccountId String?
+  stripeApiKey    String?
+
+  // DodoPayment
+  dodoApiKey      String?
+
+  lastSyncedAt    DateTime?
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model RevenueSnapshot {
+  id                  String   @id @default(cuid())
+  productId           String
+  mrr                 Float
+  arr                 Float
+  users               Int
+  activeSubscriptions Int      @default(0)
+  newMrr              Float    @default(0)
+  churnedMrr          Float    @default(0)
+  churn               Float
+  date                DateTime @default(now())
+  product             Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Issue {
+  id          String        @id @default(cuid())
+  productId   String
+  type        IssueType
+  title       String
+  description String?
+  priority    IssuePriority @default(LOW)
+  status      IssueStatus   @default(OPEN)
+  dueDate     DateTime?
+  milestone   String?
+  reporterId  String?
+  assigneeId  String?
+  createdAt   DateTime      @default(now())
+  closedAt    DateTime?
+  product     Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  assignee    User?         @relation("AssignedIssues", fields: [assigneeId], references: [id])
+  costs       Cost[]
+}
+
+enum IssueType {
+  FEATURE
+  BUG
+}
+
+enum IssuePriority {
+  P0
+  P1
+  P2
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum CostSource {
+  MANUAL
+  API_STRIPE
+  API_DODO
+}
+
+model Cost {
+  id           String       @id @default(cuid())
+  productId    String
+  name         String
+  category     CostCategory
+  amount       Float
+  budget       Float?
+  billingCycle String       @default("monthly")
+  vendor       String?
+  month        String       @default("")
+  source       CostSource   @default(MANUAL)
+  issueId      String?
+  product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  issue        Issue?       @relation(fields: [issueId], references: [id], onDelete: SetNull)
+}
+
+enum CostCategory {
+  LLM
+  CLOUD
+  PAYMENTS
+  EMAIL
+  TOOLING
+  OTHER
+}
+
+model SocialAccount {
+  id           String    @id @default(cuid())
+  productId    String
+  platform     String
+  handle       String
+  accessToken  String?
+  followers    Int       @default(0)
+  engagement   Float     @default(0)
+  impressions  Int       @default(0)
+  lastSyncedAt DateTime?
+  product      Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Changelog {
+  id            String          @id @default(cuid())
+  productId     String
+  title         String
+  body          String
+  type          ChangelogType
+  status        ChangelogStatus @default(DRAFT)
+  sourceIssueId String?
+  publishedAt   DateTime?
+  createdAt     DateTime        @default(now())
+  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+enum ChangelogType {
+  SHIPPED
+  BUGFIX
+  IMPROVEMENT
+}
+
+enum ChangelogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model BuildInPublicPost {
+  id          String    @id @default(cuid())
+  productId   String
+  platform    String
+  draftText   String
+  status      String    @default("draft")
+  sourceType  String
+  sourceId    String?
+  scheduledAt DateTime?
+  postedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
