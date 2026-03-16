@@ -49,6 +49,6 @@ export const revenueRouter = router({
       if (!result.success) {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: (result as any).message || "Sync failed" });
       }
-      return result.data;
+      return (result as any).data;
     }),
 });

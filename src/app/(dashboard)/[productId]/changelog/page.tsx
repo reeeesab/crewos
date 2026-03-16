@@ -53,8 +53,8 @@ export default function ChangelogPage() {
     );
   }
 
-  const drafts = changelogs?.filter((c) => c.status === "DRAFT") || [];
-  const published = changelogs?.filter((c) => c.status === "PUBLISHED") || [];
+  const drafts = changelogs?.filter((c: any) => c.status === "DRAFT") || [];
+  const published = changelogs?.filter((c: any) => c.status === "PUBLISHED") || [];
 
   return (
     <div className="space-y-8">
