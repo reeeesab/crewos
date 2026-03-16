@@ -33,7 +33,7 @@ export default function ForecastPage() {
   const forecast = useMemo(() => {
     if (!product) return [];
     const currentMrr = product.mrr || 0;
-    const monthlyCosts = (costs || []).reduce((sum, c) => sum + c.amount, 0);
+    const monthlyCosts = (costs || []).reduce((sum: any, c: any) => sum + c.amount, 0);
     const mult = scenarioMultipliers[scenario];
     const adjustedGrowth = growthRate * mult;
     const adjustedChurn = churnRate / mult;
