@@ -103,7 +103,7 @@ export default function RevenuePage() {
 
       {/* Time filters */}
       <div className="flex items-center gap-1 rounded-lg bg-sf-input/60 p-1 w-fit">
-        {TIME_FILTERS.map((f) => (
+        {TIME_FILTERS.map((f: any) => (
           <button
             key={f.label}
             onClick={() => setTimeFilter(f.days)}
@@ -118,7 +118,7 @@ export default function RevenuePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {stats.map((s) => (
+        {stats.map((s: any) => (
           <div key={s.label} className="rounded-xl border border-sf-border bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-2 mb-3">
               <s.icon className="h-4 w-4 text-sf-text-muted" />
@@ -144,8 +144,8 @@ export default function RevenuePage() {
               <p className="text-xs mt-1">Click "Sync Now" to fetch your latest metrics</p>
             </div>
           )}
-          {data.map((s) => {
-            const max = Math.max(...data.map((x) => x.mrr), 10);
+          {data.map((s: any) => {
+            const max = Math.max(...data.map((x: any) => x.mrr), 10);
             const pct = (s.mrr / max) * 100;
             const label = new Date(s.date).toLocaleDateString("en-US", timeFilter <= 7 ? { day: "numeric", month: "short" } : { month: "short" });
             return (
@@ -180,7 +180,7 @@ export default function RevenuePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-sf-border/50">
-              {[...data].reverse().map((s) => (
+              {[...data].reverse().map((s: any) => (
                 <tr key={s.id} className="hover:bg-sf-input/20 transition-colors">
                   <td className="px-5 py-3 font-medium text-sf-text">{new Date(s.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
                   <td className="px-5 py-3 font-mono font-semibold text-sf-text">${s.mrr.toLocaleString()}</td>

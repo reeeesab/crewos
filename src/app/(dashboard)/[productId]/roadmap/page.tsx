@@ -344,7 +344,7 @@ function IssueModal({
               className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all appearance-none"
             >
               <option value="">Unassigned</option>
-              {members.map((m) => (
+              {members.map((m: any) => (
                 <option key={m.id} value={m.user.id}>
                   {m.user.name || m.user.email} {m.user.id === issue?.reporterId ? "(Reporter)" : ""}
                 </option>
@@ -357,7 +357,7 @@ function IssueModal({
             <div>
               <label className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary mb-2">Type</label>
               <div className="grid grid-cols-2 gap-2">
-                {(["FEATURE", "BUG"] as const).map((t) => (
+                {(["FEATURE", "BUG"] as const).map((t: any) => (
                   <button
                     key={t}
                     type="button"
@@ -483,7 +483,7 @@ function CycleTimeline({ issues }: { issues: any[] }) {
 
   return (
     <div className="space-y-4">
-      {sortedKeys.map((key) => {
+      {sortedKeys.map((key: string) => {
         const [year, month] = key.split("-");
         const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
         const data = months[key];
@@ -723,7 +723,7 @@ export default function RoadmapPage() {
       {/* Board View */}
       {view === "board" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {COLUMNS.map((column) => {
+          {COLUMNS.map((column: any) => {
             const columnIssues = filteredIssues
               .filter((i: any) => i.status === column.key)
               .sort((a: any, b: any) => {

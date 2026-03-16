@@ -12,7 +12,7 @@ function formatTokens(n: number) {
 }
 
 export default function MarginPage() {
-  const negativeMargin = mockMarginFeatures.filter((f) => f.margin < 0);
+  const negativeMargin = mockMarginFeatures.filter((f: any) => f.margin < 0);
 
   return (
     <div className="space-y-6">
@@ -30,7 +30,7 @@ export default function MarginPage() {
               {negativeMargin.length} feature{negativeMargin.length > 1 ? "s" : ""} with negative margin
             </span>
           </div>
-          {negativeMargin.map((f) => (
+          {negativeMargin.map((f: any) => (
             <div key={f.id} className="flex items-center justify-between text-xs py-1">
               <span className="text-sf-text-secondary">{f.feature}</span>
               <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export default function MarginPage() {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-sf-border">
-              {["Feature", "Model", "Tokens/mo", "LLM Cost", "Attributed Rev.", "Margin"].map((h) => (
+              {["Feature", "Model", "Tokens/mo", "LLM Cost", "Attributed Rev.", "Margin"].map((h: string) => (
                 <th key={h} className="px-4 py-2.5 text-left font-mono text-[10px] font-medium uppercase tracking-wide text-sf-text-muted">
                   {h}
                 </th>
@@ -60,7 +60,7 @@ export default function MarginPage() {
             </tr>
           </thead>
           <tbody>
-            {mockMarginFeatures.map((f) => (
+            {mockMarginFeatures.map((f: any) => (
               <tr key={f.id} className="border-b border-sf-border/50 transition-colors hover:bg-sf-input/30">
                 <td className="px-4 py-3 font-medium text-sf-text">{f.feature}</td>
                 <td className="px-4 py-3">
@@ -104,7 +104,7 @@ export default function MarginPage() {
                 ? "text-sf-green"
                 : "text-sf-red",
           },
-        ].map((s) => (
+        ].map((s: any) => (
           <div key={s.label} className="rounded-lg border border-sf-border bg-sf-sidebar p-3.5">
             <div className="font-mono text-[10px] font-medium uppercase tracking-wide text-sf-text-muted">{s.label}</div>
             <div className={`mt-1.5 text-xl font-semibold ${s.color}`}>{s.value}</div>

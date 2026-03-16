@@ -100,7 +100,7 @@ export default function TeamPage() {
             <h2 className="text-[11px] font-medium uppercase tracking-wide text-sf-text-muted">Members</h2>
           </div>
           <div className="divide-y divide-sf-border/50">
-            {allMembers.map((member) => (
+            {allMembers.map((member: any) => (
               <button
                 key={member.id}
                 onClick={() => setSelectedMemberId(member.id)}
@@ -139,7 +139,7 @@ export default function TeamPage() {
                 </div>
                 <div className="p-4">
                   <div className="grid grid-cols-3 gap-2">
-                    {PERMISSION_FIELDS.map((f) => {
+                    {PERMISSION_FIELDS.map((f: any) => {
                       const enabled = selectedMember.role === "OWNER" || !!currentPermissions[f.key];
                       return (
                         <button
@@ -178,12 +178,12 @@ export default function TeamPage() {
                       </div>
                       <div className="text-[10px] text-sf-text-muted">
                         <span className="text-sf-green">✓ </span>
-                        {allowedFields.map((f) => f.label).join(", ")}
+                        {allowedFields.map((f: any) => f.label).join(", ")}
                       </div>
                       {blockedFields.length > 0 && (
                         <div className="text-[10px] text-sf-text-muted mt-0.5">
                           <span className="text-sf-red">✗ </span>
-                          {blockedFields.map((f) => f.label).join(", ")}
+                          {blockedFields.map((f: any) => f.label).join(", ")}
                         </div>
                       )}
                     </div>
@@ -294,7 +294,7 @@ function InviteModal({ productId, onClose, onSuccess }: { productId: string; onC
               <div className="space-y-1.5">
                 <label className="block font-mono text-[10px] uppercase tracking-wide text-sf-text-muted">Role</label>
                 <div className="flex gap-2">
-                  {(["VIEWER", "EDITOR"] as const).map((r) => (
+                  {(["VIEWER", "EDITOR"] as const).map((r: any) => (
                     <button
                       key={r}
                       type="button"

@@ -37,7 +37,7 @@ export default function HealthPage() {
 
   const allSnapshots = snapshots || [];
   const allCosts = costs || [];
-  const totalCosts = allCosts.reduce((s, c) => s + c.amount, 0);
+  const totalCosts = allCosts.reduce((s: any, c: any) => s + c.amount, 0);
 
   // --- Revenue Health (40%) ---
   let revenueScore = 0;
@@ -132,7 +132,7 @@ export default function HealthPage() {
 
       {/* Factors */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {factors.map((f) => (
+        {factors.map((f: any) => (
           <div key={f.label} className={`relative overflow-hidden rounded-2xl border bg-sf-surface/50 p-5 shadow-lg backdrop-blur-md transition-all hover:border-sf-border-default ${f.good ? "border-sf-green/20" : "border-sf-red/30"}`}>
             <div className="absolute inset-0 bg-gradient-to-br from-transparent to-sf-base/50 opacity-50 pointer-events-none"></div>
             <div className="relative z-10 text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary w-full truncate mb-2">{f.label}</div>
@@ -152,7 +152,7 @@ export default function HealthPage() {
             { label: "Revenue Health", score: revenueScore, max: 40, icon: TrendingUp, color: "#00D4FF", desc: "MRR growth rate and churn stability" },
             { label: "Product Health", score: productScore, max: 30, icon: Bug, color: "#22c55e", desc: "Bug count and issue resolution rate" },
             { label: "Financial Health", score: financialScore, max: 30, icon: DollarSign, color: "#f59e0b", desc: "Net margin and cost efficiency" },
-          ].map((s) => (
+          ].map((s: any) => (
             <div key={s.label} className="flex items-center gap-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sf-base border border-sf-border-subtle" style={{ boxShadow: `0 0 10px ${s.color}20` }}>
                 <s.icon className="h-5 w-5 shrink-0" style={{ color: s.color }} />

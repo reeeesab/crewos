@@ -112,7 +112,7 @@ export default function SettingsPage() {
           <div>
             <label className="block text-xs font-semibold text-sf-text-secondary mb-2.5 uppercase tracking-wider">Provider</label>
             <div className="grid grid-cols-2 gap-3">
-              {(["STRIPE", "DODO_PAYMENTS"] as const).map((p) => (
+              {(["STRIPE", "DODO_PAYMENTS"] as const).map((p: any) => (
                 <button key={p} onClick={() => setIntegrationForm({ ...integrationForm, provider: p })}
                   className={`px-4 py-3 rounded-xl border text-xs font-bold transition-all ${integrationForm.provider === p ? "bg-sf-accent/10 text-sf-accent border-sf-accent shadow-[0_0_10px_rgba(var(--color-sf-accent-rgb),0.2)]" : "bg-sf-base/50 border-sf-border-subtle text-sf-text-secondary hover:border-sf-accent/40"}`}>
                   {p === "STRIPE" ? "Stripe" : "DodoPayment"}

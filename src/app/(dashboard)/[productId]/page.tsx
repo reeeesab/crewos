@@ -52,7 +52,7 @@ export default function ProductDashboard() {
 
   const data = snapshots || [];
   const allCosts = costs || [];
-  const totalCosts = allCosts.reduce((s, c) => s + c.amount, 0);
+  const totalCosts = allCosts.reduce((s: any, c: any) => s + c.amount, 0);
   const netMargin = product.mrr - totalCosts;
   const openBugs = product.issues?.filter((i: any) => i.type === "BUG" && i.status !== "CLOSED").length || product.openBugs || 0;
 
@@ -146,7 +146,7 @@ export default function ProductDashboard() {
               </div>
             ) : (
               data.slice(-12).map((s, i) => {
-                const max = Math.max(...data.slice(-12).map((x) => x.mrr), 10);
+                const max = Math.max(...data.slice(-12).map((x: any) => x.mrr), 10);
                 const pct = (s.mrr / max) * 100;
                 return (
                   <div key={s.id} className="group/bar flex flex-1 flex-col items-center gap-2 relative">

@@ -21,9 +21,9 @@ function PlatformIcon({ platform }: { platform: string }) {
 }
 
 export default function SocialPage() {
-  const totalFollowers = mockSocialAccounts.reduce((s, a) => s + a.followers, 0);
-  const avgEngagement = (mockSocialAccounts.reduce((s, a) => s + a.engagement, 0) / mockSocialAccounts.length).toFixed(1);
-  const totalImpressions = mockSocialAccounts.reduce((s, a) => s + a.impressions, 0);
+  const totalFollowers = mockSocialAccounts.reduce((s: any, a: any) => s + a.followers, 0);
+  const avgEngagement = (mockSocialAccounts.reduce((s: any, a: any) => s + a.engagement, 0) / mockSocialAccounts.length).toFixed(1);
+  const totalImpressions = mockSocialAccounts.reduce((s: any, a: any) => s + a.impressions, 0);
 
   return (
     <div className="space-y-6">
@@ -39,7 +39,7 @@ export default function SocialPage() {
           { label: "Avg Engagement", value: `${avgEngagement}%`, icon: Heart, color: "text-sf-red" },
           { label: "Impressions/mo", value: `${(totalImpressions / 1000).toFixed(0)}k`, icon: Eye, color: "text-sf-accent" },
           { label: "Link Clicks", value: "3,241", icon: Link2, color: "text-sf-green" },
-        ].map((stat) => (
+        ].map((stat: any) => (
           <div key={stat.label} className="rounded-lg border border-sf-border bg-sf-sidebar p-3.5">
             <div className="flex items-center justify-between mb-1.5">
               <span className="font-mono text-[10px] font-medium uppercase tracking-wide text-sf-text-muted">{stat.label}</span>
@@ -56,7 +56,7 @@ export default function SocialPage() {
           <h2 className="text-[11px] font-medium uppercase tracking-wide text-sf-text-muted">By Platform</h2>
         </div>
         <div className="divide-y divide-sf-border/50">
-          {mockSocialAccounts.map((acc) => (
+          {mockSocialAccounts.map((acc: any) => (
             <div key={acc.id} className="flex items-center gap-4 px-4 py-3.5 hover:bg-sf-input/30 transition-colors">
               <PlatformIcon platform={acc.platform} />
               <div className="flex-1">
@@ -104,7 +104,7 @@ export default function SocialPage() {
                 { label: "Likes", value: "12.4k" },
                 { label: "Reposts", value: "847" },
                 { label: "Views", value: "156k" },
-              ].map((m) => (
+              ].map((m: any) => (
                 <div key={m.label} className="flex items-center gap-1">
                   <span className="font-mono text-xs font-semibold text-sf-text">{m.value}</span>
                   <span className="font-mono text-[10px] text-sf-text-muted">{m.label}</span>

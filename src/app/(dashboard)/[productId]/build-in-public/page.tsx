@@ -32,11 +32,11 @@ export default function BuildInPublicPage() {
   const [posts, setPosts] = useState(mockBIPPosts);
 
   function discard(id: string) {
-    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, status: "discarded" } : p));
+    setPosts((prev) => prev.map((p: any) => p.id === id ? { ...p, status: "discarded" } : p));
   }
 
-  const drafts = posts.filter((p) => p.status === "draft");
-  const active = posts.filter((p) => p.status !== "draft");
+  const drafts = posts.filter((p: any) => p.status === "draft");
+  const active = posts.filter((p: any) => p.status !== "draft");
 
   return (
     <div className="space-y-6">
@@ -63,7 +63,7 @@ export default function BuildInPublicPage() {
             { platform: "twitter", handle: "@shipfast_dev", connected: true },
             { platform: "linkedin", handle: "ShipFast", connected: true },
             { platform: "tiktok", handle: "@shipfast", connected: false },
-          ].map((acc) => (
+          ].map((acc: any) => (
             <div
               key={acc.platform}
               className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
@@ -88,7 +88,7 @@ export default function BuildInPublicPage() {
           <h2 className="font-mono text-[11px] font-medium uppercase tracking-wide text-sf-text-muted">
             Drafts ({drafts.length})
           </h2>
-          {drafts.map((post) => (
+          {drafts.map((post: any) => (
             <div key={post.id} className="rounded-lg border border-sf-accent/20 bg-sf-sidebar p-4">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-md bg-sf-card">
@@ -136,7 +136,7 @@ export default function BuildInPublicPage() {
         <h2 className="font-mono text-[11px] font-medium uppercase tracking-wide text-sf-text-muted">
           History
         </h2>
-        {active.map((post) => (
+        {active.map((post: any) => (
           <div key={post.id} className="flex items-start gap-3 rounded-lg border border-sf-border bg-sf-sidebar p-3.5">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-sf-card">
               <PlatformIcon platform={post.platform} />
