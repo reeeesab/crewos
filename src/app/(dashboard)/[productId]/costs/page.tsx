@@ -66,9 +66,9 @@ export default function CostsPage() {
   }
 
   const costs = costsList ?? [];
-  const total = costs.reduce((s, c) => s + c.amount, 0);
-  const llmTotal = costs.filter((c) => c.category === "LLM").reduce((s, c) => s + c.amount, 0);
-  const cloudTotal = costs.filter((c) => c.category === "CLOUD").reduce((s, c) => s + c.amount, 0);
+  const total = costs.reduce((s: any, c: any) => s + c.amount, 0);
+  const llmTotal = costs.filter((c: any) => c.category === "LLM").reduce((s: any, c: any) => s + c.amount, 0);
+  const cloudTotal = costs.filter((c: any) => c.category === "CLOUD").reduce((s: any, c: any) => s + c.amount, 0);
   
   const activeUsers = product?.activeUsers ?? 1;
   const costPerUser = (total / activeUsers).toFixed(2);
