@@ -73,7 +73,7 @@ export default function CostsPage() {
   const activeUsers = product?.activeUsers ?? 1;
   const costPerUser = (total / activeUsers).toFixed(2);
 
-  const overBudget = costs.filter((c) => c.budget && c.amount > c.budget);
+  const overBudget = costs.filter((c: any) => c.budget && c.amount > c.budget);
 
   return (
     <div className="space-y-6">
