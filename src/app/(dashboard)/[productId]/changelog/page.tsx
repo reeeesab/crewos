@@ -93,7 +93,7 @@ export default function ChangelogPage() {
             <RefreshCw className="h-3 w-3" />
             Review Drafts ({drafts.length})
           </h2>
-          {drafts.map((entry) => (
+          {drafts.map((entry: any) => (
             <div
               key={entry.id}
               className="group relative overflow-hidden rounded-2xl border border-sf-purple/30 bg-sf-surface/50 p-6 shadow-xl backdrop-blur-md transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:border-sf-purple/50"
@@ -152,7 +152,7 @@ export default function ChangelogPage() {
             Published History ({published.length})
           </h2>
           <div className="space-y-4">
-            {published.map((entry) => (
+            {published.map((entry: any) => (
               <div key={entry.id} className="relative rounded-2xl border border-sf-border-subtle bg-sf-surface/40 p-5 shadow-md backdrop-blur-sm transition-all hover:bg-sf-surface/70 hover:border-sf-border-default">
                 <div className="flex items-start gap-4">
                   <div className="flex-1">
