@@ -64,7 +64,7 @@ export default function ForecastPage() {
   // Runway calculation
   const runwayMonths = useMemo(() => {
     if (!product || !costs) return null;
-    const monthlyCosts = costs.reduce((sum, c) => sum + c.amount, 0);
+    const monthlyCosts = costs.reduce((sum: any, c: any) => sum + c.amount, 0);
     const netBurn = monthlyCosts - (product.mrr || 0);
     if (netBurn <= 0) return Infinity; // profitable
     return Math.ceil(monthlyCosts / netBurn * 12); // rough estimate
