@@ -1,175 +1,612 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { Loader2, Activity, TrendingUp, Bug, DollarSign, Shield } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  AlertTriangle,
+  Bug,
+  CalendarClock,
+  DollarSign,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { trpc } from "@/lib/trpc/provider";
+import { cn } from "@/lib/utils";
+
+type ScoreTone = "healthy" | "attention" | "unknown";
 
 function GaugeRing({ value, label, color }: { value: number; label: string; color: string }) {
   const circumference = 2 * Math.PI * 42;
   const offset = circumference - (value / 100) * circumference;
+
   return (
     <div className="flex flex-col items-center">
       <svg width="100" height="100" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" className="text-sf-border-subtle" strokeWidth="6" />
-        <circle cx="50" cy="50" r="42" fill="none" stroke={color} strokeWidth="6"
-          strokeDasharray={circumference} strokeDashoffset={offset}
-          strokeLinecap="round" transform="rotate(-90 50 50)" className="transition-all duration-700 drop-shadow-[0_0_8px_currentColor]" />
-        <text x="50" y="50" textAnchor="middle" dominantBaseline="central" className="text-lg font-bold" fill="#F0F4FF" fontSize="22">{value}</text>
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          fill="none"
+          stroke="currentColor"
+          className="text-sf-border-subtle"
+          strokeWidth="6"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          fill="none"
+          stroke={color}
+          strokeWidth="6"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 50 50)"
+          className="transition-all duration-700 drop-shadow-[0_0_8px_currentColor]"
+        />
+        <text
+          x="50"
+          y="50"
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-lg font-bold"
+          fill="#F0F4FF"
+          fontSize="22"
+        >
+          {value}
+        </text>
       </svg>
-      <span className="text-xs font-bold text-sf-text-secondary mt-3 uppercase tracking-wider">{label}</span>
+      <span className="mt-3 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">{label}</span>
     </div>
   );
 }
 
-export default function HealthPage() {
-  const params = useParams();
-  const productId = params.productId as string;
-
-  const { data: product, isLoading } = trpc.product.get.useQuery({ id: productId });
-  const { data: snapshots } = trpc.revenue.listSnapshots.useQuery({ productId });
-  const { data: costs } = trpc.cost.list.useQuery({ productId });
-
-  if (isLoading) {
-    return <div className="flex h-64 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-sf-text-muted" /></div>;
+function toneClasses(tone: ScoreTone) {
+  if (tone === "healthy") {
+    return {
+      border: "border-sf-green/20",
+      value: "text-sf-green drop-shadow-[0_0_8px_rgba(34,197,94,0.4)]",
+      badge: "text-sf-green/80",
+      badgeText: "HEALTHY",
+    };
   }
+  if (tone === "attention") {
+    return {
+      border: "border-sf-red/30",
+      value: "text-sf-red drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]",
+      badge: "text-sf-red/80",
+      badgeText: "ATTENTION",
+    };
+  }
+  return {
+    border: "border-sf-border-subtle",
+    value: "text-sf-text-primary",
+    badge: "text-sf-text-muted",
+    badgeText: "NO DATA",
+  };
+}
 
-  if (!product) return <div>Product not found</div>;
+function formatRelativeTime(value: Date | null) {
+  if (!value) return "just now";
+  const deltaMs = Date.now() - value.getTime();
+  const minutes = Math.floor(deltaMs / (1000 * 60));
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return value.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
-  type CostItem = { amount: number };
-  const allSnapshots = snapshots || [];
-  const allCosts: CostItem[] = costs || [];
-  const totalCosts = allCosts.reduce((sum, cost) => sum + cost.amount, 0);
+function calculateHealth(input: {
+  mrr: number;
+  churnRate: number;
+  snapshots: Array<{ mrr: number; date: Date | string }>;
+  totalCosts: number;
+  openBugs: number;
+  totalIssues: number;
+  closedIssues: number;
+}) {
+  const { mrr, churnRate, snapshots, totalCosts, openBugs, totalIssues, closedIssues } = input;
 
-  // --- Revenue Health (40%) ---
   let revenueScore = 0;
-  // MRR Growth
-  if (allSnapshots.length >= 2) {
-    const latest = allSnapshots[allSnapshots.length - 1];
-    const prev = allSnapshots[allSnapshots.length - 2];
-    const growthPct = prev.mrr > 0 ? ((latest.mrr - prev.mrr) / prev.mrr) * 100 : 0;
-    if (growthPct > 10) revenueScore += 20;
-    else if (growthPct > 5) revenueScore += 15;
-    else if (growthPct > 0) revenueScore += 10;
-    else revenueScore += 0;
-  } else {
-    revenueScore += product.mrr > 0 ? 10 : 0;
+  let mrrGrowthPct: number | null = null;
+  if (snapshots.length >= 2) {
+    const latest = snapshots[snapshots.length - 1];
+    const prev = snapshots[snapshots.length - 2];
+    mrrGrowthPct = prev.mrr > 0 ? ((latest.mrr - prev.mrr) / prev.mrr) * 100 : null;
+    const growthForScore = mrrGrowthPct ?? 0;
+    if (growthForScore > 10) revenueScore += 20;
+    else if (growthForScore > 5) revenueScore += 15;
+    else if (growthForScore > 0) revenueScore += 10;
+  } else if (mrr > 0) {
+    revenueScore += 10;
   }
-  // Churn health
-  if (product.churnRate <= 2) revenueScore += 20;
-  else if (product.churnRate <= 5) revenueScore += 15;
-  else if (product.churnRate <= 10) revenueScore += 10;
-  else revenueScore += 0;
 
-  // --- Product Health (30%) ---
+  if (churnRate <= 2) revenueScore += 20;
+  else if (churnRate <= 5) revenueScore += 15;
+  else if (churnRate <= 10) revenueScore += 10;
+
   let productScore = 0;
-  const openBugs = product.issues?.filter((i: any) => i.type === "BUG" && i.status !== "CLOSED").length || product.openBugs || 0;
   if (openBugs === 0) productScore += 15;
   else if (openBugs <= 3) productScore += 10;
   else if (openBugs <= 5) productScore += 5;
-  // Feature velocity
-  const closedIssues = product.issues?.filter((i: any) => i.status === "CLOSED").length || 0;
-  const totalIssues = product.issues?.length || 0;
+
   const closedPct = totalIssues > 0 ? (closedIssues / totalIssues) * 100 : 0;
   if (closedPct > 70) productScore += 15;
   else if (closedPct > 40) productScore += 10;
   else productScore += 5;
 
-  // --- Financial Health (30%) ---
   let financialScore = 0;
-  const netMargin = product.mrr - totalCosts;
-  const marginPct = product.mrr > 0 ? (netMargin / product.mrr) * 100 : 0;
+  const netMargin = mrr - totalCosts;
+  const marginPct = mrr > 0 ? (netMargin / mrr) * 100 : 0;
+  const costRatioPct = mrr > 0 ? (totalCosts / mrr) * 100 : null;
+
   if (marginPct > 60) financialScore += 15;
   else if (marginPct > 30) financialScore += 10;
   else if (marginPct > 0) financialScore += 5;
-  // Cost efficiency
-  if (totalCosts < product.mrr * 0.3) financialScore += 15;
-  else if (totalCosts < product.mrr * 0.6) financialScore += 10;
+
+  if (totalCosts < mrr * 0.3) financialScore += 15;
+  else if (totalCosts < mrr * 0.6) financialScore += 10;
   else financialScore += 5;
 
   const totalScore = Math.min(100, revenueScore + productScore + financialScore);
-  const scoreColor = totalScore >= 75 ? "#22c55e" : totalScore >= 50 ? "#f59e0b" : "#ef4444";
+
+  return {
+    revenueScore,
+    productScore,
+    financialScore,
+    totalScore,
+    mrrGrowthPct,
+    closedPct,
+    marginPct,
+    costRatioPct,
+    netMargin,
+  };
+}
+
+export default function HealthPage() {
+  const params = useParams();
+  const router = useRouter();
+  const productId = params.productId as string;
+
+  const productQuery = trpc.product.get.useQuery({ id: productId });
+  const snapshotsQuery = trpc.revenue.listSnapshots.useQuery({ productId });
+  const costsQuery = trpc.cost.list.useQuery({ productId });
+  const recommendationsQuery = trpc.health.recommendations.useQuery({ productId });
+
+  const [lastCalculatedAt, setLastCalculatedAt] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (productQuery.data?.updatedAt) {
+      setLastCalculatedAt(new Date(productQuery.data.updatedAt));
+    }
+  }, [productQuery.data?.updatedAt]);
+
+  const recalculate = trpc.health.recalculate.useMutation({
+    onSuccess: async (data) => {
+      setLastCalculatedAt(new Date(data.calculatedAt));
+      await Promise.all([
+        productQuery.refetch(),
+        snapshotsQuery.refetch(),
+        costsQuery.refetch(),
+        recommendationsQuery.refetch(),
+      ]);
+    },
+  });
+
+  if (productQuery.isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-sf-text-muted" />
+      </div>
+    );
+  }
+
+  const product = productQuery.data;
+  if (!product) return <div>Product not found</div>;
+
+  const allSnapshots = snapshotsQuery.data ?? [];
+  const allCosts = costsQuery.data ?? [];
+  const totalCosts = allCosts.reduce((sum: number, cost: { amount: number }) => sum + cost.amount, 0);
+  const openBugs = product.issues?.filter((issue: { type: string; status: string }) => issue.type === "BUG" && issue.status !== "CLOSED").length || 0;
+  const totalIssues = product.issues?.length || 0;
+  const closedIssues = product.issues?.filter((issue: { status: string }) => issue.status === "CLOSED").length || 0;
+
+  const health = calculateHealth({
+    mrr: product.mrr,
+    churnRate: product.churnRate,
+    snapshots: allSnapshots,
+    totalCosts,
+    openBugs,
+    totalIssues,
+    closedIssues,
+  });
+
+  const revenueRing = Math.round((health.revenueScore / 40) * 100);
+  const productRing = Math.round((health.productScore / 30) * 100);
+  const financialRing = Math.round((health.financialScore / 30) * 100);
+
+  const scoreColor = health.totalScore >= 75 ? "#22c55e" : health.totalScore >= 50 ? "#f59e0b" : "#ef4444";
+
+  const trendPoints = useMemo(() => {
+    if (allSnapshots.length === 0) return [] as Array<{ label: string; score: number; date: string }>;
+
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const recent = allSnapshots.filter((snapshot: { date: Date | string }) => new Date(snapshot.date).getTime() >= cutoff);
+    const source = recent.length >= 2 ? recent : allSnapshots.slice(-12);
+
+    return source.map((snapshot: { mrr: number; date: Date | string }, index: number) => {
+      const miniScores = calculateHealth({
+        mrr: snapshot.mrr,
+        churnRate: product.churnRate,
+        snapshots: source.slice(0, index + 1),
+        totalCosts,
+        openBugs,
+        totalIssues,
+        closedIssues,
+      });
+
+      const d = new Date(snapshot.date);
+      return {
+        label: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        date: d.toISOString(),
+        score: miniScores.totalScore,
+      };
+    });
+  }, [allSnapshots, closedIssues, openBugs, product.churnRate, totalCosts, totalIssues]);
 
   const factors = [
-    { label: "MRR Growth", value: allSnapshots.length >= 2 ? `${((allSnapshots[allSnapshots.length-1].mrr - allSnapshots[allSnapshots.length-2].mrr) / allSnapshots[allSnapshots.length-2].mrr * 100).toFixed(1)}%` : "N/A", good: revenueScore > 15 },
-    { label: "Churn Rate", value: `${product.churnRate.toFixed(1)}%`, good: product.churnRate < 5 },
-    { label: "Open Bugs", value: openBugs.toString(), good: openBugs <= 3 },
-    { label: "Issue Resolution", value: `${closedPct.toFixed(0)}%`, good: closedPct > 50 },
-    { label: "Net Margin", value: `${marginPct.toFixed(0)}%`, good: marginPct > 30 },
-    { label: "Cost Ratio", value: product.mrr > 0 ? `${(totalCosts / product.mrr * 100).toFixed(0)}%` : "N/A", good: totalCosts < product.mrr * 0.5 },
+    {
+      label: "MRR Growth",
+      value: health.mrrGrowthPct === null ? "N/A" : `${health.mrrGrowthPct.toFixed(1)}%`,
+      tone: (health.mrrGrowthPct === null ? "unknown" : health.mrrGrowthPct > 0 ? "healthy" : "attention") as ScoreTone,
+      detail:
+        health.mrrGrowthPct === null
+          ? "No revenue data yet. Connect Stripe or DodoPayment in Settings to track MRR growth."
+          : health.mrrGrowthPct > 0
+            ? "Growth is positive. Keep pushing top-performing channels."
+            : "Growth is flat/down. Run a pricing or activation experiment this week.",
+      benchmark: "Healthy range: >5% month-over-month",
+      href: `/${productId}/settings`,
+      cta: "Go to Settings",
+    },
+    {
+      label: "Churn Rate",
+      value: `${product.churnRate.toFixed(1)}%`,
+      tone: (product.mrr <= 0 ? "unknown" : product.churnRate < 3 ? "healthy" : "attention") as ScoreTone,
+      detail:
+        product.mrr <= 0
+          ? "No paying subscriptions tracked yet, so churn can look artificially low."
+          : product.churnRate < 3
+            ? "Retention looks healthy."
+            : "Churn is above target. Improve onboarding and cancellation recovery.",
+      benchmark: "Healthy range: <3% · SaaS median: ~2.4%",
+      href: `/${productId}/revenue`,
+      cta: "Open Revenue",
+    },
+    {
+      label: "Open Bugs",
+      value: `${openBugs}`,
+      tone: (openBugs <= 3 ? "healthy" : "attention") as ScoreTone,
+      detail:
+        openBugs === 0
+          ? "No open bugs. Great product stability signal."
+          : `${openBugs} open bug${openBugs > 1 ? "s" : ""} currently impacting product health.`,
+      benchmark: "Healthy range: 0-3 open bugs",
+      href: `/${productId}/roadmap?filter=bugs`,
+      cta: "Open Issues",
+    },
+    {
+      label: "Issue Resolution",
+      value: totalIssues > 0 ? `${health.closedPct.toFixed(0)}%` : "N/A",
+      tone: (totalIssues === 0 ? "unknown" : health.closedPct > 50 ? "healthy" : "attention") as ScoreTone,
+      detail:
+        totalIssues === 0
+          ? "No issue history yet. Start tracking work in Roadmap to measure velocity."
+          : "Resolved issues over total issues for this product.",
+      benchmark: "Healthy range: >60% resolved",
+      href: `/${productId}/roadmap`,
+      cta: "Open Roadmap",
+    },
+    {
+      label: "Net Margin",
+      value: `${health.marginPct.toFixed(0)}%`,
+      tone: (health.marginPct > 40 ? "healthy" : "attention") as ScoreTone,
+      detail:
+        product.mrr <= 0
+          ? "No revenue tracked yet. Once Stripe connects, margin = MRR − monthly costs."
+          : health.marginPct > 40
+            ? "Margin is in healthy range."
+            : "Below healthy range (>40%). Reduce cost ratio or improve MRR.",
+      benchmark: "Healthy range: >40%",
+      href: `/${productId}/costs`,
+      cta: "Open Cost Tracker",
+    },
+    {
+      label: "Cost Ratio",
+      value: health.costRatioPct === null ? "N/A" : `${health.costRatioPct.toFixed(0)}%`,
+      tone: (health.costRatioPct === null
+        ? "unknown"
+        : health.costRatioPct < 50
+          ? "healthy"
+          : "attention") as ScoreTone,
+      detail:
+        health.costRatioPct === null
+          ? "No revenue data yet. Connect Stripe or DodoPayment to calculate this ratio."
+          : "Monthly costs as a percentage of MRR.",
+      benchmark: "Healthy range: <50%",
+      href: `/${productId}/settings`,
+      cta: "Connect Revenue",
+    },
   ];
 
+  const breakdown = [
+    {
+      label: "Revenue Health",
+      score: health.revenueScore,
+      max: 40,
+      weight: 40,
+      icon: TrendingUp,
+      color: "#00D4FF",
+      desc: "MRR growth rate and churn stability",
+    },
+    {
+      label: "Product Health",
+      score: health.productScore,
+      max: 30,
+      weight: 30,
+      icon: Bug,
+      color: "#22c55e",
+      desc: "Bug count and issue resolution rate",
+    },
+    {
+      label: "Financial Health",
+      score: health.financialScore,
+      max: 30,
+      weight: 30,
+      icon: DollarSign,
+      color: "#f59e0b",
+      desc: "Net margin and cost efficiency",
+    },
+  ];
+
+  const defaultRecommendations = [
+    "Connect Stripe or DodoPayment in Settings to unlock full Revenue Health scoring and replace MRR Growth N/A with live values.",
+    "Add monthly costs in Cost Tracker to improve Financial Health accuracy and raise margin visibility above the healthy >40% benchmark.",
+    "Resolve open bugs in Roadmap to increase Product Health and move your overall score upward faster.",
+  ];
+
+  const recommendationItems =
+    recommendationsQuery.data?.items && recommendationsQuery.data.items.length > 0
+      ? recommendationsQuery.data.items
+      : defaultRecommendations;
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Health Score</h1>
-        <p className="text-sm text-sf-text-secondary mt-1">Computed from your live revenue, product, and financial data</p>
+    <div className="space-y-6 pb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Health Score</h1>
+          <p className="mt-1 text-sm text-sf-text-secondary">
+            Computed from your live data
+            <span className="mx-2">·</span>
+            Last calculated: {formatRelativeTime(lastCalculatedAt)}
+          </p>
+        </div>
+        <button
+          onClick={() => recalculate.mutate({ productId })}
+          disabled={recalculate.isPending}
+          className="inline-flex items-center gap-2 rounded-xl border border-sf-border-subtle bg-sf-surface px-4 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary disabled:opacity-50"
+        >
+          {recalculate.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+          Recalculate now
+        </button>
       </div>
 
-      {/* Main gauge */}
       <div className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl">
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-sf-accent/5 blur-[80px]"></div>
-        <div className="relative flex flex-col md:flex-row items-center justify-center gap-14">
+        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sf-accent/5 blur-[80px]" />
+        <div className="relative flex flex-col items-center justify-center gap-14 md:flex-row">
           <div className="flex flex-col items-center">
             <svg width="180" height="180" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" className="text-sf-border-subtle" strokeWidth="10" />
-              <circle cx="80" cy="80" r="68" fill="none" stroke={scoreColor} strokeWidth="10"
-                strokeDasharray={2 * Math.PI * 68} strokeDashoffset={2 * Math.PI * 68 - (totalScore / 100) * 2 * Math.PI * 68}
-                strokeLinecap="round" transform="rotate(-90 80 80)" className="transition-all duration-1000 drop-shadow-[0_0_12px_currentColor]" />
-              <text x="80" y="74" textAnchor="middle" dominantBaseline="central" fill="#F0F4FF" fontSize="36" fontWeight="bold">{totalScore}</text>
-              <text x="80" y="100" textAnchor="middle" fill="#8892A4" fontSize="11" fontWeight="600">/ 100</text>
+              <circle
+                cx="80"
+                cy="80"
+                r="68"
+                fill="none"
+                stroke={scoreColor}
+                strokeWidth="10"
+                strokeDasharray={2 * Math.PI * 68}
+                strokeDashoffset={2 * Math.PI * 68 - (health.totalScore / 100) * 2 * Math.PI * 68}
+                strokeLinecap="round"
+                transform="rotate(-90 80 80)"
+                className="transition-all duration-1000 drop-shadow-[0_0_12px_currentColor]"
+              />
+              <text x="80" y="74" textAnchor="middle" dominantBaseline="central" fill="#F0F4FF" fontSize="36" fontWeight="bold">
+                {health.totalScore}
+              </text>
+              <text x="80" y="100" textAnchor="middle" fill="#8892A4" fontSize="11" fontWeight="600">
+                / 100
+              </text>
             </svg>
             <span className="mt-4 text-sm font-bold uppercase tracking-widest" style={{ color: scoreColor }}>
-              {totalScore >= 75 ? "Excellent" : totalScore >= 50 ? "Moderate" : "Needs Attention"}
+              {health.totalScore >= 75 ? "Excellent" : health.totalScore >= 50 ? "Moderate" : "Needs Attention"}
             </span>
           </div>
 
           <div className="flex gap-6">
-            <GaugeRing value={Math.round(revenueScore / 40 * 100)} label="Revenue" color="#4f6ef7" />
-            <GaugeRing value={Math.round(productScore / 30 * 100)} label="Product" color="#22c55e" />
-            <GaugeRing value={Math.round(financialScore / 30 * 100)} label="Financial" color="#f59e0b" />
+            <GaugeRing value={revenueRing} label="Revenue" color="#4f6ef7" />
+            <GaugeRing value={productRing} label="Product" color="#22c55e" />
+            <GaugeRing value={financialRing} label="Financial" color="#f59e0b" />
           </div>
+        </div>
+
+        <div className="mt-8 rounded-xl border border-sf-border-subtle bg-sf-base/40 p-4">
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">
+            <CalendarClock className="h-3.5 w-3.5" />
+            30-day score trend
+          </div>
+          {trendPoints.length >= 2 ? (
+            <div className="h-24 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendPoints}>
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: "#8D97AA", fontSize: 10 }}
+                    minTickGap={28}
+                  />
+                  <YAxis hide domain={[0, 100]} />
+                  <Tooltip
+                    cursor={{ stroke: "#2A3444", strokeDasharray: "4 4" }}
+                    contentStyle={{
+                      background: "#0E1622",
+                      border: "1px solid #2A3444",
+                      borderRadius: "10px",
+                      color: "#F0F4FF",
+                    }}
+                    formatter={(value) => [`${Number(value ?? 0)}/100`, "Score"] as [string, string]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke="#00D4FF"
+                    strokeWidth={2.5}
+                    dot={{ r: 2, fill: "#00D4FF" }}
+                    activeDot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <p className="text-xs text-sf-text-muted">Not enough history yet. Keep syncing snapshots to see health momentum.</p>
+          )}
         </div>
       </div>
 
-      {/* Factors */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {factors.map((f: any) => (
-          <div key={f.label} className={`relative overflow-hidden rounded-2xl border bg-sf-surface/50 p-5 shadow-lg backdrop-blur-md transition-all hover:border-sf-border-default ${f.good ? "border-sf-green/20" : "border-sf-red/30"}`}>
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-sf-base/50 opacity-50 pointer-events-none"></div>
-            <div className="relative z-10 text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary w-full truncate mb-2">{f.label}</div>
-            <div className={`relative z-10 text-2xl font-bold tracking-tight ${f.good ? "text-sf-green drop-shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "text-sf-red drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]"}`}>{f.value}</div>
-            <div className={`relative z-10 text-[10px] font-bold uppercase tracking-wider mt-2 ${f.good ? "text-sf-green/80" : "text-sf-red/80"}`}>
-              {f.good ? "✓ Healthy" : "⚠ Attention"}
+      {health.financialScore <= 20 && (
+        <div className="rounded-2xl border border-sf-amber/40 bg-sf-amber/10 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-sf-amber">
+                Financial Health is critically low ({health.financialScore}/30)
+              </p>
+              <p className="mt-1 text-xs text-sf-text-secondary">
+                This is dragging your overall score by {Math.max(0, 30 - health.financialScore)} points. Add or optimize monthly costs in Cost Tracker.
+              </p>
             </div>
+            <button
+              onClick={() => router.push(`/${productId}/costs`)}
+              className="shrink-0 rounded-lg border border-sf-amber/50 px-3 py-1.5 text-xs font-semibold text-sf-amber hover:bg-sf-amber/10"
+            >
+              Open Cost Tracker
+            </button>
           </div>
-        ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {factors.map((factor) => {
+          const styles = toneClasses(factor.tone);
+          return (
+            <button
+              key={factor.label}
+              onClick={() => router.push(factor.href)}
+              className={cn(
+                "relative overflow-hidden rounded-2xl border bg-sf-surface/50 p-5 text-left shadow-lg backdrop-blur-md transition-all hover:border-sf-border-default",
+                styles.border,
+              )}
+            >
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent to-sf-base/50 opacity-50" />
+              <div className="relative z-10 mb-2 w-full truncate text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary">{factor.label}</div>
+              <div className={cn("relative z-10 text-2xl font-bold tracking-tight", styles.value)}>{factor.value}</div>
+              <div className={cn("relative z-10 mt-2 text-[10px] font-bold uppercase tracking-wider", styles.badge)}>
+                {styles.badgeText}
+              </div>
+              <p className="relative z-10 mt-3 text-xs text-sf-text-secondary">{factor.detail}</p>
+              <p className="relative z-10 mt-2 text-[11px] text-sf-text-muted">{factor.benchmark}</p>
+              <div className="relative z-10 mt-3 text-[11px] font-semibold text-sf-accent">→ {factor.cta}</div>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Score breakdown */}
-      <div className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-7 shadow-lg backdrop-blur-xl">
-        <h2 className="text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary mb-6">Score Breakdown</h2>
+      <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-7 shadow-lg backdrop-blur-xl">
+        <h2 className="mb-6 text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary">Score Breakdown</h2>
         <div className="space-y-5">
-          {[
-            { label: "Revenue Health", score: revenueScore, max: 40, icon: TrendingUp, color: "#00D4FF", desc: "MRR growth rate and churn stability" },
-            { label: "Product Health", score: productScore, max: 30, icon: Bug, color: "#22c55e", desc: "Bug count and issue resolution rate" },
-            { label: "Financial Health", score: financialScore, max: 30, icon: DollarSign, color: "#f59e0b", desc: "Net margin and cost efficiency" },
-          ].map((s: any) => (
-            <div key={s.label} className="flex items-center gap-5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sf-base border border-sf-border-subtle" style={{ boxShadow: `0 0 10px ${s.color}20` }}>
-                <s.icon className="h-5 w-5 shrink-0" style={{ color: s.color }} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm font-bold text-sf-text-primary">{s.label}</span>
-                  <span className="text-xs font-bold text-sf-text-secondary">{s.score}/{s.max}</span>
+          {breakdown.map((section) => {
+            const percent = Math.round((section.score / section.max) * 100);
+            return (
+              <div key={section.label} className="flex items-center gap-5">
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-sf-border-subtle bg-sf-base"
+                  style={{ boxShadow: `0 0 10px ${section.color}20` }}
+                >
+                  <section.icon className="h-5 w-5 shrink-0" style={{ color: section.color }} />
                 </div>
-                <div className="h-2 rounded-full bg-sf-base overflow-hidden border border-sf-border-subtle/30 shadow-inner">
-                  <div className="h-full rounded-full transition-all duration-700 shadow-sm" style={{ width: `${(s.score / s.max) * 100}%`, backgroundColor: s.color, boxShadow: `0 0 8px ${s.color}60` }} />
+                <div className="flex-1">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <span className="text-sm font-bold text-sf-text-primary">
+                      {section.label} ({section.weight}%)
+                    </span>
+                    <span className="text-xs font-bold text-sf-text-secondary">
+                      {section.score}/{section.max} · {percent}%
+                    </span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full border border-sf-border-subtle/30 bg-sf-base shadow-inner">
+                    <div
+                      className="h-full rounded-full shadow-sm transition-all duration-700"
+                      style={{
+                        width: `${(section.score / section.max) * 100}%`,
+                        backgroundColor: section.color,
+                        boxShadow: `0 0 8px ${section.color}60`,
+                      }}
+                    />
+                  </div>
+                  <p className="mt-2 text-[11px] font-medium text-sf-text-muted">{section.desc}</p>
                 </div>
-                <p className="text-[11px] font-medium text-sf-text-muted mt-2">{s.desc}</p>
               </div>
-            </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-lg">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-sf-text-primary">
+          <Sparkles className="h-4 w-4 text-sf-accent" />
+          What to improve
+        </div>
+
+        {recommendationsQuery.isLoading ? (
+          <div className="flex items-center gap-2 text-sm text-sf-text-muted">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Generating founder recommendations...
+          </div>
+        ) : recommendationsQuery.isError ? (
+          <div className="rounded-xl border border-sf-amber/30 bg-sf-amber/10 p-3 text-xs text-sf-amber">
+            AI recommendations are unavailable right now. Showing fallback suggestions.
+          </div>
+        ) : null}
+
+        <ol className="space-y-2 text-sm text-sf-text-secondary">
+          {recommendationItems.slice(0, 3).map((item, index) => (
+            <li key={`${index}-${item}`} className="flex items-start gap-2">
+              <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sf-base text-[11px] font-bold text-sf-text-primary">
+                {index + 1}
+              </span>
+              <span>{item}</span>
+            </li>
           ))}
+        </ol>
+
+        <div className="mt-4 flex items-center gap-2 text-xs text-sf-text-muted">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          Ranked by impact based on your current metrics.
         </div>
       </div>
     </div>

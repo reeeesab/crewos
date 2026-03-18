@@ -32,6 +32,9 @@ model Product {
   netMargin          Float               @default(0)
   openBugs           Int                 @default(0)
   healthScore        Int                 @default(0)
+  inviteCodeHash     String?             @unique
+  inviteCodeHint     String?
+  inviteCodeUpdatedAt DateTime?
   newMrr             Float               @default(0)
   churnedMrr         Float               @default(0)
   lastChangelogAt    DateTime?
@@ -45,6 +48,12 @@ model Product {
   changelogs         Changelog[]
   snapshots          RevenueSnapshot[]
   buildInPublicPosts BuildInPublicPost[]
+  analyticsConfig    AnalyticsConfig?
+  analyticsSnapshots AnalyticsSnapshot[]
+  dunningAttempts    DunningAttempt[]
+  notificationPreference NotificationPreference?
+  notificationEvents  NotificationEvent[]
+  webhookEvents       WebhookEvent[]
 }
 
 enum ProductStatus {
@@ -87,6 +96,20 @@ model IntegrationConfig {
 
   // DodoPayment
   dodoApiKey      String?
+
+  // Webhooks + Dunning
+  stripeWebhookSecret String?
+  dodoWebhookSecret   String?
+  dunningEnabled      Boolean   @default(false)
+  dunningFromEmail    String?
+  dunningSenderName   String?
+  dunningReplyTo      String?
+  dunningEmail1Subject String?
+  dunningEmail1Body    String? @db.Text
+  dunningEmail2Subject String?
+  dunningEmail2Body    String? @db.Text
+  dunningEmail3Subject String?
+  dunningEmail3Body    String? @db.Text
 
   lastSyncedAt    DateTime?
   product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -225,4 +248,119 @@ model BuildInPublicPost {
   postedAt    DateTime?
   createdAt   DateTime  @default(now())
   product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsConfig {
+  id           String   @id @default(cuid())
+  productId    String   @unique
+  propertyId   String
+  clientEmail  String
+  privateKey   String   @db.Text
+  isConnected  Boolean  @default(false)
+  lastSyncedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsSnapshot {
+  id                String   @id @default(cuid())
+  productId         String
+  date              DateTime @default(now())
+  totalSessions     Int      @default(0)
+  totalUsers        Int      @default(0)
+  newUsers          Int      @default(0)
+  returningUsers    Int      @default(0)
+  avgEngagementTime Float    @default(0)
+  bounceRate        Float    @default(0)
+  pageViews         Int      @default(0)
+  signupEvents      Int      @default(0)
+  conversionRate    Float    @default(0)
+  topSources        Json     @default("[]")
+  topPages          Json     @default("[]")
+  topCountries      Json     @default("[]")
+  aiSummary         String?  @db.Text
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, date])
+}
+
+enum DunningStatus {
+  FAILED
+  RECOVERED
+  CLOSED
+}
+
+model DunningAttempt {
+  id                String         @id @default(cuid())
+  productId         String
+  provider          RevenueProvider
+  providerInvoiceId String
+  customerId        String?
+  customerEmail     String
+  customerName      String?
+  amountCents       Int
+  currency          String         @default("USD")
+  paymentUrl        String?
+  failedCount       Int            @default(1)
+  emailsSent        Int            @default(0)
+  status            DunningStatus  @default(FAILED)
+  firstFailedAt     DateTime       @default(now())
+  lastFailedAt      DateTime       @default(now())
+  lastEmailSentAt   DateTime?
+  recoveredAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, provider, providerInvoiceId])
+  @@index([productId, status, updatedAt])
+}
+
+model NotificationPreference {
+  id                     String   @id @default(cuid())
+  productId              String   @unique
+  paymentFailedEnabled   Boolean  @default(true)
+  healthScoreEnabled     Boolean  @default(true)
+  healthScoreThreshold   Int      @default(60)
+  trafficSpikeEnabled    Boolean  @default(true)
+  issueOverdueEnabled    Boolean  @default(true)
+  weeklyDigestEnabled    Boolean  @default(true)
+  weeklyDigestDay        Int      @default(1)
+  weeklyDigestTime       String   @default("08:00")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model NotificationEvent {
+  id         String   @id @default(cuid())
+  productId  String
+  type       String
+  title      String
+  message    String?
+  severity   String   @default("info")
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, createdAt])
+}
+
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  productId  String
+  provider   RevenueProvider
+  eventType  String
+  status     String   @default("received")
+  message    String?
+  createdAt  DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, provider, createdAt])
 }

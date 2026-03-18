@@ -1,12 +1,12 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { db } from "@/server/db";
+import { getDb } from "@/server/db";
 import superjson from "superjson";
 
 export async function createTRPCContext() {
   const { userId } = await auth();
   const user = userId ? await currentUser() : null;
-  return { userId, clerkUser: user, db };
+  return { userId, clerkUser: user, db: getDb() };
 }
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;

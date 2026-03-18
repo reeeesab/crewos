@@ -19,6 +19,7 @@ const navSections = [
       { label: "Portfolio", href: "__portfolio__", icon: SquaresFour },
       { label: "Dashboard", href: "", icon: TrendUp },
       { label: "Revenue", href: "/revenue", icon: ChartBar },
+      { label: "Analytics", href: "/analytics", icon: Compass, badge: "new", badgeColor: "cyan" },
       { label: "Forecasting", href: "/forecast", icon: ChartLineUp, badge: "new", badgeColor: "cyan" },
     ],
   },
@@ -49,12 +50,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const { user } = useUser();
   const [showProductMenu, setShowProductMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { data: products, isLoading } = trpc.product.list.useQuery();
 
-  useEffect(() => { setMobileMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setShowNotifications(false);
+    setShowProductMenu(false);
+  }, [pathname]);
 
   const pathParts = pathname?.split("/") || [];
   const urlProductId = pathParts[1] && pathParts[1] !== "portfolio" ? pathParts[1] : null;
@@ -67,6 +73,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [allProducts, urlProductId]);
 
   const productId = currentProduct?.id;
+  const notificationsQuery = trpc.notifications.listEvents.useQuery(
+    { productId: productId ?? "", limit: 5 },
+    { enabled: Boolean(productId) },
+  );
+  const unreadQuery = trpc.notifications.getUnreadCount.useQuery(
+    { productId: productId ?? "" },
+    { enabled: Boolean(productId) },
+  );
+  const markAllRead = trpc.notifications.markAllRead.useMutation({
+    onSuccess: async () => {
+      if (!productId) return;
+      await Promise.all([
+        notificationsQuery.refetch(),
+        unreadQuery.refetch(),
+      ]);
+    },
+  });
 
   function getHealthColor(score: number) {
     if (score >= 75) return "bg-sf-accent-emerald";
@@ -111,7 +134,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             {sidebarOpen && (
               <span className="font-display text-lg tracking-wide whitespace-nowrap text-white">
-                SaaSForge
+                CrewOS
               </span>
             )}
           </Link>
@@ -206,7 +229,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            <div className="w-[240px] h-full bg-sf-bg-base border-r border-sf-border-subtle p-4" onClick={e => e.stopPropagation()}>
              {/* Simple mobile menu closure */}
              <div className="flex justify-between items-center mb-8">
-               <span className="font-display text-lg text-white">SaaSForge</span>
+               <span className="font-display text-lg text-white">CrewOS</span>
                <button onClick={() => setMobileMenuOpen(false)}><X size={24} className="text-sf-text-secondary" /></button>
              </div>
              <nav className="space-y-6">
@@ -290,10 +313,57 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               <kbd className="font-mono text-[10px] bg-sf-bg-base px-1.5 py-0.5 rounded border border-sf-border-subtle text-sf-text-secondary">⌘K</kbd>
             </button>
-            <button className="text-sf-text-secondary hover:text-white transition-colors relative outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan rounded p-1">
+            <button
+              onClick={() => {
+                const next = !showNotifications;
+                setShowNotifications(next);
+                if (next && productId) {
+                  markAllRead.mutate({ productId });
+                }
+              }}
+              className="text-sf-text-secondary hover:text-white transition-colors relative outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan rounded p-1"
+            >
               <Bell size={18} />
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-sf-accent-rose shadow-[0_0_4px_rgba(244,63,94,0.8)]" />
+              {(unreadQuery.data?.count ?? 0) > 0 && (
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-sf-accent-rose shadow-[0_0_4px_rgba(244,63,94,0.8)]" />
+              )}
             </button>
+            <AnimatePresence>
+              {showNotifications && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-4 top-[48px] lg:right-6 z-50 w-[320px] rounded-xl border border-sf-border-default bg-sf-bg-elevated/95 backdrop-blur-xl p-2 shadow-2xl"
+                >
+                  <div className="flex items-center justify-between px-2 py-1.5">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-sf-text-muted">Notifications</p>
+                    {productId && (
+                      <Link
+                        href={`/${productId}/settings#notifications-settings`}
+                        className="text-[11px] text-sf-accent-cyan hover:underline"
+                        onClick={() => setShowNotifications(false)}
+                      >
+                        Manage
+                      </Link>
+                    )}
+                  </div>
+                  <div className="max-h-[260px] overflow-y-auto space-y-1">
+                    {(notificationsQuery.data || []).map((event) => (
+                      <div key={event.id} className="rounded-lg border border-sf-border-subtle bg-sf-bg-glass px-2.5 py-2">
+                        <p className="text-xs font-semibold text-white">{event.title}</p>
+                        {event.message && <p className="text-[11px] text-sf-text-secondary mt-0.5">{event.message}</p>}
+                        <p className="text-[10px] text-sf-text-muted mt-1">{new Date(event.createdAt).toLocaleString()}</p>
+                      </div>
+                    ))}
+                    {(!notificationsQuery.data || notificationsQuery.data.length === 0) && (
+                      <p className="px-2.5 py-3 text-xs text-sf-text-muted">No notifications yet.</p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div className="lg:hidden">
               <UserButton appearance={{ elements: { avatarBox: "h-7 w-7 rounded" } }} />
             </div>

@@ -1,77 +1,100 @@
+import Link from "next/link";
 import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", backgroundColor: "#0c0d0f", gap: "24px" }}
-    >
-      {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <div style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: "#5b7fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg viewBox="0 0 24 24" style={{ width: 16, height: 16 }} fill="white">
-            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <span style={{ fontSize: 18, fontWeight: 600, color: "white" }}>SaaSForge</span>
+    <div className="relative min-h-screen overflow-hidden bg-sf-bg-base">
+      <div className="bg-noise" />
+      <div className="bg-grid absolute inset-0 pointer-events-none" />
+
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-sf-accent-cyan/10 blur-[90px]" />
+        <div className="absolute -right-24 bottom-8 h-72 w-72 rounded-full bg-sf-accent-violet/10 blur-[90px]" />
       </div>
 
-      <SignUp
-        appearance={{
-          baseTheme: undefined,
-          variables: {
-            colorBackground: "#1b1d20",
-            colorInputBackground: "#252729",
-            colorInputText: "#ffffff",
-            colorText: "#ffffff",
-            colorTextSecondary: "#d1d5db",
-            colorTextOnPrimaryBackground: "#ffffff",
-            colorPrimary: "#5b7fff",
-            colorDanger: "#ef4444",
-            colorSuccess: "#4ade80",
-            colorNeutral: "#ffffff",
-            borderRadius: "8px",
-            fontSize: "14px",
-          },
-          elements: {
-            card: {
-              backgroundColor: "#1b1d20",
-              border: "1px solid #2a2d31",
-              boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
-            },
-            headerTitle: { color: "#ffffff", fontWeight: "600" },
-            headerSubtitle: { color: "#9ca3af" },
-            socialButtonsBlockButton: {
-              backgroundColor: "#252729",
-              border: "1px solid #2a2d31",
-              color: "#ffffff",
-            },
-            socialButtonsBlockButtonText: { color: "#ffffff", fontWeight: "500" },
-            dividerLine: { backgroundColor: "#2a2d31" },
-            dividerText: { color: "#9ca3af", backgroundColor: "#1b1d20" },
-            formFieldLabel: { color: "#ffffff", fontWeight: "600", marginBottom: "4px" },
-            formFieldInput: {
-              backgroundColor: "#252729",
-              borderColor: "#2a2d31",
-              color: "#ffffff",
-            },
-            formButtonPrimary: {
-              backgroundColor: "#5b7fff",
-              color: "#ffffff",
-              fontWeight: "600",
-            },
-            footerActionText: { color: "#9ca3af" },
-            footerActionLink: { color: "#5b7fff", fontWeight: "600" },
-            identityPreviewText: { color: "#ffffff" },
-            identityPreviewEditButtonIcon: { color: "#5b7fff" },
-            formFieldSuccessText: { color: "#4ade80", fontWeight: "500" },
-            formFieldErrorText: { color: "#f87171" },
-            formFieldInfoText: { color: "#d1d5db" },
-            formFieldHintText: { color: "#9ca3af" },
-            alertText: { color: "#ffffff" },
-            formFieldInputShowPasswordIcon: { color: "#9ca3af" },
-          },
-        }}
-      />
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 items-center gap-10 px-4 py-10 lg:grid-cols-2">
+        <div className="hidden lg:block">
+          <div className="max-w-md space-y-5">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sf-accent-cyan to-blue-600 shadow-[0_0_18px_rgba(0,212,255,0.35)]">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="currentColor" aria-hidden="true">
+                  <path d="M13 2.5a1 1 0 0 1 .9 1.4l-2.16 5.04h5.21a1 1 0 0 1 .77 1.64l-8.5 10.5a1 1 0 0 1-1.72-.9l1.7-5.72H4.94a1 1 0 0 1-.8-1.6l7.98-10.1a1 1 0 0 1 .88-.38Z" />
+                </svg>
+              </span>
+              <span className="font-display text-2xl tracking-wide text-white">CrewOS</span>
+            </Link>
+            <h1 className="text-4xl font-display leading-tight text-sf-text-primary">Create your workspace in minutes.</h1>
+            <p className="text-sm text-sf-text-secondary">
+              Bring your revenue, roadmap, and operations into one command center tailored for SaaS founders.
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-md">
+          <div className="mb-4 flex items-center justify-center lg:hidden">
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sf-accent-cyan to-blue-600 shadow-[0_0_14px_rgba(0,212,255,0.3)]">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" fill="currentColor" aria-hidden="true">
+                  <path d="M13 2.5a1 1 0 0 1 .9 1.4l-2.16 5.04h5.21a1 1 0 0 1 .77 1.64l-8.5 10.5a1 1 0 0 1-1.72-.9l1.7-5.72H4.94a1 1 0 0 1-.8-1.6l7.98-10.1a1 1 0 0 1 .88-.38Z" />
+                </svg>
+              </span>
+              <span className="font-display text-lg tracking-wide text-white">CrewOS</span>
+            </Link>
+          </div>
+
+          <SignUp
+            appearance={{
+              variables: {
+                colorPrimary: "#00d4ff",
+                colorBackground: "rgba(19, 25, 32, 0.86)",
+                colorInputBackground: "rgba(255, 255, 255, 0.03)",
+                colorInputText: "#f0f4ff",
+                colorText: "#f0f4ff",
+                colorTextSecondary: "#8892a4",
+                colorTextOnPrimaryBackground: "#080b12",
+                colorDanger: "#f43f5e",
+                colorSuccess: "#10b981",
+                borderRadius: "12px",
+                fontFamily: "var(--font-sans)",
+              },
+              elements: {
+                rootBox: { width: "100%" },
+                cardBox: { width: "100%" },
+                card: {
+                  backgroundColor: "rgba(19, 25, 32, 0.82)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  boxShadow: "0 28px 70px rgba(0, 0, 0, 0.48)",
+                  backdropFilter: "blur(14px)",
+                },
+                headerTitle: { color: "#f0f4ff", fontWeight: "700", letterSpacing: "-0.01em" },
+                headerSubtitle: { color: "#8892a4" },
+                socialButtonsBlockButton: {
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#f0f4ff",
+                },
+                socialButtonsBlockButtonText: { color: "#f0f4ff", fontWeight: "600" },
+                dividerLine: { backgroundColor: "rgba(255, 255, 255, 0.12)" },
+                dividerText: { color: "#8892a4", backgroundColor: "rgba(19, 25, 32, 0.82)" },
+                formFieldLabel: { color: "#f0f4ff", fontWeight: "600" },
+                formFieldInput: {
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                  color: "#f0f4ff",
+                },
+                formButtonPrimary: {
+                  backgroundColor: "#00d4ff",
+                  color: "#080b12",
+                  fontWeight: "700",
+                },
+                footerActionText: { color: "#8892a4" },
+                footerActionLink: { color: "#00d4ff", fontWeight: "700" },
+                formFieldInputShowPasswordIcon: { color: "#8892a4" },
+              },
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

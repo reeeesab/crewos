@@ -21,7 +21,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SaaSForge — Portfolio Management OS",
+  title: "CrewOS — Portfolio Management OS",
   description:
     "The command center for indie SaaS founders. Manage revenue, costs, roadmap, and more from one place.",
 };
