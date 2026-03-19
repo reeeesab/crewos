@@ -198,7 +198,7 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
               <input
                 value={formClientEmail}
                 onChange={(event) => setFormClientEmail(event.target.value)}
-                placeholder="crewos-analytics@project.iam.gserviceaccount.com"
+                placeholder="indiqo-analytics@project.iam.gserviceaccount.com"
                 className="w-full rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent-cyan focus:outline-none"
               />
             </div>

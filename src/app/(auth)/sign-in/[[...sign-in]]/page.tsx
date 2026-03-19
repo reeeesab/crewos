@@ -21,7 +21,7 @@ export default function SignInPage() {
                   <path d="M13 2.5a1 1 0 0 1 .9 1.4l-2.16 5.04h5.21a1 1 0 0 1 .77 1.64l-8.5 10.5a1 1 0 0 1-1.72-.9l1.7-5.72H4.94a1 1 0 0 1-.8-1.6l7.98-10.1a1 1 0 0 1 .88-.38Z" />
                 </svg>
               </span>
-              <span className="font-display text-2xl tracking-wide text-white">CrewOS</span>
+              <span className="font-display text-2xl tracking-wide text-white">Indiqo</span>
             </Link>
             <h1 className="text-4xl font-display leading-tight text-sf-text-primary">Sign in to your founder command center.</h1>
             <p className="text-sm text-sf-text-secondary">
@@ -38,7 +38,7 @@ export default function SignInPage() {
                   <path d="M13 2.5a1 1 0 0 1 .9 1.4l-2.16 5.04h5.21a1 1 0 0 1 .77 1.64l-8.5 10.5a1 1 0 0 1-1.72-.9l1.7-5.72H4.94a1 1 0 0 1-.8-1.6l7.98-10.1a1 1 0 0 1 .88-.38Z" />
                 </svg>
               </span>
-              <span className="font-display text-lg tracking-wide text-white">CrewOS</span>
+              <span className="font-display text-lg tracking-wide text-white">Indiqo</span>
             </Link>
           </div>
 

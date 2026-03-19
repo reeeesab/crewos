@@ -153,7 +153,7 @@ export async function generateHealthRecommendations(input: {
 
   if (!input.hasRevenueIntegration || input.mrr <= 0 || input.mrrGrowthPct === null) {
     fallback.push(
-      "Connect Stripe or DodoPayment in Settings so CrewOS can track MRR growth and unlock full Revenue Health scoring.",
+      "Connect Stripe or DodoPayment in Settings so Indiqo can track MRR growth and unlock full Revenue Health scoring.",
     );
   }
   if (input.costItemsCount === 0 || input.costRatioPct === null) {

@@ -61,7 +61,7 @@ export default function SettingsPage() {
   const [dunningForm, setDunningForm] = useState({
     dunningEnabled: false,
     dunningFromEmail: "",
-    dunningSenderName: "CrewOS",
+    dunningSenderName: "Indiqo",
     dunningReplyTo: "",
     stripeWebhookSecret: "",
     dodoWebhookSecret: "",
@@ -98,7 +98,7 @@ export default function SettingsPage() {
     setDunningForm({
       dunningEnabled: dunningSummary.integration.dunningEnabled || false,
       dunningFromEmail: dunningSummary.integration.dunningFromEmail || "",
-      dunningSenderName: dunningSummary.integration.dunningSenderName || "CrewOS",
+      dunningSenderName: dunningSummary.integration.dunningSenderName || "Indiqo",
       dunningReplyTo: dunningSummary.integration.dunningReplyTo || "",
       stripeWebhookSecret: dunningSummary.integration.stripeWebhookSecret || "",
       dodoWebhookSecret: dunningSummary.integration.dodoWebhookSecret || "",
@@ -113,7 +113,7 @@ export default function SettingsPage() {
       dunningEmail3Subject: dunningSummary.integration.dunningEmail3Subject || "Final reminder: update payment method",
       dunningEmail3Body:
         dunningSummary.integration.dunningEmail3Body ||
-        "Final reminder: {{productName}} billing issue is still open. This is the last recovery email from CrewOS before this invoice is marked unresolved. Update your card to avoid disruption.",
+        "Final reminder: {{productName}} billing issue is still open. This is the last recovery email from Indiqo before this invoice is marked unresolved. Update your card to avoid disruption.",
     });
   }
 
@@ -621,8 +621,8 @@ export default function SettingsPage() {
         <div className="rounded-xl border border-sf-accent/25 bg-sf-accent/8 px-4 py-3 mb-5">
           <p className="text-sm font-semibold text-sf-text-primary">
             {recoveredUsd > 0
-              ? `CrewOS recovered $${recoveredUsd.toFixed(0)} in failed payments this month, which is ${roiMultiple.toFixed(1)}x your subscription cost.`
-              : "Once enabled, CrewOS will track recovered failed payments and show your monthly ROI here."}
+              ? `Indiqo recovered $${recoveredUsd.toFixed(0)} in failed payments this month, which is ${roiMultiple.toFixed(1)}x your subscription cost.`
+              : "Once enabled, Indiqo will track recovered failed payments and show your monthly ROI here."}
           </p>
           <p className="mt-1 text-[11px] text-sf-text-muted">
             Recovered invoices this month: {dunningSummary?.recoveredInvoicesThisMonth || 0} · At-risk invoices: {dunningSummary?.atRiskInvoices || 0}
@@ -663,7 +663,7 @@ export default function SettingsPage() {
               <input
                 value={dunningForm.dunningSenderName}
                 onChange={(e) => setDunningForm((prev) => ({ ...prev, dunningSenderName: e.target.value }))}
-                placeholder="CrewOS Billing"
+                placeholder="Indiqo Billing"
                 className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
               />
             </div>
@@ -765,7 +765,7 @@ export default function SettingsPage() {
                   placeholder="Set any long random token"
                   className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-mono text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
                 />
-                <p className="text-[11px] text-sf-text-muted mt-1">This token is appended to the URL and validated by CrewOS.</p>
+                <p className="text-[11px] text-sf-text-muted mt-1">This token is appended to the URL and validated by Indiqo.</p>
               </div>
             )}
 
@@ -868,7 +868,7 @@ export default function SettingsPage() {
                   <div className="rounded-lg border border-sf-border-subtle bg-sf-base/60 p-3">
                     <p className="text-[10px] uppercase tracking-wider text-sf-text-muted mb-1">Preview</p>
                     <p className="text-[11px] text-sf-text-secondary">
-                      From: {(dunningForm.dunningSenderName || "CrewOS").trim() || "CrewOS"} &lt;
+                      From: {(dunningForm.dunningSenderName || "Indiqo").trim() || "Indiqo"} &lt;
                       {dunningForm.dunningFromEmail || "billing@yourdomain.com"}&gt;
                     </p>
                     <p className="text-[11px] text-sf-text-secondary mt-1">

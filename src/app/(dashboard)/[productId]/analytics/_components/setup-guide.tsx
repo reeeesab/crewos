@@ -16,7 +16,7 @@ export function SetupGuide() {
               >
                 console.cloud.google.com
               </a>{" "}
-              and create a project (for example: <code className="rounded bg-sf-base px-1">crewos-analytics</code>).
+              and create a project (for example: <code className="rounded bg-sf-base px-1">indiqo-analytics</code>).
             </>
           ),
         },
@@ -62,7 +62,7 @@ export function SetupGuide() {
         },
         {
           step: "6",
-          title: "Paste the 3 required fields in CrewOS",
+          title: "Paste the 3 required fields in Indiqo",
           body: (
             <>
               From your JSON, use <code className="rounded bg-sf-base px-1">client_email</code> and{" "}

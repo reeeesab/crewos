@@ -9,7 +9,7 @@ export function normalizeInviteCode(code: string) {
 
 export function hashInviteCode(code: string) {
   const normalized = normalizeInviteCode(code);
-  return createHash("sha256").update(`crewos:invite:${normalized}`).digest("hex");
+  return createHash("sha256").update(`indiqo:invite:${normalized}`).digest("hex");
 }
 
 function generateRawCode(length = RAW_CODE_LENGTH) {

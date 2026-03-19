@@ -37,7 +37,7 @@ function stageCopy(stage: DunningEmailStage, productName: string, amountFormatte
   }
 
   return {
-    body: `Final reminder: ${productName} billing issue is still open. This is the last recovery email from CrewOS before this invoice is marked unresolved. Update your card to avoid disruption.`,
+    body: `Final reminder: ${productName} billing issue is still open. This is the last recovery email from Indiqo before this invoice is marked unresolved. Update your card to avoid disruption.`,
     cta: "Resolve Payment",
   };
 }
@@ -67,7 +67,7 @@ function buildEmailHtml({
         ${cta}
       </a>
       <p style="font-size:12px;line-height:1.5;color:#64748b;margin:18px 0 0;">
-        Sent by CrewOS automated recovery. If you've already updated payment details, you can ignore this message.
+        Sent by Indiqo automated recovery. If you've already updated payment details, you can ignore this message.
       </p>
     </div>
   `;
@@ -95,7 +95,7 @@ function getTemplateValue(
         ? `Your payment of ${amountPlaceholder} for ${productPlaceholder} didn't go through. This is usually a card expiration or bank-side block. Update your billing method and we'll retry automatically.`
         : stage === 2
           ? `Still unpaid: ${amountPlaceholder} for ${productPlaceholder}. You're at risk of service interruption. A quick payment method update usually resolves this in under a minute.`
-          : `Final reminder: ${productPlaceholder} billing issue is still open. This is the last recovery email from CrewOS before this invoice is marked unresolved. Update your card to avoid disruption.`,
+          : `Final reminder: ${productPlaceholder} billing issue is still open. This is the last recovery email from Indiqo before this invoice is marked unresolved. Update your card to avoid disruption.`,
   };
 
   if (stage === 1) {
@@ -153,7 +153,7 @@ async function sendRecoveryEmail({
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const amountFormatted = formatMoney(amountCents, currency);
-  const fromName = senderName?.trim() || "CrewOS";
+  const fromName = senderName?.trim() || "Indiqo";
   const from = `${fromName} <${fromEmail}>`;
   const copy = stageCopy(stage, productName, amountFormatted);
   const subject = customSubject?.trim() || DEFAULT_STAGE_SUBJECTS[stage];

@@ -140,7 +140,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             {sidebarOpen && (
               <span className="font-display text-lg tracking-wide whitespace-nowrap text-white">
-                CrewOS
+                Indiqo
               </span>
             )}
           </Link>
@@ -235,7 +235,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            <div className="w-[240px] h-full bg-sf-bg-base border-r border-sf-border-subtle p-4" onClick={e => e.stopPropagation()}>
              {/* Simple mobile menu closure */}
              <div className="flex justify-between items-center mb-8">
-               <span className="font-display text-lg text-white">CrewOS</span>
+               <span className="font-display text-lg text-white">Indiqo</span>
                <button onClick={() => setMobileMenuOpen(false)}><X size={24} className="text-sf-text-secondary" /></button>
              </div>
              <nav className="space-y-6">
