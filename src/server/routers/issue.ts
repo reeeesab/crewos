@@ -8,7 +8,7 @@ export const issueRouter = router({
     .input(
       z.object({
         productId: z.string(),
-        type: z.enum(["FEATURE", "BUG"]).optional(),
+        type: z.enum(["FEATURE", "BUG", "MARKETING", "OTHER"]).optional(),
         status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]).optional(),
       }),
     )
@@ -34,7 +34,8 @@ export const issueRouter = router({
         productId: z.string(),
         title: z.string().min(1),
         description: z.string().optional(),
-        type: z.enum(["FEATURE", "BUG"]),
+        type: z.enum(["FEATURE", "BUG", "MARKETING", "OTHER"]),
+        points: z.number().min(0).default(0),
         status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]).optional(),
         priority: z.enum(["P0", "P1", "P2", "HIGH", "MEDIUM", "LOW"]).default("MEDIUM"),
         milestone: z.string().optional(),
@@ -52,22 +53,50 @@ export const issueRouter = router({
           message: "Title and description should not be the same. Add more detail in the description.",
         });
       }
+      let { assigneeId } = input;
+      if (assigneeId && assigneeId.startsWith("user_")) {
+        const u = await ctx.db.user.findUnique({ where: { clerkId: assigneeId }, select: { id: true } });
+        assigneeId = u?.id || null;
+      }
+
       return ctx.db.issue.create({
         data: {
           productId: input.productId,
           title,
           description: input.description ?? "",
           type: input.type,
+          points: input.points,
           status: input.status ?? "OPEN",
           ...(input.status === "CLOSED" && { closedAt: new Date() }),
           priority: input.priority,
           milestone: input.milestone,
           reporterId: ctx.user.id,
-          assigneeId: input.assigneeId || null,
+          assigneeId: assigneeId || null,
           ...(input.dueDate && { dueDate: new Date(input.dueDate) }),
         },
       });
     }),
+
+  getLeaderboard: protectedProcedure
+    .input(z.object({ productId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      await assertProductAccess(ctx, input.productId);
+      return ctx.db.userPoints.findMany({
+        where: { productId: input.productId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              clerkId: true,
+            },
+          },
+        },
+        orderBy: { points: "desc" },
+      });
+    }),
+
 
   update: protectedProcedure
     .input(
@@ -75,8 +104,10 @@ export const issueRouter = router({
         id: z.string(),
         title: z.string().min(1).optional(),
         description: z.string().optional(),
-        type: z.enum(["FEATURE", "BUG"]).optional(),
+        type: z.enum(["FEATURE", "BUG", "MARKETING", "OTHER"]).optional(),
+        points: z.number().min(0).optional(),
         priority: z.enum(["P0", "P1", "P2", "HIGH", "MEDIUM", "LOW"]).optional(),
+        status: z.enum(["OPEN", "IN_PROGRESS", "CLOSED"]).optional(),
         milestone: z.string().optional(),
         dueDate: z.string().nullable().optional(),
         assigneeId: z.string().nullable().optional(),
@@ -99,16 +130,44 @@ export const issueRouter = router({
           message: "Title and description should not be the same. Add more detail in the description.",
         });
       }
-      return ctx.db.issue.update({
+
+      let finalAssigneeId = assigneeId;
+      if (finalAssigneeId && finalAssigneeId.startsWith("user_")) {
+        const u = await ctx.db.user.findUnique({ where: { clerkId: finalAssigneeId }, select: { id: true } });
+        finalAssigneeId = u?.id || null;
+      }
+
+      const updated = await ctx.db.issue.update({
         where: { id },
         data: {
           ...data,
           ...(title !== undefined && { title }),
           ...(description !== undefined && { description }),
-          ...(assigneeId !== undefined && { assigneeId: assigneeId || null }),
+          ...(assigneeId !== undefined && { assigneeId: finalAssigneeId || null }),
           ...(dueDate !== undefined && { dueDate: dueDate ? new Date(dueDate) : null }),
+          ...(input.status === "CLOSED" && { closedAt: new Date() }),
         },
       });
+
+      // Award points if moved to CLOSED
+      if (input.status === "CLOSED" && updated.assigneeId && updated.points > 0) {
+        await ctx.db.userPoints.upsert({
+          where: {
+            userId_productId: {
+              userId: updated.assigneeId,
+              productId: target.productId,
+            },
+          },
+          update: { points: { increment: updated.points } },
+          create: {
+            userId: updated.assigneeId,
+            productId: target.productId,
+            points: updated.points,
+          },
+        });
+      }
+
+      return updated;
     }),
 
   updateStatus: protectedProcedure
@@ -126,10 +185,30 @@ export const issueRouter = router({
       if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "Issue not found." });
       await assertProductAccess(ctx, target.productId);
 
-      return ctx.db.issue.update({
+      const updated = await ctx.db.issue.update({
         where: { id: input.id },
         data: { status: input.status, ...(input.status === "CLOSED" && { closedAt: new Date() }) },
       });
+
+      // Award points if moved to CLOSED
+      if (input.status === "CLOSED" && updated.assigneeId && updated.points > 0) {
+        await ctx.db.userPoints.upsert({
+          where: {
+            userId_productId: {
+              userId: updated.assigneeId,
+              productId: target.productId,
+            },
+          },
+          update: { points: { increment: updated.points } },
+          create: {
+            userId: updated.assigneeId,
+            productId: target.productId,
+            points: updated.points,
+          },
+        });
+      }
+
+      return updated;
     }),
 
   delete: protectedProcedure

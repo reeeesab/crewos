@@ -15,6 +15,7 @@ model User {
   createdAt      DateTime        @default(now())
   products       ProductMember[]
   assignedIssues Issue[]         @relation("AssignedIssues")
+  points         UserPoints[]
 }
 
 model Product {
@@ -54,6 +55,7 @@ model Product {
   notificationPreference NotificationPreference?
   notificationEvents  NotificationEvent[]
   webhookEvents       WebhookEvent[]
+  userPoints          UserPoints[]
 }
 
 enum ProductStatus {
@@ -141,6 +143,7 @@ model Issue {
   milestone   String?
   reporterId  String?
   assigneeId  String?
+  points      Int           @default(0)
   createdAt   DateTime      @default(now())
   closedAt    DateTime?
   product     Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -151,6 +154,8 @@ model Issue {
 enum IssueType {
   FEATURE
   BUG
+  MARKETING
+  OTHER
 }
 
 enum IssuePriority {
@@ -364,3 +369,15 @@ model WebhookEvent {
 
   @@index([productId, provider, createdAt])
 }
+
+model UserPoints {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  points    Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+

@@ -26,18 +26,42 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 
   const primaryEmail = ctx.clerkUser.emailAddresses[0]?.emailAddress;
 
-  // Sync user to DB on first call
-  const user = await ctx.db.user.upsert({
+  let user = await ctx.db.user.findUnique({
     where: { clerkId: ctx.userId },
-    update: {
-      email: primaryEmail ?? "",
-      name: `${ctx.clerkUser.firstName ?? ""} ${ctx.clerkUser.lastName ?? ""}`.trim(),
-    },
-    create: {
-      clerkId: ctx.userId,
-      email: primaryEmail ?? "",
-      name: `${ctx.clerkUser.firstName ?? ""} ${ctx.clerkUser.lastName ?? ""}`.trim(),
-    },
   });
+
+  if (!user && primaryEmail) {
+    // Check if user exists with this email but no clerkId yet
+    user = await ctx.db.user.findUnique({
+      where: { email: primaryEmail },
+    });
+    
+    if (user) {
+      // Link existing user to this clerkId
+      user = await ctx.db.user.update({
+        where: { id: user.id },
+        data: { clerkId: ctx.userId },
+      });
+    }
+  }
+
+  if (!user) {
+    user = await ctx.db.user.create({
+      data: {
+        clerkId: ctx.userId,
+        email: primaryEmail ?? "",
+        name: `${ctx.clerkUser.firstName ?? ""} ${ctx.clerkUser.lastName ?? ""}`.trim(),
+      },
+    });
+  } else {
+    // Sync info for existing user
+    user = await ctx.db.user.update({
+      where: { id: user.id },
+      data: {
+        email: primaryEmail ?? "",
+        name: `${ctx.clerkUser.firstName ?? ""} ${ctx.clerkUser.lastName ?? ""}`.trim(),
+      },
+    });
+  }
   return next({ ctx: { ...ctx, userId: ctx.userId, user } });
 });

@@ -26,7 +26,7 @@ const navSections = [
   {
     section: "Build",
     items: [
-      { label: "Issues", href: "/roadmap", icon: Kanban },
+      { label: "Board", href: "/roadmap", icon: Kanban },
       { label: "Changelog", href: "/changelog", icon: ListDashes, badge: "AI", badgeColor: "violet" },
     ],
   },

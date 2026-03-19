@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -17,6 +18,10 @@ import {
   Tag,
   Edit3,
   CheckCircle2,
+  LayoutGrid,
+  Trophy,
+  CalendarRange,
+  ChevronDown,
 } from "lucide-react";
 import {
   DndContext,
@@ -30,11 +35,17 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc/provider";
+import { motion } from "framer-motion"; // Added for motion.div
 
-type IssueType = "FEATURE" | "BUG";
+type IssueType = "FEATURE" | "BUG" | "MARKETING" | "OTHER";
 type IssuePriority = "P0" | "P1" | "P2" | "HIGH" | "MEDIUM" | "LOW";
 type IssueStatus = "OPEN" | "IN_PROGRESS" | "CLOSED";
 
@@ -48,13 +59,20 @@ const COLUMNS: { key: IssueStatus; label: string; dotColor: string; bgColor: str
   { key: "CLOSED", label: "Done", dotColor: "bg-sf-green", bgColor: "bg-sf-green/5" },
 ];
 
-const PRIORITY_META: Record<IssuePriority, { label: string; bar: string }> = {
-  P0: { label: "P0", bar: "bg-sf-red" },
-  P1: { label: "P1", bar: "bg-sf-amber" },
-  P2: { label: "P2", bar: "bg-sf-accent-emerald" },
-  HIGH: { label: "High", bar: "bg-sf-red" },
-  MEDIUM: { label: "Med", bar: "bg-sf-amber" },
-  LOW: { label: "Low", bar: "bg-sf-text-muted" },
+const PRIORITY_META: Record<IssuePriority, { label: string; bar: string; color: string }> = {
+  P0: { label: "P0", bar: "bg-sf-red", color: "#EF4444" },
+  P1: { label: "P1", bar: "bg-sf-amber", color: "#F59E0B" },
+  P2: { label: "P2", bar: "bg-sf-accent-emerald", color: "#10B981" },
+  HIGH: { label: "High", bar: "bg-sf-red", color: "#EF4444" },
+  MEDIUM: { label: "Med", bar: "bg-sf-amber", color: "#F59E0B" },
+  LOW: { label: "Low", bar: "bg-sf-text-muted", color: "#94A3B8" },
+};
+
+const TYPE_META: Record<IssueType, { label: string; icon: any; color: string; ring: string; border: string }> = {
+  FEATURE: { label: "Feature", icon: Sparkles, color: "text-sf-accent-cyan", ring: "ring-sf-accent-cyan/20", border: "border-sf-accent-cyan" },
+  BUG: { label: "Bug", icon: Bug, color: "text-sf-red", ring: "ring-sf-red/20", border: "border-sf-red" },
+  MARKETING: { label: "Marketing", icon: Sparkles, color: "text-sf-purple", ring: "ring-sf-purple/20", border: "border-sf-purple" },
+  OTHER: { label: "Other", icon: Tag, color: "text-sf-text-muted", ring: "ring-sf-text-muted/20", border: "border-sf-text-muted" },
 };
 
 function getPriorityOrder(priority: IssuePriority) {
@@ -91,9 +109,9 @@ function DraggableIssueCard({
     transform: CSS.Transform.toString(transform),
   };
 
+  const typeMeta = TYPE_META[issue.type as IssueType] ?? TYPE_META.FEATURE;
   const priority = PRIORITY_META[issue.priority as IssuePriority] ?? PRIORITY_META.MEDIUM;
   const isClosed = issue.status === "CLOSED";
-  const leftBarClass = isClosed ? "bg-sf-text-muted" : priority.bar;
 
   return (
     <div
@@ -101,78 +119,102 @@ function DraggableIssueCard({
       style={style}
       onClick={() => onOpen(issue)}
       className={cn(
-        "group relative rounded-xl border border-sf-border-subtle bg-sf-elevated/80 p-4 shadow-lg backdrop-blur-md transition-all hover:-translate-y-0.5 hover:shadow-2xl cursor-pointer",
-        isDragging && "opacity-60",
+        "group relative rounded-2xl border border-sf-border-subtle bg-slate-800/40 p-5 shadow-xl backdrop-blur-md transition-all hover:-translate-y-1 hover:bg-slate-800/60 hover:shadow-2xl cursor-pointer",
+        isDragging && "opacity-60 scale-95",
       )}
     >
-      <div className={cn("absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl", leftBarClass)} />
-      <div style={{ opacity: isClosed ? 0.55 : 1 }}>
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
+      {/* Type-based left border */}
+      <div className={cn("absolute left-0 top-4 bottom-4 w-1 rounded-r-full transition-all group-hover:top-2 group-hover:bottom-2", typeMeta.border.replace('border-', 'bg-'))} />
+
+      <div style={{ opacity: isClosed ? 0.6 : 1 }}>
+        <div className="mb-3 flex items-start justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Type Badge */}
             <span
               className={cn(
-                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-                issue.type === "FEATURE"
-                  ? "border-sf-purple/30 bg-sf-purple/10 text-sf-purple"
-                  : "border-sf-red/30 bg-sf-red/10 text-sf-red",
+                "inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm",
+                typeMeta.border,
+                typeMeta.color,
+                "bg-sf-base/40"
               )}
             >
-              {issue.type === "FEATURE" ? <Sparkles className="h-2.5 w-2.5" /> : <Bug className="h-2.5 w-2.5" />}
-              {issue.type === "FEATURE" ? "Feature" : "Bug"}
+              <typeMeta.icon className="h-3 w-3" />
+              {typeMeta.label}
             </span>
-            <span className="rounded-full bg-sf-base px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sf-text-secondary border border-sf-border-subtle">
+
+            {/* Priority Dot */}
+            <span className="flex items-center gap-1.5 rounded-lg bg-sf-base/40 px-2 py-1 text-[10px] font-bold text-sf-text-secondary border border-sf-border-subtle">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: priority.color }} />
               {priority.label}
             </span>
           </div>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="rounded-md p-1 text-sf-text-muted hover:text-sf-text-primary cursor-grab active:cursor-grabbing"
-            {...(draggable ? listeners : {})}
-            {...(draggable ? attributes : {})}
-            aria-label="Drag issue"
-          >
-            <GripVertical className="h-3.5 w-3.5" />
-          </button>
+
+          {/* Points Badge (Top Right) */}
+          <div className="flex flex-col items-end gap-2">
+             <div className="rounded-lg bg-sf-accent-cyan/10 border border-sf-accent-cyan/20 px-2 py-1 text-[10px] font-bold text-sf-accent-cyan">
+               {issue.points || 0} pts
+             </div>
+             <button
+               onClick={(e) => e.stopPropagation()}
+               className="rounded-md p-1 text-sf-text-muted hover:text-white cursor-grab active:cursor-grabbing transition-colors"
+               {...(draggable ? listeners : {})}
+               {...(draggable ? attributes : {})}
+               aria-label="Drag issue"
+             >
+               <GripVertical className="h-4 w-4" />
+             </button>
+          </div>
         </div>
 
-        <p className={cn("text-[13px] font-semibold leading-snug text-sf-text-primary", isClosed && "line-through")}>{issue.title}</p>
+        <h4 className={cn("text-sm font-bold leading-snug text-white group-hover:text-sf-accent-cyan transition-colors", isClosed && "line-through text-sf-text-muted")}>
+          {issue.title}
+        </h4>
 
         {issue.description && (
-          <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-sf-text-muted">{issue.description}</p>
+          <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-sf-text-muted">
+            {issue.description}
+          </p>
         )}
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-2.5">
-          {issue.milestone && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-sf-text-muted">
-              <Tag className="h-2.5 w-2.5" />
-              {issue.milestone}
-            </span>
-          )}
-          {issue.dueDate && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-sf-text-secondary">
-              <Calendar className="h-2.5 w-2.5" />
-              Due {new Date(issue.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-            </span>
-          )}
-          {issue.costs && issue.costs.length > 0 && (
-            <span className="inline-flex items-center gap-1 rounded bg-sf-green/10 px-1.5 py-0.5 text-[10px] font-bold text-sf-green">
-              <DollarSign className="h-2.5 w-2.5" />
-              {formatMoney(issue.costs.reduce((s: number, c: any) => s + c.amount, 0))}
-            </span>
-          )}
-          {issue.assignee && (
-            <div className="ml-auto flex h-5 w-5 items-center justify-center rounded-full border border-sf-accent/20 bg-sf-accent/10 text-[8px] font-bold text-sf-accent">
-              {(issue.assignee.name || issue.assignee.email).charAt(0).toUpperCase()}
+        <div className="mt-4 flex items-center justify-between border-t border-sf-border-subtle/40 pt-3">
+          <div className="flex items-center gap-3">
+            {issue.dueDate && (
+              <span className="flex items-center gap-1.5 text-[10px] font-medium text-sf-text-secondary">
+                <Calendar className="h-3 w-3" />
+                {new Date(issue.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </span>
+            )}
+            {issue.costs && issue.costs.length > 0 && (
+              <span className="flex items-center gap-1 rounded-md bg-sf-green/10 px-1.5 py-0.5 text-[10px] font-bold text-sf-green border border-sf-green/20">
+                <DollarSign className="h-2.5 w-2.5" />
+                {formatMoney(issue.costs.reduce((s: number, c: any) => s + c.amount, 0))}
+              </span>
+            )}
+          </div>
+
+          {/* Assignee Avatar (Bottom Right) */}
+          {issue.assignee ? (
+            <div className="group/avatar relative">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg border border-sf-accent-cyan/30 bg-sf-accent-cyan/10 text-[10px] font-bold text-sf-accent-cyan shadow-sm ring-2 ring-transparent group-hover/avatar:ring-sf-accent-cyan/20 transition-all">
+                {(issue.assignee.name || issue.assignee.email).charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute bottom-full right-0 mb-2 invisible group-hover/avatar:visible opacity-0 group-hover/avatar:opacity-100 transition-all whitespace-nowrap rounded-md bg-sf-elevated border border-sf-border-subtle px-2 py-1 text-[9px] font-bold text-white shadow-xl">
+                {issue.assignee.name || issue.assignee.email}
+              </div>
+            </div>
+          ) : (
+            <div className="h-6 w-6 rounded-lg border border-dashed border-sf-border-subtle bg-sf-base/40 flex items-center justify-center">
+               <Plus className="h-2.5 w-2.5 text-sf-text-muted" />
             </div>
           )}
         </div>
 
-        <div className="relative z-10 mt-4 flex items-center gap-1.5 border-t border-sf-border-subtle/60 pt-3" onClick={(e) => e.stopPropagation()}>
+        <div className="z-10 mt-4 flex items-center gap-1.5 border-t border-sf-border-subtle/40 pt-4" onClick={(e) => e.stopPropagation()}>
           {issue.status === "OPEN" && (
             <button
               onClick={() => onStatusChange(issue.id, "IN_PROGRESS")}
               disabled={isUpdating}
-              className="inline-flex items-center gap-1 rounded-lg border border-[#00D4FF]/30 bg-[#00D4FF]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#00D4FF] hover:bg-[#00D4FF]/20 disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-sf-accent-cyan/30 bg-sf-accent-cyan/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-accent-cyan hover:bg-sf-accent-cyan/20 disabled:opacity-50 transition-all"
             >
               <ChevronRight className="h-3 w-3" />
               Start
@@ -184,7 +226,7 @@ function DraggableIssueCard({
               <button
                 onClick={() => onStatusChange(issue.id, "CLOSED")}
                 disabled={isUpdating}
-                className="inline-flex items-center gap-1 rounded-lg border border-sf-green/30 bg-sf-green/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-green hover:bg-sf-green/20 disabled:opacity-50"
+                className="inline-flex items-center gap-1 rounded-lg border border-sf-green/30 bg-sf-green/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-green hover:bg-sf-green/20 disabled:opacity-50 transition-all"
               >
                 <CheckCircle2 className="h-3 w-3" />
                 Done
@@ -192,7 +234,7 @@ function DraggableIssueCard({
               <button
                 onClick={() => onStatusChange(issue.id, "OPEN")}
                 disabled={isUpdating}
-                className="inline-flex items-center gap-1 rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-text-secondary hover:text-sf-text-primary disabled:opacity-50"
+                className="inline-flex items-center gap-1 rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-text-secondary hover:text-white disabled:opacity-50 transition-all"
               >
                 Back
               </button>
@@ -203,7 +245,7 @@ function DraggableIssueCard({
             <button
               onClick={() => onStatusChange(issue.id, "OPEN")}
               disabled={isUpdating}
-              className="inline-flex items-center gap-1 rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-text-secondary hover:text-sf-text-primary disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sf-text-secondary hover:text-white disabled:opacity-50 transition-all"
             >
               Reopen
             </button>
@@ -211,19 +253,20 @@ function DraggableIssueCard({
 
           <button
             onClick={() => onEdit(issue)}
-            className="ml-auto rounded-lg p-1.5 text-sf-text-muted hover:bg-sf-base hover:text-sf-text-primary"
+            className="ml-auto rounded-lg p-1.5 text-sf-text-muted hover:bg-sf-base hover:text-white transition-colors"
             title="Edit"
           >
-            <Edit3 className="h-3.5 w-3.5" />
+            <Edit3 className="h-4 w-4" />
           </button>
           <button
             onClick={() => onDelete(issue.id)}
-            className="rounded-lg p-1.5 text-sf-text-muted hover:bg-sf-red/10 hover:text-sf-red"
+            className="rounded-lg p-1.5 text-sf-text-muted hover:bg-sf-red/10 hover:text-sf-red transition-colors"
             title="Delete"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
+
       </div>
     </div>
   );
@@ -270,13 +313,14 @@ function KanbanColumn({
       <div className="pointer-events-none absolute inset-0 bg-sf-noise opacity-20 mix-blend-overlay" />
 
       <div className="relative z-10 flex items-center justify-between border-b border-sf-border-subtle/50 px-5 py-4">
-        <div className="flex items-center gap-2.5">
-          <span className={cn("h-2.5 w-2.5 rounded-full shadow-[0_0_8px_currentColor]", column.dotColor)} />
-          <h3 className="text-sm font-bold uppercase tracking-wide text-sf-text-primary">{column.label}</h3>
-          <span className="rounded-full border border-sf-border-subtle bg-sf-base/80 px-2.5 py-0.5 text-[10px] font-bold text-sf-text-secondary">
+        <div className="flex items-center gap-3">
+          <span className={cn("h-3 w-3 rounded-full blur-[1px] animate-pulse", column.dotColor)} />
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">{column.label}</h3>
+          <span className="rounded-lg border border-sf-border-subtle bg-sf-base/80 px-2.5 py-0.5 text-[10px] font-bold text-sf-text-muted">
             {issues.length}
           </span>
         </div>
+
         <button
           onClick={onQuickCreateOpen}
           className="rounded-lg border border-transparent p-1.5 text-sf-text-muted transition-all hover:border-sf-border-default hover:bg-sf-elevated hover:text-sf-text-primary"
@@ -336,6 +380,7 @@ interface IssueForm {
   description: string;
   type: IssueType;
   priority: IssuePriority;
+  points: number;
   dueDate: string;
   milestone: string;
   assigneeId: string;
@@ -349,6 +394,7 @@ function IssueModal({
   onSubmit,
   isPending,
   error,
+  userId, // Added userId prop
 }: {
   mode: "create" | "edit";
   issue?: any;
@@ -357,6 +403,7 @@ function IssueModal({
   onSubmit: (data: any) => void;
   isPending: boolean;
   error?: string;
+  userId: string; // Added userId prop type
 }) {
   const [localError, setLocalError] = useState<string>("");
   const [form, setForm] = useState<IssueForm>({
@@ -364,12 +411,20 @@ function IssueModal({
     description: issue?.description || "",
     type: (issue?.type || "FEATURE") as IssueType,
     priority: (issue?.priority || "MEDIUM") as IssuePriority,
+    points: issue?.points || 0,
     dueDate: issue?.dueDate ? new Date(issue.dueDate).toISOString().split("T")[0] : "",
     milestone: issue?.milestone || "",
     assigneeId: issue?.assigneeId || "",
   });
 
-  const submit = () => {
+  useEffect(() => {
+    if (userId && !form.assigneeId && !issue) {
+      // Default to "me" for new tickets if available
+      // or at least make sure the "Assign to me" option works
+    }
+  }, [userId]);
+
+  const handleSubmit = () => { // Renamed submit to handleSubmit
     const title = form.title.trim();
     const description = form.description.trim();
     if (description && title.toLowerCase() === description.toLowerCase()) {
@@ -382,152 +437,224 @@ function IssueModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#080B12]/80 backdrop-blur-md p-4 overflow-y-auto">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit();
-        }}
-        className="relative my-auto w-full max-w-lg overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-elevated p-8 shadow-2xl"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="relative my-auto w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
       >
-        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-sf-purple to-sf-accent" />
+        <div className="absolute left-0 top-0 h-1.5 w-full bg-gradient-to-r from-sf-accent-cyan via-sf-purple to-sf-accent-cyan shadow-[0_4px_12px_rgba(0,212,255,0.4)]" />
+
         <div className="mb-8 flex items-center justify-between">
-          <h3 className="text-xl font-bold tracking-tight text-sf-text-primary">{mode === "create" ? "Create Issue" : "Edit Issue"}</h3>
+          <div>
+            <h3 className="text-2xl font-black tracking-tight text-white">{mode === "create" ? "Create New Ticket" : "Edit Ticket"}</h3>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-1">PLANNING & EXECUTION</p>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-transparent p-1.5 text-sf-text-muted transition-colors hover:border-sf-border-subtle hover:bg-sf-base hover:text-sf-text-primary"
+            className="rounded-xl border border-white/5 bg-white/5 p-2.5 text-slate-500 transition-all hover:bg-white/10 hover:text-white"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="space-y-5">
-          <div>
-            <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Title</label>
-            <input
-              required
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent focus:outline-none"
-              placeholder="What needs to be done?"
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Description</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={4}
-              className="w-full resize-none rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent focus:outline-none"
-              placeholder="Add details..."
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Assignee</label>
-            <select
-              value={form.assigneeId}
-              onChange={(e) => setForm({ ...form, assigneeId: e.target.value })}
-              className="w-full appearance-none rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none"
-            >
-              <option value="">Unassigned</option>
-              {members.map((m: any) => (
-                <option key={m.id} value={m.user.id}>
-                  {m.user.name || m.user.email}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-5">
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-8">
+          <div className="space-y-6">
+            {/* Row 1: Title */}
             <div>
-              <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Type</label>
-              <div className="grid grid-cols-2 gap-2">
-                {(["FEATURE", "BUG"] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setForm({ ...form, type: t })}
-                    className={cn(
-                      "flex items-center justify-center gap-1.5 rounded-xl py-3 text-[11px] font-bold uppercase tracking-wider transition-all",
-                      form.type === t
-                        ? t === "FEATURE"
-                          ? "border border-sf-purple/50 bg-sf-purple/10 text-sf-purple"
-                          : "border border-sf-red/50 bg-sf-red/10 text-sf-red"
-                        : "border border-sf-border-subtle bg-sf-base/50 text-sf-text-secondary hover:text-sf-text-primary",
-                    )}
-                  >
-                    {t === "FEATURE" ? <Sparkles className="h-3 w-3" /> : <Bug className="h-3 w-3" />}
-                    {t === "FEATURE" ? "Feature" : "Bug"}
-                  </button>
-                ))}
+              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Title</label>
+              <input
+                required
+                // fullWidth // This is not a standard HTML attribute, removed.
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className="h-12 w-full rounded-2xl border border-neutral-700 bg-neutral-800 px-5 text-lg font-bold text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                placeholder="What needs to be done?"
+              />
+            </div>
+
+            {/* Row 2: Description */}
+            <div>
+              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Description</label>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={4}
+                className="w-full rounded-2xl border border-neutral-700 bg-neutral-800 p-5 text-sm font-medium text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                placeholder="Details of the task..."
+              />
+            </div>
+
+            {/* Row 3: Type Selector */}
+            <div>
+              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Ticket Type</label>
+              <div className="grid grid-cols-4 gap-3">
+                {(["FEATURE", "BUG", "MARKETING", "OTHER"] as const).map((t) => {
+                  const meta = TYPE_META[t];
+                  const Icon = meta.icon;
+                  const isSelected = form.type === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setForm({ ...form, type: t })}
+                      className={cn(
+                        "flex flex-col items-center justify-center gap-2 rounded-2xl py-4 border-2 transition-all",
+                        isSelected
+                          ? cn(
+                              t === "FEATURE" ? "bg-cyan-950/40 border-sf-accent-cyan text-sf-accent-cyan shadow-[0_0_20px_rgba(0,212,255,0.15)]" :
+                              t === "BUG" ? "bg-red-950/40 border-sf-red text-sf-red shadow-[0_0_20px_rgba(248,113,113,0.15)]" :
+                              t === "MARKETING" ? "bg-purple-950/40 border-sf-purple text-sf-purple shadow-[0_0_20px_rgba(192,132,252,0.15)]" :
+                              "bg-slate-800/40 border-slate-500 text-slate-300 shadow-[0_0_20px_rgba(148,163,184,0.15)]"
+                            )
+                          : "border-neutral-700 bg-neutral-800 text-slate-500 hover:border-neutral-600 hover:text-white"
+                      )}
+                    >
+                      <Icon className="h-6 w-6" />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{meta.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-            <div>
-              <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Priority</label>
-              <select
-                value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: e.target.value as IssuePriority })}
-                className="w-full appearance-none rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm font-semibold text-sf-text-primary focus:border-sf-accent focus:outline-none"
-              >
-                <option value="P0">P0</option>
-                <option value="P1">P1</option>
-                <option value="P2">P2</option>
-                <option value="HIGH">High</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="LOW">Low</option>
-              </select>
+
+            {/* Row 4: Points | Priority */}
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Points Reward</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={form.points}
+                  onChange={(e) => setForm({ ...form, points: parseInt(e.target.value) || 0 })}
+                  className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-black text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                />
+                <div className="mt-3 flex gap-1.5 flex-wrap">
+                  {[1, 3, 5, 8, 13].map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setForm({ ...form, points: v })}
+                      className={cn(
+                        "rounded-lg border px-3 py-1.5 text-[10px] font-black transition-all",
+                        form.points === v
+                          ? "bg-sf-accent-cyan/10 border-sf-accent-cyan text-sf-accent-cyan shadow-[0_0_10px_rgba(0,212,255,0.1)]"
+                          : "bg-neutral-800 border-neutral-700 text-slate-500 hover:border-neutral-600 hover:text-white"
+                      )}
+                    >
+                      +{v}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Priority</label>
+                <div className="flex flex-col gap-2">
+                   <div className="grid grid-cols-3 gap-2">
+                     {(["LOW", "MEDIUM", "HIGH"] as const).map((p) => (
+                       <button
+                         key={p}
+                         type="button"
+                         onClick={() => setForm({ ...form, priority: p })}
+                         className={cn(
+                            "flex h-11 items-center justify-center rounded-xl border-2 transition-all text-[10px] font-black uppercase tracking-widest",
+                            form.priority === p
+                              ? p === "HIGH" ? "bg-red-950/40 border-sf-red text-sf-red" :
+                                p === "MEDIUM" ? "bg-sf-amber/10 border-sf-amber text-sf-amber" :
+                                "bg-green-950/40 border-sf-green text-sf-green"
+                              : "border-neutral-700 bg-neutral-800 text-slate-500 hover:text-white"
+                         )}
+                       >
+                         {p}
+                       </button>
+                     ))}
+                   </div>
+                </div>
+              </div>
             </div>
+
+            {/* Row 5: Assignee | Due Date */}
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assignee</label>
+                <div className="relative">
+                  <select
+                    value={form.assigneeId}
+                    onChange={(e) => setForm({ ...form, assigneeId: e.target.value })}
+                    className="h-11 w-full appearance-none rounded-xl border border-neutral-700 bg-neutral-800 px-4 pr-10 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                  >
+                    <option value="" className="bg-neutral-900">Unassigned</option>
+                    <option value={userId || ""} className="bg-neutral-900 font-bold text-sf-accent-cyan italic">Assign to me</option>
+                    {members.map((m: any) => (
+                      <option key={m.id} value={m.user.id} className="bg-neutral-900">
+                        {m.user.name || m.user.email}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Due Date</label>
+                <input
+                  type="date"
+                  value={form.dueDate}
+                  onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                  className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10 [color-scheme:dark]"
+                />
+              </div>
+            </div>
+
+            {/* Row 6: Milestone (Optional) */}
+            <Collapsible>
+               <CollapsibleTrigger className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-colors py-2">
+                  Advanced options <ChevronDown className="h-3 w-3" />
+               </CollapsibleTrigger>
+               <CollapsibleContent className="mt-4">
+                  <div>
+                    <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Milestone</label>
+                    <input
+                      value={form.milestone}
+                      onChange={(e) => setForm({ ...form, milestone: e.target.value })}
+                      className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                      placeholder="e.g. Q1 Release"
+                    />
+                  </div>
+               </CollapsibleContent>
+            </Collapsible>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
-            <div>
-              <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Due Date</label>
-              <input
-                type="date"
-                value={form.dueDate}
-                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none [color-scheme:dark]"
-              />
+          {(error || localError) && (
+            <div className="mt-6 flex items-center gap-2 rounded-xl border border-sf-red/30 bg-sf-red/10 p-3 text-xs font-semibold text-sf-red">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {localError || error}
             </div>
-            <div>
-              <label className="mb-2 block font-mono text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">Milestone</label>
-              <input
-                value={form.milestone}
-                onChange={(e) => setForm({ ...form, milestone: e.target.value })}
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent focus:outline-none"
-                placeholder="v1.0, Sprint 3..."
-              />
-            </div>
-          </div>
-        </div>
+          )}
 
-        {(error || localError) && (
-          <div className="mt-6 flex items-center gap-2 rounded-xl border border-sf-red/30 bg-sf-red/10 p-3 text-xs font-semibold text-sf-red">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {localError || error}
+          <div className="flex gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-2xl bg-white/5 px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-slate-400 transition-all hover:bg-white/10 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="flex-[2] rounded-2xl bg-gradient-to-r from-sf-accent-cyan to-sf-accent via-sf-accent-cyan px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-[0_10px_25px_rgba(0,212,255,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
+            >
+              {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+              {mode === "create" ? "Create Ticket" : "Save Changes"}
+            </button>
           </div>
-        )}
-
-        <div className="mt-8 flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-3 text-sm font-semibold text-sf-text-secondary hover:bg-sf-border-subtle hover:text-sf-text-primary"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isPending}
-            className="flex-1 rounded-xl bg-sf-accent px-4 py-3 text-sm font-bold tracking-tight text-white hover:bg-sf-accent/90 disabled:opacity-50"
-          >
-            {isPending ? "Saving..." : mode === "create" ? "Create Issue" : "Save Changes"}
-          </button>
-        </div>
-      </form>
+        </form>
+      </motion.div>
     </div>
   );
 }
@@ -599,6 +726,101 @@ function GanttTimeline({ issues, onOpenIssue }: { issues: any[]; onOpenIssue: (i
   );
 }
 
+function LeaderboardView({ productId }: { productId: string }) {
+  const { data: leaderboard, isLoading } = trpc.issue.getLeaderboard.useQuery({ productId });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-sf-text-muted" />
+      </div>
+    );
+  }
+
+  if (!leaderboard || leaderboard.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-sf-border-subtle bg-sf-elevated/30 p-20 text-center shadow-xl backdrop-blur-md">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sf-accent-cyan/10 mb-6 shadow-[0_0_30px_rgba(0,212,255,0.1)]">
+           <Trophy className="h-10 w-10 text-sf-accent-cyan animate-pulse" />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-2">No points yet</h3>
+        <p className="max-w-xs text-sm text-sf-text-muted leading-relaxed">
+          Complete tickets to earn points and climb the board. The more you ship, the higher you rank.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border border-sf-border-subtle bg-sf-elevated/50 p-8 shadow-2xl backdrop-blur-md">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Trophy className="h-6 w-6 text-sf-amber" />
+            <div className="absolute inset-0 h-6 w-6 animate-ping rounded-full bg-sf-amber/20" />
+          </div>
+          <h3 className="text-xl font-bold text-white tracking-tight">Team Leaderboard</h3>
+        </div>
+        <button className="rounded-xl border border-sf-border-subtle bg-sf-base/50 px-5 py-2 text-xs font-bold uppercase tracking-widest text-sf-text-muted hover:bg-sf-base hover:text-white transition-all shadow-sm">
+          MVP RANKING
+        </button>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-sf-border-subtle bg-[#0B0E14]/40">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-[#0D1117] text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+            <tr className="border-b border-white/5">
+              <th className="px-6 py-5">Rank</th>
+              <th className="px-6 py-5">Member</th>
+              <th className="px-6 py-5 text-center">Reward Points</th>
+              <th className="px-6 py-5 text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {leaderboard.map((row: any, i: number) => (
+              <tr key={row.id} className="group hover:bg-white/[0.02] transition-colors">
+                <td className="px-6 py-6">
+                  <div className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-xl font-mono text-xs font-black",
+                    i === 0 ? "bg-sf-amber/20 text-sf-amber shadow-[0_0_15px_rgba(245,158,11,0.2)]" : 
+                    i === 1 ? "bg-slate-300/10 text-slate-300" :
+                    i === 2 ? "bg-orange-400/10 text-orange-400" : "bg-sf-base/40 text-sf-text-muted"
+                  )}>
+                    {i + 1}
+                  </div>
+                </td>
+                <td className="px-6 py-6 font-medium">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-2xl border border-sf-border-subtle bg-sf-base p-0.5 flex items-center justify-center text-sf-accent-cyan font-bold text-sm ring-2 ring-transparent group-hover:ring-sf-accent-cyan/20 transition-all">
+                      {row.user.name?.charAt(0) || row.user.email?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-white group-hover:text-sf-accent-cyan transition-colors">{row.user.name || row.user.email}</p>
+                      <p className="text-[10px] text-sf-text-muted mt-0.5 font-medium">{row.user.email}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-6 text-center">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-sf-accent-cyan/10 px-4 py-1.5 text-xs font-black text-sf-accent-cyan border border-sf-accent-cyan/20 shadow-sm">
+                    <Sparkles className="h-3 w-3" />
+                    {row.points} PTS
+                  </span>
+                </td>
+                <td className="px-6 py-6 text-right">
+                   <div className="inline-flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-slate-400 border border-white/5">
+                     <div className="h-1 w-1 rounded-full bg-sf-accent-cyan animate-pulse" />
+                     Contributor
+                   </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function IssueDetailSheet({
   issue,
   open,
@@ -622,10 +844,22 @@ function IssueDetailSheet({
         {issue ? (
           <>
             <SheetHeader>
-              <SheetTitle>{issue.title}</SheetTitle>
-              <SheetDescription>
-                {issue.type === "FEATURE" ? "Feature" : "Bug"} · {issue.priority}
-              </SheetDescription>
+              <SheetTitle className="text-xl font-bold text-white">{issue.title}</SheetTitle>
+              <div className="flex items-center gap-2 mt-2">
+                <span className={cn(
+                  "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                  TYPE_META[issue.type as IssueType]?.color || "text-sf-text-muted",
+                  TYPE_META[issue.type as IssueType]?.ring || "ring-sf-border-subtle",
+                  "bg-sf-base/40 border",
+                  TYPE_META[issue.type as IssueType]?.border || "border-sf-border-subtle"
+                )}>
+                   {TYPE_META[issue.type as IssueType]?.label || issue.type}
+                </span>
+                <span className="h-1 w-1 rounded-full bg-sf-border-subtle" />
+                <span className="text-[10px] font-bold text-sf-text-muted uppercase tracking-wider">
+                  {PRIORITY_META[issue.priority as IssuePriority]?.label || issue.priority} Priority
+                </span>
+              </div>
             </SheetHeader>
 
             <div className="mt-5 space-y-4">
@@ -633,14 +867,18 @@ function IssueDetailSheet({
                 <p className="text-sm leading-relaxed text-sf-text-primary">{issue.description || "No description"}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="rounded-lg border border-sf-border-subtle bg-sf-base/30 p-3">
-                  <p className="text-sf-text-muted">Status</p>
-                  <p className="mt-1 font-semibold text-sf-text-primary">{issue.status.replace("_", " ")}</p>
+                  <p className="text-sf-text-muted text-[10px] uppercase font-bold tracking-tight">Status</p>
+                  <p className="mt-1 font-bold text-white">{issue.status.replace("_", " ")}</p>
                 </div>
                 <div className="rounded-lg border border-sf-border-subtle bg-sf-base/30 p-3">
-                  <p className="text-sf-text-muted">Due Date</p>
-                  <p className="mt-1 font-semibold text-sf-text-primary">
+                  <p className="text-sf-text-muted text-[10px] uppercase font-bold tracking-tight">Reward</p>
+                  <p className="mt-1 font-bold text-sf-accent-cyan">{issue.points || 0} pts</p>
+                </div>
+                <div className="rounded-lg border border-sf-border-subtle bg-sf-base/30 p-3">
+                  <p className="text-sf-text-muted text-[10px] uppercase font-bold tracking-tight">Due Date</p>
+                  <p className="mt-1 font-bold text-white">
                     {issue.dueDate ? new Date(issue.dueDate).toLocaleDateString() : "Not set"}
                   </p>
                 </div>
@@ -696,6 +934,7 @@ function IssueDetailSheet({
 }
 
 export default function RoadmapPage() {
+  const { userId } = useAuth();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -704,15 +943,15 @@ export default function RoadmapPage() {
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [editingIssue, setEditingIssue] = useState<any>(null);
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
-  const [filter, setFilter] = useState<"all" | "features" | "bugs">("all");
-  const [view, setView] = useState<"board" | "timeline">("board");
+  const [filter, setFilter] = useState<"all" | "features" | "bugs" | "marketing" | "other">("all");
+  const [view, setView] = useState<"board" | "timeline" | "leaderboard">("board");
   const [quickColumn, setQuickColumn] = useState<IssueStatus | null>(null);
   const [quickTitle, setQuickTitle] = useState("");
 
   useEffect(() => {
     const queryFilter = searchParams.get("filter");
-    if (queryFilter === "all" || queryFilter === "features" || queryFilter === "bugs") {
-      setFilter(queryFilter);
+    if (["all", "features", "bugs", "marketing", "other"].includes(queryFilter || "")) {
+      setFilter(queryFilter as any);
     }
   }, [searchParams]);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
@@ -723,6 +962,8 @@ export default function RoadmapPage() {
   const utils = trpc.useUtils();
   const { data: issues, isLoading } = trpc.issue.list.useQuery({ productId });
   const { data: members } = trpc.product.listMembers.useQuery({ productId });
+  const me = members?.find((m: any) => m.user.clerkId === userId);
+  const myInternalId = me?.user?.id;
 
   const createIssue = trpc.issue.create.useMutation({
     onSuccess: () => {
@@ -772,6 +1013,8 @@ export default function RoadmapPage() {
   const filteredIssues = allIssues.filter((issue: any) => {
     if (filter === "features") return issue.type === "FEATURE";
     if (filter === "bugs") return issue.type === "BUG";
+    if (filter === "marketing") return issue.type === "MARKETING";
+    if (filter === "other") return issue.type === "OTHER";
     return true;
   });
 
@@ -782,6 +1025,8 @@ export default function RoadmapPage() {
 
   const featuresCount = allIssues.filter((i: any) => i.type === "FEATURE" && i.status !== "CLOSED").length;
   const bugsCount = allIssues.filter((i: any) => i.type === "BUG" && i.status !== "CLOSED").length;
+  const marketingCount = allIssues.filter((i: any) => i.type === "MARKETING" && i.status !== "CLOSED").length;
+  const otherCount = allIssues.filter((i: any) => i.type === "OTHER" && i.status !== "CLOSED").length;
   const closedCount = allIssues.filter((i: any) => i.status === "CLOSED").length;
 
   function handleStatusChange(id: string, status: IssueStatus) {
@@ -848,56 +1093,72 @@ export default function RoadmapPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Issues</h1>
-          <p className="mt-1 text-sm font-medium text-sf-text-secondary">
-            {featuresCount} features · {bugsCount} bugs open · {closedCount} completed
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-white mb-3">Board</h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-cyan-950 px-3 py-1 text-xs font-bold text-cyan-400 border border-cyan-800 shadow-[0_2px_8px_rgba(34,211,238,0.1)]">
+               <Sparkles className="h-3.5 w-3.5" /> {featuresCount} Features
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-red-950 px-3 py-1 text-xs font-bold text-red-400 border border-red-800 shadow-[0_2px_8px_rgba(248,113,113,0.1)]">
+               <Bug className="h-3.5 w-3.5" /> {bugsCount} Bugs
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-purple-950 px-3 py-1 text-xs font-bold text-purple-400 border border-purple-800 shadow-[0_2px_8px_rgba(192,132,252,0.1)]">
+               <Sparkles className="h-3.5 w-3.5" /> {marketingCount} Marketing
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-green-950 px-3 py-1 text-xs font-bold text-green-400 border border-green-800 shadow-[0_2px_8px_rgba(74,222,128,0.1)]">
+               <CheckCircle2 className="h-3.5 w-3.5" /> {closedCount} Shipped
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex gap-1 rounded-xl border border-sf-border-subtle bg-sf-surface p-1 shadow-md">
-            <button
-              onClick={() => setView("board")}
-              className={cn(
-                "rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all",
-                view === "board"
-                  ? "border border-sf-border-subtle bg-sf-base text-sf-text-primary"
-                  : "text-sf-text-secondary hover:text-sf-text-primary",
-              )}
-            >
-              Board
-            </button>
-            <button
-              onClick={() => setView("timeline")}
-              className={cn(
-                "rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all",
-                view === "timeline"
-                  ? "border border-sf-border-subtle bg-sf-base text-sf-text-primary"
-                  : "text-sf-text-secondary hover:text-sf-text-primary",
-              )}
-            >
-              Timeline
-            </button>
+          <div className="flex gap-1.5 rounded-xl bg-sf-elevated/40 p-1 border border-white/5">
+            {[
+              { id: "board" as const, label: "Board", icon: LayoutGrid },
+              { id: "timeline" as const, label: "Timeline", icon: CalendarRange },
+              { id: "leaderboard" as const, label: "🏆 Leaderboard", icon: Trophy },
+            ].map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => setView(id)}
+                className={cn(
+                  "relative flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-all",
+                  view === id
+                    ? "bg-white/10 text-white shadow-xl"
+                    : "text-slate-500 hover:text-white hover:bg-white/5",
+                )}
+              >
+                {label}
+                {view === id && (
+                  <div className="absolute -bottom-1 left-4 right-4 h-[2px] bg-sf-accent-cyan rounded-full shadow-[0_0_8px_#10b981]" />
+                )}
+              </button>
+            ))}
           </div>
-
-          <div className="flex gap-1.5 rounded-xl border border-sf-border-subtle bg-sf-surface p-1 shadow-md">
+           <div className="flex gap-1.5 rounded-xl border border-white/5 bg-sf-elevated/40 p-1 shadow-lg">
             {[
               { key: "all" as const, label: "All" },
               { key: "features" as const, label: "Features", count: featuresCount },
               { key: "bugs" as const, label: "Bugs", count: bugsCount },
+              { key: "marketing" as const, label: "Marketing", count: marketingCount },
+              { key: "other" as const, label: "Other", count: otherCount },
             ].map(({ key, label, count }) => (
               <button
                 key={key}
                 onClick={() => setFilter(key)}
                 className={cn(
-                  "rounded-lg border border-transparent px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all",
+                  "flex items-center gap-2 rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
                   filter === key
-                    ? "border-sf-accent/30 bg-sf-accent/10 text-sf-accent"
-                    : "text-sf-text-secondary hover:border-sf-border-default hover:bg-sf-base hover:text-sf-text-primary",
+                    ? "bg-sf-accent-cyan text-white shadow-[0_4px_12px_rgba(0,212,255,0.2)]"
+                    : "text-slate-500 hover:text-white hover:bg-white/5",
                 )}
               >
                 {label}
                 {count !== undefined && (
-                  <span className={cn("ml-1.5 rounded px-1.5 py-0.5 font-mono text-[10px]", filter === key ? "bg-sf-accent/20" : "bg-sf-base text-sf-text-muted")}>{count}</span>
+                  <span className={cn(
+                    "ml-1 rounded-md px-1.5 py-0.5 text-[9px] font-black",
+                    filter === key ? "bg-white/20 text-white" : "bg-white/5 text-slate-500"
+                  )}>
+                    {count}
+                  </span>
                 )}
               </button>
             ))}
@@ -908,7 +1169,7 @@ export default function RoadmapPage() {
             className="flex items-center gap-1.5 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold tracking-tight text-white shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)] hover:bg-sf-accent/90"
           >
             <Plus className="h-4 w-4" />
-            New Issue
+            New Ticket
           </button>
         </div>
       </div>
@@ -973,11 +1234,16 @@ export default function RoadmapPage() {
         <GanttTimeline issues={filteredIssues} onOpenIssue={(issue) => setSelectedIssue(issue)} />
       )}
 
+      {view === "leaderboard" && (
+        <LeaderboardView productId={productId} />
+      )}
+
       {modalMode && (
         <IssueModal
           mode={modalMode}
           issue={modalMode === "edit" ? editingIssue : undefined}
           members={members || []}
+          userId={myInternalId || ""}
           onClose={() => {
             setModalMode(null);
             setEditingIssue(null);
