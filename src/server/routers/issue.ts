@@ -56,7 +56,7 @@ export const issueRouter = router({
       let { assigneeId } = input;
       if (assigneeId && assigneeId.startsWith("user_")) {
         const u = await ctx.db.user.findUnique({ where: { clerkId: assigneeId }, select: { id: true } });
-        assigneeId = u?.id || null;
+        assigneeId = u?.id || undefined;
       }
 
       return ctx.db.issue.create({
@@ -134,7 +134,7 @@ export const issueRouter = router({
       let finalAssigneeId = assigneeId;
       if (finalAssigneeId && finalAssigneeId.startsWith("user_")) {
         const u = await ctx.db.user.findUnique({ where: { clerkId: finalAssigneeId }, select: { id: true } });
-        finalAssigneeId = u?.id || null;
+        finalAssigneeId = u?.id || undefined;
       }
 
       const updated = await ctx.db.issue.update({
