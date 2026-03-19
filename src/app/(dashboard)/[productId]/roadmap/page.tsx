@@ -1139,10 +1139,6 @@ export default function RoadmapPage() {
         <GanttTimeline issues={filteredIssues} onOpenIssue={(issue) => setSelectedIssue(issue)} />
       )}
 
-      {view === "leaderboard" && (
-        <LeaderboardView productId={productId} />
-      )}
-
       {modalMode && (
         <IssueModal
           mode={modalMode}
