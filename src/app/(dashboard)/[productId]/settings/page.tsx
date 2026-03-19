@@ -37,6 +37,7 @@ export default function SettingsPage() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("general");
   const [form, setForm] = useState<any>(null);
   const [copiedItem, setCopiedItem] = useState("");
   const [showEmailPreview, setShowEmailPreview] = useState(false);
@@ -326,10 +327,37 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Settings</h1>
         <p className="text-sm text-sf-text-secondary mt-1">Manage {product?.name} configuration</p>
+
+        <div className="mt-4">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: 'status', label: 'Status' },
+              { id: 'general', label: 'General' },
+              { id: 'integrations', label: 'Integrations' },
+              { id: 'notifications', label: 'Notifications' },
+              { id: 'dunning', label: 'Dunning' },
+              { id: 'webhooks', label: 'Webhooks' },
+              { id: 'danger', label: 'Danger' },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
+                  activeTab === t.id
+                    ? 'bg-sf-accent text-white shadow-sm'
+                    : 'bg-sf-base/50 text-sf-text-secondary border border-sf-border-subtle hover:border-sf-border-default'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Integration Status */}
-      <section className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl">
+      <div hidden={activeTab !== 'status'}>
+        <section className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl">
         <h2 className="text-sm font-bold text-sf-text-primary mb-4">Integration status</h2>
         <div className="space-y-2.5">
           {integrationStatusRows.map((row) => (
@@ -349,10 +377,12 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
-      </section>
+        </section>
+      </div>
 
       {/* Notifications */}
-      <section id="notifications-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+      <div hidden={activeTab !== 'notifications'}>
+        <section id="notifications-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
         <div className="flex items-center gap-2.5 mb-6">
           <Bell className="h-5 w-5 text-sf-accent" />
           <h2 className="text-sm font-bold text-sf-text-primary">Notifications</h2>
@@ -462,10 +492,12 @@ export default function SettingsPage() {
           </div>
           {notificationsSaved && <p className="text-xs font-semibold text-green-600">✓ Notification settings saved</p>}
         </div>
-      </section>
+        </section>
+      </div>
 
       {/* Analytics Status */}
-      <section id="analytics-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+      <div hidden={activeTab !== 'integrations'}>
+        <section id="analytics-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
         <h2 className="text-sm font-bold text-sf-text-primary">Google Analytics</h2>
         <p className="text-xs text-sf-text-secondary mt-1">
           {analyticsConfig?.isConnected
@@ -478,10 +510,12 @@ export default function SettingsPage() {
         >
           Open Analytics Settings
         </button>
-      </section>
+        </section>
+      </div>
 
       {/* General */}
-      <section id="general-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+      <div hidden={activeTab !== 'general'}>
+        <section id="general-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
         <h2 className="text-sm font-bold text-sf-text-primary mb-6">General</h2>
         <div className="space-y-5">
           <div>
@@ -513,10 +547,12 @@ export default function SettingsPage() {
             Save Changes
           </button>
         </div>
-      </section>
+        </section>
+      </div>
 
       {/* Integration */}
-      <section id="revenue-integration" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+      <div hidden={activeTab !== 'integrations'}>
+        <section id="revenue-integration" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
         <div className="flex items-center gap-2.5 mb-6">
           <Shield className="h-5 w-5 text-sf-accent" />
           <h2 className="text-sm font-bold text-sf-text-primary">Revenue Integration</h2>
@@ -559,10 +595,12 @@ export default function SettingsPage() {
           </button>
           {integrationSaved && <p className="text-xs font-semibold text-green-600 mt-2">✓ Integration saved successfully</p>}
         </div>
-      </section>
+        </section>
+      </div>
 
       {/* Dunning */}
-      <section id="dunning-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+      <div hidden={activeTab !== 'dunning'}>
+        <section id="dunning-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2.5">
             <Mail className="h-5 w-5 text-sf-accent" />
@@ -787,7 +825,8 @@ export default function SettingsPage() {
           )}
           {dunningSaved && <p className="text-xs font-semibold text-green-600 mt-2">✓ Dunning settings saved</p>}
         </div>
-      </section>
+        </section>
+      </div>
 
       {showEmailPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#080B12]/80 backdrop-blur-md p-4">
@@ -856,7 +895,8 @@ export default function SettingsPage() {
       )}
 
       {/* Danger Zone */}
-      <section className="relative overflow-hidden rounded-2xl border border-sf-red/30 bg-sf-red/5 p-8 shadow-xl backdrop-blur-md">
+      <div hidden={activeTab !== 'danger'}>
+        <section className="relative overflow-hidden rounded-2xl border border-sf-red/30 bg-sf-red/5 p-8 shadow-xl backdrop-blur-md">
         <h2 className="flex items-center gap-2.5 text-sm font-bold text-sf-red mb-3">
           <AlertTriangle className="h-5 w-5" /> Danger Zone
         </h2>
@@ -870,7 +910,8 @@ export default function SettingsPage() {
           <Trash2 className="h-4 w-4" />
           Delete Product
         </button>
-      </section>
+        </section>
+      </div>
 
       {/* Delete confirmation modal */}
       {showDeleteModal && (

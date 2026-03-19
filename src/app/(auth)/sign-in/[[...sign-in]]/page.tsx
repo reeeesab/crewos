@@ -43,6 +43,8 @@ export default function SignInPage() {
           </div>
 
           <SignIn
+            fallbackRedirectUrl="/portfolio"
+            signUpUrl="/sign-up"
             appearance={{
               variables: {
                 colorPrimary: "#00d4ff",

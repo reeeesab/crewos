@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrewOS — The OS for Solo SaaS Founders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --base:#070c17;--surface:#0a1525;--card:#0f1e35;--card2:#111d30;
+  --b:rgba(14,165,233,.13);--b2:rgba(14,165,233,.22);--b3:rgba(14,165,233,.35);
+  --t:#f1f5f9;--t2:#94a3b8;--t3:#475569;--t4:#334155;--t5:#1e3a5f;
+  --acc:#0ea5e9;--acc2:#0284c7;--acc-bg:rgba(14,165,233,.08);--acc-border:rgba(14,165,233,.2);
+  --teal:#2dd4bf;--teal-bg:rgba(45,212,191,.08);
+  --green:#3ecf8e;--green-bg:rgba(62,207,142,.08);--green-border:rgba(62,207,142,.18);
+  --amber:#f97316;--amber-bg:rgba(249,115,22,.08);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,.08);
+  --serif:'Instrument Serif',serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--base);color:var(--t);font-size:15px;line-height:1.6;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:56px;display:flex;align-items:center;padding:0 28px;gap:20px;background:rgba(7,12,23,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:var(--acc);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:16px;height:16px}
+.logo-name{font-family:var(--serif);font-size:18px;color:var(--t);letter-spacing:-.2px}
+.nav-links{display:flex;gap:18px;margin-left:20px}
+.nav-links a{color:var(--t3);font-size:13px;text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--t)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn-ghost{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:500;border:1px solid var(--b2);color:var(--t2);background:none;cursor:pointer;font-family:var(--sans);transition:all .15s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--b3);color:var(--t)}
+.btn-acc{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;border:none;color:#fff;background:var(--acc);cursor:pointer;font-family:var(--sans);transition:all .15s;text-decoration:none}
+.btn-acc:hover{background:var(--acc2);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(14,165,233,.06) 1px, transparent 0);background-size:32px 32px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,black,transparent)}
+.hero-glow{position:absolute;top:15%;left:50%;transform:translateX(-50%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(14,165,233,.055) 0%,transparent 65%);pointer-events:none}
+.hero-glow2{position:absolute;top:35%;left:30%;width:300px;height:300px;background:radial-gradient(ellipse,rgba(45,212,191,.03) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--acc-bg);border:1px solid var(--acc-border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--acc);font-family:var(--mono);margin-bottom:22px}
+.badge-dot{width:5px;height:5px;background:var(--acc);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+h1{font-family:var(--serif);font-size:clamp(42px,6vw,80px);line-height:1.05;text-align:center;letter-spacing:-.03em;max-width:860px;margin-bottom:20px}
+h1 em{font-style:italic;color:var(--acc)}
+.hero-sub{font-size:17px;color:var(--t2);text-align:center;max-width:520px;line-height:1.65;margin-bottom:36px}
+.hero-ctas{display:flex;gap:10px;margin-bottom:20px}
+.cta-lg{padding:12px 26px;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.cta-primary{background:var(--acc);color:#fff;border:none}
+.cta-primary:hover{background:var(--acc2);transform:translateY(-1px)}
+.cta-secondary{background:none;color:var(--t2);border:1px solid var(--b2)}
+.cta-secondary:hover{border-color:var(--b3);color:var(--t)}
+.hero-proof{font-size:11px;color:var(--t4);font-family:var(--mono)}
+.hero-proof span{color:var(--acc)}
+
+/* ── APP SHELL PREVIEW ── */
+.preview-wrap{width:100%;max-width:1060px;margin:52px auto 0;position:relative}
+.preview-glow-under{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:80%;height:80px;background:radial-gradient(ellipse,rgba(14,165,233,.12) 0%,transparent 70%);pointer-events:none}
+.browser-frame{border-radius:14px;overflow:hidden;border:1px solid var(--b2);box-shadow:0 0 0 1px var(--b),0 32px 80px rgba(0,0,0,.7)}
+.browser-bar{background:var(--card);border-bottom:1px solid var(--b);padding:9px 14px;display:flex;align-items:center;gap:8px}
+.traffic-lights{display:flex;gap:5px}
+.tl{width:11px;height:11px;border-radius:50%}
+.url-bar{flex:1;max-width:260px;margin:0 auto;background:var(--surface);border:1px solid var(--b);border-radius:5px;padding:3px 10px;font-size:10px;color:var(--t4);font-family:var(--mono);text-align:center}
+.app-shell{display:grid;grid-template-columns:188px 1fr;height:500px;background:var(--base)}
+
+/* sidebar */
+.ap-sidebar{background:var(--surface);border-right:1px solid var(--b);padding:10px 7px;display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.ap-product{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:8px;margin-bottom:8px}
+.ap-pname{font-size:11px;font-weight:500;color:var(--t)}
+.ap-pval{font-size:9px;color:var(--green);font-family:var(--mono);margin-top:1px}
+.ap-health{display:flex;justify-content:space-between;align-items:center;background:var(--green-bg);border:1px solid var(--green-border);border-radius:5px;padding:4px 7px;margin-bottom:8px}
+.ap-hlabel{font-size:9px;color:var(--t2)}
+.ap-hval{font-size:12px;font-weight:600;color:var(--green);font-family:var(--mono)}
+.ap-section{font-size:8px;color:var(--t5);text-transform:uppercase;letter-spacing:.7px;padding:7px 7px 2px;font-family:var(--mono)}
+.ap-item{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:5px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .1s}
+.ap-item.active{background:var(--acc-bg);color:var(--acc)}
+.ap-item:not(.active):hover{background:var(--card)}
+.ap-badge{margin-left:auto;font-size:8px;padding:1px 4px;border-radius:3px;font-family:var(--mono)}
+.ap-badge-r{background:var(--red-bg);color:var(--red)}
+.ap-badge-g{background:var(--acc-bg);color:var(--acc)}
+
+/* main */
+.ap-main{overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:10px}
+.ap-page{display:none;flex-direction:column;gap:10px;animation:fadeIn .25s ease}
+.ap-page.show{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ap-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ap-stat{background:var(--surface);border:1px solid var(--b);border-radius:7px;padding:10px}
+.ap-slabel{font-size:8px;color:var(--t4);font-family:var(--mono);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.ap-sval{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.ap-sdelta{font-size:9px;margin-top:2px}
+.up{color:var(--green)}.dn{color:var(--red)}.muted{color:var(--t4)}
+.ap-row{display:grid;grid-template-columns:1fr 230px;gap:8px}
+.ap-card{background:var(--surface);border:1px solid var(--b);border-radius:7px;padding:10px}
+.ap-ctitle{font-size:9px;color:var(--t3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.mini-chart{height:52px;display:flex;align-items:flex-end;gap:2px}
+.mbar{flex:1;border-radius:2px 2px 0 0;background:var(--acc);transition:height .3s}
+.mtag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:500;font-family:var(--mono)}
+.mtag-g{background:var(--green-bg);color:var(--green)}
+.mtag-r{background:var(--red-bg);color:var(--red)}
+.mtag-a{background:var(--amber-bg);color:var(--amber)}
+.mtag-b{background:var(--acc-bg);color:var(--acc)}
+.mtag-gr{background:rgba(255,255,255,.05);color:var(--t3)}
+.mini-table{width:100%;font-size:9px;border-collapse:collapse}
+.mini-table th{color:var(--t4);font-family:var(--mono);text-align:left;padding:2px 4px;border-bottom:1px solid var(--b);font-size:8px;text-transform:uppercase}
+.mini-table td{padding:4px 4px;border-bottom:1px solid rgba(255,255,255,.02);color:var(--t2)}
+.mini-table td:first-child{color:var(--t);font-weight:500}
+/* sunset alert */
+.sunset{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:6px;padding:7px 9px;display:flex;gap:7px;align-items:flex-start}
+.sunset-ico{width:14px;height:14px;border-radius:3px;background:var(--red-bg);display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;color:var(--red)}
+.sunset-title{font-size:9px;font-weight:500;color:var(--red);margin-bottom:1px}
+.sunset-body{font-size:9px;color:var(--t2)}
+/* health page */
+.health-rings{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.health-bars{display:flex;flex-direction:column;gap:5px}
+.hbar-row{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--t2)}
+.hbar-label{min-width:80px;font-size:9px}
+.hbar-track{flex:1;height:3px;background:var(--card);border-radius:2px}
+.hbar-fill{height:100%;border-radius:2px}
+.hbar-val{min-width:22px;text-align:right;font-family:var(--mono);font-size:9px}
+/* issue rows */
+.issue-row{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.issue-row:last-child{border:none}
+.iico{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;flex-shrink:0}
+.if{background:var(--acc-bg);color:var(--acc)}
+.ib2{background:var(--red-bg);color:var(--red)}
+/* cost bars */
+.cost-row{display:flex;align-items:center;gap:7px;padding:4px 0}
+.cost-track{flex:1;height:3px;background:var(--card);border-radius:2px}
+.cost-fill{height:100%;border-radius:2px}
+/* changelog */
+.cl-entry{background:var(--card);border:1px solid var(--b);border-radius:5px;padding:7px 8px;margin-bottom:6px}
+.cl-header{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.cl-title{font-size:10px;font-weight:500}
+.cl-body{font-size:9px;color:var(--t2);line-height:1.4}
+.cl-btns{display:flex;gap:4px;margin-top:5px}
+.cl-btn{padding:2px 6px;border-radius:3px;font-size:8px;cursor:pointer;border:none;font-family:var(--mono)}
+.cl-pub{background:var(--acc);color:#fff}
+.cl-edit{background:var(--card2);color:var(--t2)}
+
+/* ── TICKER ── */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:11px 0;background:var(--surface)}
+.ticker-track{display:flex;gap:40px;width:max-content;animation:ticker 28s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-size:11px;color:var(--t4);font-family:var(--mono);white-space:nowrap;display:flex;align-items:center;gap:7px}
+.ticker-dot{color:var(--acc)}
+
+/* ── METRICS STRIP ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:13px;overflow:hidden;max-width:1060px;margin:0 auto}
+.metric-cell{background:var(--surface);padding:26px 22px;text-align:center}
+.metric-val{font-family:var(--serif);font-size:40px;line-height:1;letter-spacing:-.04em;margin-bottom:5px}
+.metric-label{font-size:11px;color:var(--t4);font-family:var(--mono)}
+
+/* ── SECTIONS ── */
+section{padding:90px 24px}
+.container{max-width:1060px;margin:0 auto}
+.sec-eyebrow{font-size:10px;font-family:var(--mono);color:var(--acc);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.sec-title{font-family:var(--serif);font-size:clamp(30px,4vw,52px);line-height:1.08;letter-spacing:-.025em;margin-bottom:14px}
+.sec-sub{font-size:16px;color:var(--t2);max-width:480px;line-height:1.65}
+
+/* ── BENTO ── */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;margin-top:52px}
+.bc{background:var(--surface);border:1px solid var(--b);border-radius:13px;padding:22px;overflow:hidden;transition:border-color .2s}
+.bc:hover{border-color:var(--b2)}
+.bc-5{grid-column:span 5}
+.bc-7{grid-column:span 7}
+.bc-4{grid-column:span 4}
+.bc-12{grid-column:span 12}
+.bc-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-family:var(--mono);background:var(--acc-bg);color:var(--acc);border:1px solid var(--acc-border);margin-bottom:10px}
+.bc-tag-teal{background:var(--teal-bg);color:var(--teal);border-color:rgba(45,212,191,.2)}
+.bc-title{font-size:15px;font-weight:500;margin-bottom:6px;line-height:1.3}
+.bc-desc{font-size:12px;color:var(--t2);line-height:1.55}
+.bc-visual{margin-top:14px}
+
+/* donut */
+.donut-row{display:flex;align-items:center;gap:14px}
+.donut-legend{display:flex;flex-direction:column;gap:5px}
+.dl-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t2)}
+.dl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* mrr sparkline */
+.spark-svg{width:100%;height:56px;overflow:visible}
+
+/* perm chips */
+.perm-grid{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.pchip{padding:3px 7px;border-radius:4px;font-size:9px;font-family:var(--mono);display:flex;align-items:center;gap:3px}
+.pchip-on{background:var(--green-bg);color:var(--green);border:1px solid rgba(62,207,142,.15)}
+.pchip-off{background:var(--card);color:var(--t4);border:1px solid var(--b)}
+.pck{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.pck-on{background:var(--green)}.pck-off{background:var(--t5)}
+
+/* bip post */
+.bip-card{background:var(--card);border:1px solid var(--b);border-radius:6px;padding:8px 10px;margin-top:10px}
+.bip-platform{font-size:9px;color:var(--t3);font-family:var(--mono);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.bip-text{font-size:10px;color:var(--t);line-height:1.5}
+.bip-btns{display:flex;gap:4px;margin-top:7px}
+
+/* ── STEPS ── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;border:1px solid var(--b);border-radius:13px;overflow:hidden}
+.step{padding:28px;background:var(--surface)}
+.step:not(:last-child){border-right:1px solid var(--b)}
+.step-num{font-size:11px;font-family:var(--mono);color:var(--acc);margin-bottom:14px}
+.step-title{font-size:18px;font-weight:500;margin-bottom:7px;line-height:1.2}
+.step-desc{font-size:13px;color:var(--t2);line-height:1.6}
+
+/* ── TESTIMONIALS ── */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.tcard{background:var(--surface);border:1px solid var(--b);border-radius:13px;padding:22px;transition:border-color .2s}
+.tcard:hover{border-color:var(--b2)}
+.tquote{font-size:14px;line-height:1.7;color:var(--t);margin-bottom:18px}
+.tauthor{display:flex;align-items:center;gap:9px}
+.tav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.tname{font-size:12px;font-weight:500}
+.thandle{font-size:10px;color:var(--t3);font-family:var(--mono)}
+
+/* ── PRICING ── */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:48px;max-width:880px;margin-left:auto;margin-right:auto}
+.pcard{background:var(--surface);border:1px solid var(--b);border-radius:15px;padding:26px;position:relative;transition:border-color .2s}
+.pcard:hover{border-color:var(--b2)}
+.pcard.featured{border-color:var(--acc);background:linear-gradient(180deg,rgba(14,165,233,.04) 0%,var(--surface) 40%)}
+.p-popular{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;font-size:9px;font-weight:600;font-family:var(--mono);padding:3px 12px;border-radius:0 0 7px 7px}
+.p-plan{font-size:11px;font-family:var(--mono);color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.p-price{font-family:var(--serif);font-size:46px;line-height:1;letter-spacing:-.04em;margin-bottom:4px}
+.p-price sup{font-size:18px;vertical-align:top;margin-top:8px;font-family:var(--sans);font-weight:300}
+.p-price sub{font-size:13px;color:var(--t2);font-family:var(--sans)}
+.p-desc{font-size:12px;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.p-divider{height:1px;background:var(--b);margin-bottom:18px}
+.p-features{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.p-feat{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--t2)}
+.p-check{width:14px;height:14px;border-radius:3px;background:var(--green-bg);border:1px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.p-feat.dim{color:var(--t4)}
+.p-feat.dim .p-check{background:var(--card);border-color:var(--b)}
+.p-btn{width:100%;padding:10px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;border:none}
+.p-btn-acc{background:var(--acc);color:#fff}
+.p-btn-acc:hover{background:var(--acc2)}
+.p-btn-outline{background:none;color:var(--t);border:1px solid var(--b2)}
+.p-btn-outline:hover{border-color:var(--b3)}
+.p-note{text-align:center;font-size:11px;color:var(--t4);margin-top:14px;font-family:var(--mono)}
+
+/* ── INTEGRATIONS ── */
+.int-grid{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:36px}
+.int-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--b);border-radius:40px;padding:7px 14px;font-size:12px;transition:border-color .15s}
+.int-chip:hover{border-color:var(--b2)}
+.int-ico{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+
+/* ── CTA ── */
+.cta-strip{background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:72px 24px;text-align:center}
+.cta-strip h2{font-family:var(--serif);font-size:clamp(30px,4vw,52px);line-height:1.08;letter-spacing:-.025em;margin-bottom:12px}
+.cta-strip p{font-size:15px;color:var(--t2);margin-bottom:28px}
+.cta-email-row{display:flex;gap:7px;max-width:380px;margin:0 auto}
+.cta-input{flex:1;background:var(--card);border:1px solid var(--b2);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--t);font-family:var(--sans);outline:none;transition:border-color .15s}
+.cta-input::placeholder{color:var(--t4)}
+.cta-input:focus{border-color:var(--acc)}
+.cta-note{font-size:11px;color:var(--t4);margin-top:10px;font-family:var(--mono)}
+
+/* ── FOOTER ── */
+footer{padding:40px 24px;background:var(--base)}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.footer-links{display:flex;gap:18px}
+.footer-links a{font-size:12px;color:var(--t4);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--t2)}
+.footer-copy{font-size:11px;color:var(--t5);font-family:var(--mono)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .6s ease forwards;opacity:0}
+.d1{animation-delay:.05s}.d2{animation-delay:.12s}.d3{animation-delay:.2s}.d4{animation-delay:.28s}.d5{animation-delay:.36s}.d6{animation-delay:.44s}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .bento{grid-template-columns:1fr}.bc-5,.bc-7,.bc-4,.bc-12{grid-column:span 1}
+  .steps,.tgrid,.pgrid{grid-template-columns:1fr}
+  .step:not(:last-child){border-right:none;border-bottom:1px solid var(--b)}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .ap-stats{grid-template-columns:repeat(2,1fr)}
+  .app-shell{grid-template-columns:1fr}
+  .ap-sidebar{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="5" r="3" fill="white"/>
+        <circle cx="3" cy="12" r="2.5" fill="white" opacity=".6"/>
+        <circle cx="13" cy="12" r="2.5" fill="white" opacity=".4"/>
+        <line x1="8" y1="8" x2="3" y2="9.5" stroke="white" stroke-width="1" opacity=".5"/>
+        <line x1="8" y1="8" x2="13" y2="9.5" stroke="white" stroke-width="1" opacity=".4"/>
+      </svg>
+    </div>
+    <span class="logo-name">CrewOS</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#" class="btn-acc">Start free →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
+  <div class="badge fu d1"><div class="badge-dot"></div>Built for the company of one</div>
+  <h1 class="fu d2">Your entire SaaS<br><em>empire</em>, one tab.</h1>
+  <p class="hero-sub fu d3">Revenue, costs, roadmap, bugs, AI changelog — all in one command center built for solo and indie SaaS founders.</p>
+  <div class="hero-ctas fu d4">
+    <a href="#" class="cta-lg cta-primary">Get early access →</a>
+    <a href="#features" class="cta-lg cta-secondary">See all features</a>
+  </div>
+  <p class="hero-proof fu d5"><span>412</span> indie founders on the waitlist</p>
+
+  <!-- LIVE APP PREVIEW -->
+  <div class="preview-wrap fu d6">
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="traffic-lights">
+          <div class="tl" style="background:#ff5f57"></div>
+          <div class="tl" style="background:#febc2e"></div>
+          <div class="tl" style="background:#28c840"></div>
+        </div>
+        <div class="url-bar">app.crewos.app / jobtrackfy</div>
+      </div>
+      <div class="app-shell">
+
+        <!-- SIDEBAR -->
+        <div class="ap-sidebar">
+          <div class="ap-product">
+            <div class="ap-pname">Jobtrackfy</div>
+            <div class="ap-pval">$2,840 MRR · live</div>
+          </div>
+          <div class="ap-health">
+            <div class="ap-hlabel">health score</div>
+            <div class="ap-hval" id="health-num">82</div>
+          </div>
+          <div class="ap-section">overview</div>
+          <div class="ap-item active" id="nav-dashboard" onclick="showPage('dashboard',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x=".5" y=".5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1"/><rect x="6.5" y=".5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1"/><rect x=".5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1"/><rect x="6.5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1"/></svg>
+            Dashboard
+          </div>
+          <div class="ap-item" id="nav-revenue" onclick="showPage('revenue',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 9L3.5 6l2 2L9 2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            Revenue
+          </div>
+          <div class="ap-item" id="nav-health" onclick="showPage('health',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M.5 5.5h2l1.5-3 2 5 1.5-4 1 2H10.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            Health score
+          </div>
+          <div class="ap-section">build</div>
+          <div class="ap-item" id="nav-issues" onclick="showPage('issues',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x=".5" y=".5" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3 5.5h5M3 7.5h3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            Issues
+            <span class="ap-badge ap-badge-r">3</span>
+          </div>
+          <div class="ap-item" id="nav-changelog" onclick="showPage('changelog',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 2h9M1 5.5h6M1 9h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            Changelog
+            <span class="ap-badge ap-badge-g">AI</span>
+          </div>
+          <div class="ap-section">finance</div>
+          <div class="ap-item" id="nav-costs" onclick="showPage('costs',this)">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x=".5" y="3" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1"/><circle cx="5.5" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1"/></svg>
+            Cost tracker
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="ap-main">
+
+          <!-- DASHBOARD -->
+          <div class="ap-page show" id="page-dashboard">
+            <div class="ap-stats">
+              <div class="ap-stat"><div class="ap-slabel">MRR</div><div class="ap-sval up">$2,840</div><div class="ap-sdelta up">↑ 12%</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Users</div><div class="ap-sval">1,247</div><div class="ap-sdelta up">↑ 8%</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Churn</div><div class="ap-sval" style="color:var(--amber)">2.4%</div><div class="ap-sdelta" style="color:var(--amber)">↑ 0.3%</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Margin</div><div class="ap-sval">61%</div><div class="ap-sdelta up">↑ 4%</div></div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-card">
+                <div class="ap-ctitle">MRR TREND</div>
+                <div class="mini-chart" id="mrr-chart"></div>
+              </div>
+              <div class="ap-card">
+                <div class="ap-ctitle">PRODUCTS</div>
+                <table class="mini-table">
+                  <thead><tr><th>Name</th><th>MRR</th><th>Health</th></tr></thead>
+                  <tbody>
+                    <tr><td>Jobtrackfy</td><td class="up" style="font-family:var(--mono)">$2.8k</td><td><span class="mtag mtag-g">82</span></td></tr>
+                    <tr><td>FormCraft</td><td style="color:var(--amber);font-family:var(--mono)">$1.1k</td><td><span class="mtag mtag-a">61</span></td></tr>
+                    <tr><td>DevPulse</td><td class="muted" style="font-family:var(--mono)">beta</td><td><span class="mtag mtag-gr">—</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="sunset">
+              <div class="sunset-ico">!</div>
+              <div><div class="sunset-title">Sunset signal — FormCraft</div><div class="sunset-body">MRR declined 3 months. No new signups in 14 days.</div></div>
+            </div>
+          </div>
+
+          <!-- REVENUE -->
+          <div class="ap-page" id="page-revenue">
+            <div class="ap-stats">
+              <div class="ap-stat"><div class="ap-slabel">MRR</div><div class="ap-sval up">$2,840</div><div class="ap-sdelta up">↑ 12%</div></div>
+              <div class="ap-stat"><div class="ap-slabel">ARR</div><div class="ap-sval">$34k</div><div class="ap-sdelta up">on track</div></div>
+              <div class="ap-stat"><div class="ap-slabel">New MRR</div><div class="ap-sval" style="color:var(--acc)">$640</div><div class="ap-sdelta muted">this month</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Churned</div><div class="ap-sval dn">$180</div><div class="ap-sdelta dn">3 churns</div></div>
+            </div>
+            <div class="ap-card" style="flex:1">
+              <div class="ap-ctitle">RECENT TRANSACTIONS</div>
+              <table class="mini-table">
+                <thead><tr><th>Customer</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Alex Chen</td><td class="muted">Pro</td><td style="font-family:var(--mono)">$49</td><td><span class="mtag mtag-g">paid</span></td></tr>
+                  <tr><td>Priya S.</td><td class="muted">Growth</td><td style="font-family:var(--mono)">$99</td><td><span class="mtag mtag-g">paid</span></td></tr>
+                  <tr><td>Mike T.</td><td class="muted">Starter</td><td style="font-family:var(--mono)">$19</td><td><span class="mtag mtag-a">pending</span></td></tr>
+                  <tr><td>Fatima Y.</td><td class="muted">Pro</td><td style="font-family:var(--mono)">$49</td><td><span class="mtag mtag-r">failed</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- HEALTH -->
+          <div class="ap-page" id="page-health">
+            <div class="ap-row">
+              <div class="ap-card">
+                <div class="ap-ctitle">HEALTH BREAKDOWN</div>
+                <div class="health-rings" style="margin-top:6px">
+                  <svg width="70" height="70" viewBox="0 0 70 70">
+                    <circle cx="35" cy="35" r="28" fill="none" stroke="#0f1e35" stroke-width="9"/>
+                    <circle cx="35" cy="35" r="28" fill="none" stroke="#0ea5e9" stroke-width="9" stroke-dasharray="118 176" stroke-dashoffset="-22" stroke-linecap="round"/>
+                    <text x="35" y="32" text-anchor="middle" fill="#f1f5f9" font-size="14" font-weight="600" font-family="DM Sans,sans-serif">82</text>
+                    <text x="35" y="43" text-anchor="middle" fill="#334155" font-size="7" font-family="DM Mono,sans-serif">/100</text>
+                  </svg>
+                  <div style="font-size:11px">
+                    <div style="font-weight:500;color:var(--green);margin-bottom:2px">Good health</div>
+                    <div style="color:var(--t3);font-size:10px;line-height:1.4">Revenue strong.<br>1 churn spike flagged.</div>
+                  </div>
+                </div>
+                <div class="health-bars">
+                  <div class="hbar-row"><span class="hbar-label">MRR trend</span><div class="hbar-track"><div class="hbar-fill" style="width:90%;background:var(--green)"></div></div><span class="hbar-val up">90</span></div>
+                  <div class="hbar-row"><span class="hbar-label">Churn rate</span><div class="hbar-track"><div class="hbar-fill" style="width:72%;background:var(--amber)"></div></div><span class="hbar-val" style="color:var(--amber)">72</span></div>
+                  <div class="hbar-row"><span class="hbar-label">Margin</span><div class="hbar-track"><div class="hbar-fill" style="width:85%;background:var(--green)"></div></div><span class="hbar-val up">85</span></div>
+                  <div class="hbar-row"><span class="hbar-label">P0 bugs</span><div class="hbar-track"><div class="hbar-fill" style="width:62%;background:var(--red)"></div></div><span class="hbar-val dn">62</span></div>
+                </div>
+              </div>
+              <div class="ap-card">
+                <div class="ap-ctitle">AT-RISK SUBS</div>
+                <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
+                  <div style="display:flex;justify-content:space-between;font-size:9px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span>Alex C. — Pro</span><span style="color:var(--red);font-family:var(--mono)">high risk</span></div>
+                  <div style="display:flex;justify-content:space-between;font-size:9px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span>Priya S. — Growth</span><span style="color:var(--amber);font-family:var(--mono)">at risk</span></div>
+                  <div style="display:flex;justify-content:space-between;font-size:9px;padding:3px 0"><span>Sam R. — Starter</span><span style="color:var(--green);font-family:var(--mono)">upsell opp</span></div>
+                </div>
+                <div style="background:var(--amber-bg);border:1px solid rgba(249,115,22,.2);border-radius:5px;padding:6px 7px;margin-top:8px;font-size:9px;color:var(--amber)">At-risk MRR: $197/mo</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ISSUES -->
+          <div class="ap-page" id="page-issues">
+            <div class="ap-row">
+              <div class="ap-card">
+                <div class="ap-ctitle" style="color:var(--acc)">FEATURES</div>
+                <div class="issue-row"><div class="iico if">F</div><div style="flex:1"><div style="font-size:10px;font-weight:500">AI changelog generator</div><div style="font-size:9px;color:var(--t3)">Due Mar 28 · in progress</div></div><span style="font-size:8px;color:var(--red);font-family:var(--mono)">high</span></div>
+                <div class="issue-row"><div class="iico if">F</div><div style="flex:1"><div style="font-size:10px;font-weight:500">Stripe webhook dashboard</div><div style="font-size:9px;color:var(--t3)">Due Apr 10</div></div><span style="font-size:8px;color:var(--amber);font-family:var(--mono)">med</span></div>
+                <div class="issue-row"><div class="iico if">F</div><div style="flex:1"><div style="font-size:10px;font-weight:500">Public roadmap page</div><div style="font-size:9px;color:var(--t3)">Backlog</div></div><span style="font-size:8px;color:var(--t3);font-family:var(--mono)">low</span></div>
+              </div>
+              <div class="ap-card">
+                <div class="ap-ctitle" style="color:var(--red)">BUGS</div>
+                <div class="issue-row"><div class="iico ib2">B</div><div style="flex:1"><div style="font-size:10px;font-weight:500">Webhook 500 on retry</div><div style="font-size:9px;color:var(--t3)">2d ago · Production</div></div><span style="font-size:8px;color:var(--red);font-family:var(--mono)">P0</span></div>
+                <div class="issue-row"><div class="iico ib2">B</div><div style="flex:1"><div style="font-size:10px;font-weight:500">CSV drops last row</div><div style="font-size:9px;color:var(--t3)">5d ago</div></div><span style="font-size:8px;color:var(--amber);font-family:var(--mono)">P1</span></div>
+                <div class="issue-row"><div class="iico ib2">B</div><div style="flex:1"><div style="font-size:10px;font-weight:500">Safari flicker</div><div style="font-size:9px;color:var(--t3)">1w ago</div></div><span style="font-size:8px;color:var(--amber);font-family:var(--mono)">P1</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHANGELOG -->
+          <div class="ap-page" id="page-changelog">
+            <div style="background:var(--acc-bg);border:1px solid var(--acc-border);border-radius:5px;padding:6px 8px;font-size:9px;color:var(--acc)">3 issues closed · AI drafted entries ready</div>
+            <div class="cl-entry">
+              <div class="cl-header"><span class="mtag mtag-g">shipped</span><span style="font-size:8px;color:var(--t3);margin-left:auto">Mar 14</span></div>
+              <div class="cl-title">CSV export now available</div>
+              <div class="cl-body">Export your full dataset with custom date ranges and filters. Available on all plans.</div>
+              <div class="cl-btns"><button class="cl-btn cl-pub">Publish</button><button class="cl-btn cl-edit">Edit</button></div>
+            </div>
+            <div class="cl-entry">
+              <div class="cl-header"><span class="mtag mtag-r">bugfix</span><span style="font-size:8px;color:var(--t3);margin-left:auto">Mar 10</span></div>
+              <div class="cl-title">Fixed: upgrade email not sending</div>
+              <div class="cl-body">Users upgrading to Pro now receive the correct confirmation email.</div>
+              <div class="cl-btns"><button class="cl-btn cl-pub">Publish</button><button class="cl-btn cl-edit">Edit</button></div>
+            </div>
+          </div>
+
+          <!-- COSTS -->
+          <div class="ap-page" id="page-costs">
+            <div class="ap-stats">
+              <div class="ap-stat"><div class="ap-slabel">Total/mo</div><div class="ap-sval dn">$441</div><div class="ap-sdelta dn">↑ $38</div></div>
+              <div class="ap-stat"><div class="ap-slabel">LLM</div><div class="ap-sval">$118</div><div class="ap-sdelta muted">on budget</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Cloud</div><div class="ap-sval">$196</div><div class="ap-sdelta muted">on budget</div></div>
+              <div class="ap-stat"><div class="ap-slabel">Cost/user</div><div class="ap-sval up">$0.25</div><div class="ap-sdelta up">healthy</div></div>
+            </div>
+            <div class="ap-card">
+              <div class="ap-ctitle">JOBTRACKFY · $312/mo</div>
+              <div class="cost-row"><div style="min-width:80px;font-size:10px">OpenAI</div><div class="cost-track"><div class="cost-fill" style="width:72%;background:var(--acc)"></div></div><div style="font-size:9px;font-family:var(--mono);min-width:30px;text-align:right">$89</div></div>
+              <div class="cost-row"><div style="min-width:80px;font-size:10px">AWS RDS</div><div class="cost-track"><div class="cost-fill" style="width:60%;background:var(--amber)"></div></div><div style="font-size:9px;font-family:var(--mono);min-width:30px;text-align:right">$74</div></div>
+              <div class="cost-row"><div style="min-width:80px;font-size:10px">Vercel Pro</div><div class="cost-track"><div class="cost-fill" style="width:48%;background:var(--green)"></div></div><div style="font-size:9px;font-family:var(--mono);min-width:30px;text-align:right">$60</div></div>
+              <div class="cost-row"><div style="min-width:80px;font-size:10px">Stripe</div><div class="cost-track"><div class="cost-fill" style="width:38%;background:var(--purple)"></div></div><div style="font-size:9px;font-family:var(--mono);min-width:30px;text-align:right;color:var(--amber)">$47!</div></div>
+              <div style="background:var(--amber-bg);border:1px solid rgba(249,115,22,.2);border-radius:4px;padding:5px 7px;margin-top:8px;font-size:9px;color:var(--amber)">Stripe fees over budget by $9</div>
+            </div>
+          </div>
+
+        </div><!-- end ap-main -->
+      </div><!-- end app-shell -->
+    </div><!-- end browser-frame -->
+    <div class="preview-glow-under"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Revenue dashboard</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>AI changelog generator</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Health score</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Build in public</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Cost tracker</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Roadmap & issues</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Margin per feature</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Revenue quality score</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Sunset signal alerts</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>DodoPayment + Stripe</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Google Analytics integration</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Team & access control</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Revenue dashboard</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>AI changelog generator</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Health score</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Build in public</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Cost tracker</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Roadmap & issues</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Margin per feature</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Revenue quality score</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Sunset signal alerts</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>DodoPayment + Stripe</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Google Analytics integration</span>
+    <span class="ticker-item"><span class="ticker-dot">✦</span>Team & access control</span>
+  </div>
+</div>
+
+<!-- METRICS STRIP -->
+<section style="padding:72px 24px 0">
+  <div class="container">
+    <div class="metrics">
+      <div class="metric-cell"><div class="metric-val" style="color:var(--acc)">3</div><div class="metric-label">avg products per founder</div></div>
+      <div class="metric-cell"><div class="metric-val">8+</div><div class="metric-label">tabs replaced by CrewOS</div></div>
+      <div class="metric-cell"><div class="metric-val" style="color:var(--acc)">2h</div><div class="metric-label">saved per week on admin</div></div>
+      <div class="metric-cell"><div class="metric-val">₹0</div><div class="metric-label">to start, free forever tier</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section id="features">
+  <div class="container">
+    <div class="sec-eyebrow">Everything you need</div>
+    <div class="sec-title">Stop juggling tabs.<br>Start building.</div>
+    <p class="sec-sub">Every tool a solo founder needs to run and grow a SaaS business — in one place, with nothing you don't need.</p>
+
+    <div class="bento">
+      <!-- Health score -->
+      <div class="bc bc-5">
+        <div class="bc-tag">new</div>
+        <div class="bc-title">Product health score</div>
+        <div class="bc-desc">A live composite score across MRR trend, churn, margin, open bugs, and engagement.</div>
+        <div class="bc-visual">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#0f1e35" stroke-width="9"/><circle cx="32" cy="32" r="24" fill="none" stroke="#0ea5e9" stroke-width="9" stroke-dasharray="100 151" stroke-dashoffset="-18" stroke-linecap="round"/><text x="32" y="29" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="600" font-family="DM Sans">82</text><text x="32" y="40" text-anchor="middle" fill="#334155" font-size="7" font-family="DM Mono">/100</text></svg>
+            <div style="font-size:12px;color:var(--green);font-weight:500">Good health<br><span style="color:var(--t3);font-weight:400;font-size:11px">Revenue trend strong</span></div>
+          </div>
+          <div class="health-bars">
+            <div class="hbar-row"><span class="hbar-label">MRR trend</span><div class="hbar-track"><div class="hbar-fill" style="width:90%;background:var(--green)"></div></div><span class="hbar-val up">90</span></div>
+            <div class="hbar-row"><span class="hbar-label">Churn rate</span><div class="hbar-track"><div class="hbar-fill" style="width:72%;background:var(--amber)"></div></div><span class="hbar-val" style="color:var(--amber)">72</span></div>
+            <div class="hbar-row"><span class="hbar-label">Margin</span><div class="hbar-track"><div class="hbar-fill" style="width:85%;background:var(--green)"></div></div><span class="hbar-val up">85</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue -->
+      <div class="bc bc-7">
+        <div class="bc-title">Stripe & DodoPayment revenue dashboard</div>
+        <div class="bc-desc">MRR, ARR, churn, new vs churned revenue — pulled live from your payment provider. See every transaction, flag failed payments, and spot upsell opportunities automatically.</div>
+        <div class="bc-visual">
+          <svg class="spark-svg" viewBox="0 0 320 56" preserveAspectRatio="none">
+            <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ea5e9" stop-opacity=".18"/><stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/></linearGradient></defs>
+            <path fill="url(#sg)" d="M0,56 L0,44 C40,40 80,34 120,28 C160,22 200,16 240,11 C270,8 290,6 320,5 L320,56 Z"/>
+            <path fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-linecap="round" d="M0,44 C40,40 80,34 120,28 C160,22 200,16 240,11 C270,8 290,6 320,5"/>
+          </svg>
+          <div style="display:flex;gap:18px;margin-top:8px">
+            <div><div style="font-size:9px;color:var(--t4);font-family:var(--mono)">MRR</div><div style="font-size:18px;font-weight:600;color:var(--green)">$2,840</div></div>
+            <div><div style="font-size:9px;color:var(--t4);font-family:var(--mono)">ARR</div><div style="font-size:18px;font-weight:600">$34k</div></div>
+            <div><div style="font-size:9px;color:var(--t4);font-family:var(--mono)">Churn</div><div style="font-size:18px;font-weight:600;color:var(--amber)">2.4%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Changelog AI -->
+      <div class="bc bc-4">
+        <div class="bc-tag">AI-powered</div>
+        <div class="bc-title">Changelog generator</div>
+        <div class="bc-desc">Close an issue, get a publish-ready changelog. Claude writes it, you approve it.</div>
+        <div class="bc-visual">
+          <div class="cl-entry" style="margin-bottom:6px">
+            <div class="cl-header"><span class="mtag mtag-g">shipped</span></div>
+            <div class="cl-title">CSV export now available</div>
+            <div class="cl-body">Export your full dataset with custom date ranges and filters.</div>
+            <div class="cl-btns"><button class="cl-btn cl-pub">Publish</button><button class="cl-btn cl-edit">Edit</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost tracker -->
+      <div class="bc bc-4">
+        <div class="bc-title">Cost tracker</div>
+        <div class="bc-desc">Track every LLM, cloud, and ops cost. Set budgets, get alerts before you overspend.</div>
+        <div class="bc-visual">
+          <div class="cost-row"><div style="min-width:80px;font-size:10px">OpenAI</div><div class="cost-track"><div class="cost-fill" style="width:74%;background:var(--acc)"></div></div><span style="font-size:9px;font-family:var(--mono)">$89</span></div>
+          <div class="cost-row"><div style="min-width:80px;font-size:10px">AWS RDS</div><div class="cost-track"><div class="cost-fill" style="width:62%;background:var(--amber)"></div></div><span style="font-size:9px;font-family:var(--mono)">$74</span></div>
+          <div class="cost-row"><div style="min-width:80px;font-size:10px">Vercel</div><div class="cost-track"><div class="cost-fill" style="width:48%;background:var(--green)"></div></div><span style="font-size:9px;font-family:var(--mono)">$60</span></div>
+          <div class="cost-row"><div style="min-width:80px;font-size:10px">Stripe</div><div class="cost-track"><div class="cost-fill" style="width:38%;background:var(--purple)"></div></div><span style="font-size:9px;font-family:var(--mono);color:var(--amber)">$47!</span></div>
+        </div>
+      </div>
+
+      <!-- Build in public -->
+      <div class="bc bc-4">
+        <div class="bc-tag bc-tag-teal">AI-powered</div>
+        <div class="bc-title">Build in public</div>
+        <div class="bc-desc">Ship a feature. Get a ready-to-post tweet. One click to publish.</div>
+        <div class="bc-visual">
+          <div class="bip-card">
+            <div class="bip-platform"><div style="width:12px;height:12px;background:rgba(255,255,255,.07);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700">X</div>from: CSV export shipped</div>
+            <div class="bip-text">"Just shipped CSV export — your full dataset in one click. Solo devs, your data is yours."</div>
+            <div class="bip-btns"><button class="cl-btn cl-pub">Post now</button><button class="cl-btn cl-edit">Schedule</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team permissions — full width -->
+      <div class="bc bc-12" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
+        <div>
+          <div class="bc-title">Granular team permissions</div>
+          <div class="bc-desc">Invite co-founders, contractors, or investors. Control exactly which modules and data fields they see — per product, per person. No more accidental data leaks.</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--t3);margin-bottom:8px;font-family:var(--mono)">Sara M. — editor · Jobtrackfy</div>
+          <div class="perm-grid">
+            <div class="pchip pchip-on"><div class="pck pck-on"></div>Revenue</div>
+            <div class="pchip pchip-on"><div class="pck pck-on"></div>Roadmap</div>
+            <div class="pchip pchip-on"><div class="pck pck-on"></div>Issues</div>
+            <div class="pchip pchip-off"><div class="pck pck-off"></div>Costs</div>
+            <div class="pchip pchip-on"><div class="pck pck-on"></div>Changelog</div>
+            <div class="pchip pchip-off"><div class="pck pck-off"></div>Billing</div>
+            <div class="pchip pchip-off"><div class="pck pck-off"></div>Margin data</div>
+            <div class="pchip pchip-on"><div class="pck pck-on"></div>Build in public</div>
+            <div class="pchip pchip-off"><div class="pck pck-off"></div>Health score</div>
+          </div>
+          <div style="background:var(--acc-bg);border:1px solid var(--acc-border);border-radius:6px;padding:8px 10px;margin-top:10px;font-size:11px;color:var(--t2)">Sara can edit roadmap and issues. Costs, billing, and margin data are hidden.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--surface);border-top:1px solid var(--b);border-bottom:1px solid var(--b)">
+  <div class="container">
+    <div class="sec-eyebrow">How it works</div>
+    <div class="sec-title">Up in 5 minutes.<br>Running forever.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Add your products</div>
+        <div class="step-desc">Create a product card for each SaaS you run. Name, status, type. Manage 1 or 10 from the same dashboard.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Connect your stack</div>
+        <div class="step-desc">Paste your Stripe or DodoPayment webhook — revenue data flows in instantly. Connect GA4 for analytics. Zero manual entry.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Everything else follows</div>
+        <div class="step-desc">Log costs, track bugs, close issues, watch the AI draft your changelog and social posts. Your whole business, one tab.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="container">
+    <div class="sec-eyebrow">From the waitlist</div>
+    <div class="sec-title">Founders who get it.</div>
+    <div class="tgrid">
+      <div class="tcard">
+        <div class="tquote">"I run 4 products and I'm constantly switching between Stripe, Notion, GitHub Issues, and spreadsheets. CrewOS is exactly the product I've wanted to build myself for 2 years."</div>
+        <div class="tauthor">
+          <div class="tav" style="background:linear-gradient(135deg,var(--acc),var(--purple))">AK</div>
+          <div><div class="tname">Arjun K.</div><div class="thandle">@arjunbuilds · 3 SaaS products</div></div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tquote">"The health score idea alone is worth paying for. I have no idea which of my products is actually healthy vs slowly dying. I just react to whatever's on fire that day."</div>
+        <div class="tauthor">
+          <div class="tav" style="background:linear-gradient(135deg,var(--green),var(--teal))">ML</div>
+          <div><div class="tname">Mia L.</div><div class="thandle">@miaships · Indie hacker</div></div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tquote">"The AI changelog feature is going to save me an hour every week. Writing changelogs is the task I always skip. Having it just appear after I close an issue is a dream."</div>
+        <div class="tauthor">
+          <div class="tav" style="background:linear-gradient(135deg,var(--amber),var(--red))">RP</div>
+          <div><div class="tname">Rohan P.</div><div class="thandle">@rohanmakes · FormKit, DevLog</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section style="padding:0 24px 72px">
+  <div class="container" style="text-align:center">
+    <div class="sec-eyebrow" style="text-align:center">Integrations</div>
+    <div class="sec-title" style="font-size:clamp(24px,3vw,38px)">Connects to your stack</div>
+    <div class="int-grid">
+      <div class="int-chip"><div class="int-ico" style="background:rgba(99,91,255,.15);color:#8b85ff">St</div>Stripe</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(251,113,22,.1);color:#fb7116">Do</div>DodoPayment</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(62,207,142,.1);color:var(--green)">An</div>Anthropic</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(255,255,255,.06);color:#e8eaed">X</div>X / Twitter</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(66,133,244,.1);color:#4285f4">GA</div>Google Analytics</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(255,100,130,.1);color:#ff6482">Tk</div>TikTok</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(0,119,181,.12);color:#4ea8de">in</div>LinkedIn</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(0,0,0,.2);color:#fff">Oa</div>OpenAI</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(0,196,180,.1);color:#00c4b4">Ve</div>Vercel</div>
+      <div class="int-chip"><div class="int-ico" style="background:rgba(255,153,0,.1);color:#ff9900">AW</div>AWS</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--surface);border-top:1px solid var(--b)">
+  <div class="container">
+    <div class="sec-eyebrow">Pricing</div>
+    <div class="sec-title">Simple. No surprises.</div>
+    <p class="sec-sub">Start free. Pay when it saves you money — which it will.</p>
+    <div class="pgrid">
+      <div class="pcard">
+        <div class="p-plan">Starter</div>
+        <div class="p-price"><sup>₹</sup>0<sub>/mo</sub></div>
+        <div class="p-desc">For founders just getting started. One product, forever free.</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>1 product</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Revenue dashboard</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Cost tracker</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Roadmap & issues</div>
+          <div class="p-feat dim"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M2 2l5 5M7 2l-5 5" stroke="#1e3a5f" stroke-width="1.2" stroke-linecap="round"/></svg></div>Health score</div>
+          <div class="p-feat dim"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M2 2l5 5M7 2l-5 5" stroke="#1e3a5f" stroke-width="1.2" stroke-linecap="round"/></svg></div>AI changelog</div>
+        </div>
+        <button class="p-btn p-btn-outline">Get started free</button>
+      </div>
+      <div class="pcard featured">
+        <div class="p-popular">Most popular</div>
+        <div class="p-plan">Solo</div>
+        <div class="p-price"><sup>₹</sup>2,400<sub>/mo</sub></div>
+        <div class="p-desc">For serious indie founders running multiple products. Everything included.</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div><strong>3 products</strong></div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Full revenue analytics</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Health score + sunset signal</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>AI changelog + BIP posts</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Google Analytics integration</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Acquisition report AI</div>
+        </div>
+        <button class="p-btn p-btn-acc">Start 14-day free trial →</button>
+      </div>
+      <div class="pcard">
+        <div class="p-plan">Team</div>
+        <div class="p-price"><sup>₹</sup>4,900<sub>/mo</sub></div>
+        <div class="p-desc">For founders with contractors, co-founders, or investors to loop in.</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div><strong>10 products</strong></div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Everything in Solo</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div><strong>5 team members</strong></div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Granular field permissions</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Public changelog page</div>
+          <div class="p-feat"><div class="p-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3ecf8e" stroke-width="1.3" stroke-linecap="round"/></svg></div>Priority support</div>
+        </div>
+        <button class="p-btn p-btn-outline">Start 14-day free trial</button>
+      </div>
+    </div>
+    <p class="p-note">All prices in INR · No credit card required for free trial · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<div class="cta-strip">
+  <h2>One tab for your<br><em style="font-family:var(--serif);font-style:italic;color:var(--acc)">whole empire.</em></h2>
+  <p>Join 412 indie founders on the early access waitlist. Free to start.</p>
+  <div class="cta-email-row">
+    <input type="email" class="cta-input" placeholder="your@email.com">
+    <button class="btn-acc" style="padding:10px 18px;border-radius:8px;font-size:14px;white-space:nowrap">Join waitlist →</button>
+  </div>
+  <p class="cta-note">No spam. Early access gets 3 months free on any paid plan.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="#" class="logo" style="text-decoration:none">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" fill="white"/><circle cx="3" cy="12" r="2.5" fill="white" opacity=".6"/><circle cx="13" cy="12" r="2.5" fill="white" opacity=".4"/><line x1="8" y1="8" x2="3" y2="9.5" stroke="white" stroke-width="1" opacity=".5"/><line x1="8" y1="8" x2="13" y2="9.5" stroke="white" stroke-width="1" opacity=".4"/></svg></div>
+      <span class="logo-name" style="font-size:16px">CrewOS</span>
+    </a>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Twitter</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+    <div class="footer-copy">© 2025 CrewOS · built for the company of one</div>
+  </div>
+</footer>
+
+<script>
+// Build MRR bars
+const bars = [25,32,40,38,48,52,58,55,68,72,82,95,100]
+const chart = document.getElementById('mrr-chart')
+if(chart){
+  bars.forEach(h=>{
+    const b = document.createElement('div')
+    b.className = 'mbar'
+    b.style.height = (h*0.52)+'px'
+    b.style.opacity = 0.4 + (h/100)*0.6
+    chart.appendChild(b)
+  })
+}
+
+// Page switcher
+const pages = ['dashboard','revenue','health','issues','changelog','costs']
+let cur = 0
+
+function showPage(id, el){
+  document.querySelectorAll('.ap-page').forEach(p=>p.classList.remove('show'))
+  document.querySelectorAll('.ap-item').forEach(n=>n.classList.remove('active'))
+  document.getElementById('page-'+id)?.classList.add('show')
+  if(el) el.classList.add('active')
+  else document.getElementById('nav-'+id)?.classList.add('active')
+}
+
+// Auto-rotate
+setInterval(()=>{
+  cur=(cur+1)%pages.length
+  showPage(pages[cur])
+}, 3200)
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.style.cssText='opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease'
+  })
+},{threshold:.12})
+document.querySelectorAll('.bc,.tcard,.pcard,.step,.metric-cell').forEach(el=>{
+  el.style.cssText='opacity:0;transform:translateY(20px)'
+  observer.observe(el)
+})
+</script>
+</body>
+</html>

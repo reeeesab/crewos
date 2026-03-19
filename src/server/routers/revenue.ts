@@ -154,7 +154,7 @@ export const revenueRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
-      await assertProductRole(ctx, input.productId, ["OWNER", "EDITOR"]);
+      await assertProductAccess(ctx, input.productId);
       return ctx.db.webhookEvent.findMany({
         where: {
           productId: input.productId,

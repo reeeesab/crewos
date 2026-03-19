@@ -42,6 +42,12 @@ const navSections = [
       { label: "Health score", href: "/health", icon: Pulse },
       { label: "Acquisition report", href: "/acquisition", icon: FileText, badge: "AI", badgeColor: "violet" },
     ],
+  },
+  {
+    section: "Team",
+    items: [
+      { label: "Team & Access", href: "/team", icon: List },
+    ],
   }
 ];
 
