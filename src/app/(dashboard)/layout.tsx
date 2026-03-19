@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   SquaresFour, TrendUp, ChartBar, ChartLineUp, Compass, ListDashes,
   Briefcase, Pulse, FileText, CaretDown, Lightning, Gear, CircleNotch,
-  List, X, MagnifyingGlass, Bell, Kanban
+  List, X, MagnifyingGlass, Bell, Kanban, Trophy
 } from "@phosphor-icons/react";
 import { trpc } from "@/lib/trpc/provider";
 
@@ -27,6 +27,7 @@ const navSections = [
     section: "Build",
     items: [
       { label: "Board", href: "/roadmap", icon: Kanban },
+      { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
       { label: "Changelog", href: "/changelog", icon: ListDashes, badge: "AI", badgeColor: "violet" },
     ],
   },
