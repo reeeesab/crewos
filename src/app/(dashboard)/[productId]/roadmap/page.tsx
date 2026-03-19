@@ -442,55 +442,55 @@ function IssueModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="relative my-auto w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-neutral-900 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+        className="relative my-auto w-full max-w-xl overflow-hidden rounded-[1.5rem] border border-white/10 bg-neutral-900 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
       >
         <div className="absolute left-0 top-0 h-1.5 w-full bg-gradient-to-r from-sf-accent-cyan via-sf-purple to-sf-accent-cyan shadow-[0_4px_12px_rgba(0,212,255,0.4)]" />
 
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <h3 className="text-2xl font-black tracking-tight text-white">{mode === "create" ? "Create New Ticket" : "Edit Ticket"}</h3>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-1">PLANNING & EXECUTION</p>
+            <h3 className="text-xl font-black tracking-tight text-white">{mode === "create" ? "Create New Ticket" : "Edit Ticket"}</h3>
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 mt-1">PLANNING & EXECUTION</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-white/5 bg-white/5 p-2.5 text-slate-500 transition-all hover:bg-white/10 hover:text-white"
+            className="rounded-xl border border-white/5 bg-white/5 p-2 text-slate-500 transition-all hover:bg-white/10 hover:text-white"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-8">
-          <div className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
+            <div className="space-y-5">
             {/* Row 1: Title */}
             <div>
-              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Title</label>
+              <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Title</label>
               <input
                 required
                 // fullWidth // This is not a standard HTML attribute, removed.
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="h-12 w-full rounded-2xl border border-neutral-700 bg-neutral-800 px-5 text-lg font-bold text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                className="h-10 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-base font-bold text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
                 placeholder="What needs to be done?"
               />
             </div>
 
             {/* Row 2: Description */}
             <div>
-              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Description</label>
+              <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Description</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={4}
-                className="w-full rounded-2xl border border-neutral-700 bg-neutral-800 p-5 text-sm font-medium text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                rows={3}
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-4 text-sm font-medium text-white placeholder-slate-600 outline-none transition-all focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
                 placeholder="Details of the task..."
               />
             </div>
 
             {/* Row 3: Type Selector */}
             <div>
-              <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Ticket Type</label>
-              <div className="grid grid-cols-4 gap-3">
+              <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Ticket Type</label>
+              <div className="grid grid-cols-4 gap-2.5">
                 {(["FEATURE", "BUG", "MARKETING", "OTHER"] as const).map((t) => {
                   const meta = TYPE_META[t];
                   const Icon = meta.icon;
@@ -501,7 +501,7 @@ function IssueModal({
                       type="button"
                       onClick={() => setForm({ ...form, type: t })}
                       className={cn(
-                        "flex flex-col items-center justify-center gap-2 rounded-2xl py-4 border-2 transition-all",
+                        "flex flex-col items-center justify-center gap-1.5 rounded-xl py-3 border-2 transition-all",
                         isSelected
                           ? cn(
                               t === "FEATURE" ? "bg-cyan-950/40 border-sf-accent-cyan text-sf-accent-cyan shadow-[0_0_20px_rgba(0,212,255,0.15)]" :
@@ -521,25 +521,25 @@ function IssueModal({
             </div>
 
             {/* Row 4: Points | Priority */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Points Reward</label>
+                <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Points Reward</label>
                 <input
                   type="number"
                   min={0}
                   max={100}
                   value={form.points}
                   onChange={(e) => setForm({ ...form, points: parseInt(e.target.value) || 0 })}
-                  className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-black text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                  className="h-10 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-black text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
                 />
-                <div className="mt-3 flex gap-1.5 flex-wrap">
+                <div className="mt-2.5 flex gap-1 flex-wrap">
                   {[1, 3, 5, 8, 13].map((v) => (
                     <button
                       key={v}
                       type="button"
                       onClick={() => setForm({ ...form, points: v })}
                       className={cn(
-                        "rounded-lg border px-3 py-1.5 text-[10px] font-black transition-all",
+                        "rounded-lg border px-2.5 py-1 text-[9px] font-black transition-all",
                         form.points === v
                           ? "bg-sf-accent-cyan/10 border-sf-accent-cyan text-sf-accent-cyan shadow-[0_0_10px_rgba(0,212,255,0.1)]"
                           : "bg-neutral-800 border-neutral-700 text-slate-500 hover:border-neutral-600 hover:text-white"
@@ -551,7 +551,7 @@ function IssueModal({
                 </div>
               </div>
               <div>
-                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Priority</label>
+                <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Priority</label>
                 <div className="flex flex-col gap-2">
                    <div className="grid grid-cols-3 gap-2">
                      {(["LOW", "MEDIUM", "HIGH"] as const).map((p) => (
@@ -560,7 +560,7 @@ function IssueModal({
                          type="button"
                          onClick={() => setForm({ ...form, priority: p })}
                          className={cn(
-                            "flex h-11 items-center justify-center rounded-xl border-2 transition-all text-[10px] font-black uppercase tracking-widest",
+                            "flex h-10 items-center justify-center rounded-xl border-2 transition-all text-[9px] font-black uppercase tracking-widest",
                             form.priority === p
                               ? p === "HIGH" ? "bg-red-950/40 border-sf-red text-sf-red" :
                                 p === "MEDIUM" ? "bg-sf-amber/10 border-sf-amber text-sf-amber" :
@@ -577,14 +577,14 @@ function IssueModal({
             </div>
 
             {/* Row 5: Assignee | Due Date */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-5">
               <div>
-                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assignee</label>
+                <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Assignee</label>
                 <div className="relative">
                   <select
                     value={form.assigneeId}
                     onChange={(e) => setForm({ ...form, assigneeId: e.target.value })}
-                    className="h-11 w-full appearance-none rounded-xl border border-neutral-700 bg-neutral-800 px-4 pr-10 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                    className="h-10 w-full appearance-none rounded-xl border border-neutral-700 bg-neutral-800 px-4 pr-10 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
                   >
                     <option value="" className="bg-neutral-900">Unassigned</option>
                     <option value={userId || ""} className="bg-neutral-900 font-bold text-sf-accent-cyan italic">Assign to me</option>
@@ -600,28 +600,28 @@ function IssueModal({
                 </div>
               </div>
               <div>
-                <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Due Date</label>
+                <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Due Date</label>
                 <input
                   type="date"
                   value={form.dueDate}
                   onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                  className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10 [color-scheme:dark]"
+                  className="h-10 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10 [color-scheme:dark]"
                 />
               </div>
             </div>
 
             {/* Row 6: Milestone (Optional) */}
             <Collapsible>
-               <CollapsibleTrigger className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-colors py-2">
+               <CollapsibleTrigger className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-white transition-colors py-1.5">
                   Advanced options <ChevronDown className="h-3 w-3" />
                </CollapsibleTrigger>
-               <CollapsibleContent className="mt-4">
+               <CollapsibleContent className="mt-3">
                   <div>
-                    <label className="mb-2.5 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Milestone</label>
+                    <label className="mb-1.5 block text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Milestone</label>
                     <input
                       value={form.milestone}
                       onChange={(e) => setForm({ ...form, milestone: e.target.value })}
-                      className="h-11 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
+                      className="h-10 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-4 text-sm font-bold text-white outline-none focus:border-sf-accent-cyan focus:ring-4 focus:ring-sf-accent-cyan/10"
                       placeholder="e.g. Q1 Release"
                     />
                   </div>
@@ -630,24 +630,24 @@ function IssueModal({
           </div>
 
           {(error || localError) && (
-            <div className="mt-6 flex items-center gap-2 rounded-xl border border-sf-red/30 bg-sf-red/10 p-3 text-xs font-semibold text-sf-red">
-              <AlertCircle className="h-3.5 w-3.5" />
+            <div className="mt-4 flex items-center gap-2 rounded-xl border border-sf-red/30 bg-sf-red/10 p-2.5 text-xs font-semibold text-sf-red">
+              <AlertCircle className="h-3 w-3" />
               {localError || error}
             </div>
           )}
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-4 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-2xl bg-white/5 px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-slate-400 transition-all hover:bg-white/10 hover:text-white"
+              className="flex-1 rounded-xl bg-white/5 px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-slate-400 transition-all hover:bg-white/10 hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="flex-[2] rounded-2xl bg-gradient-to-r from-sf-accent-cyan to-sf-accent via-sf-accent-cyan px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-[0_10px_25px_rgba(0,212,255,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
+              className="flex-[2] rounded-xl bg-gradient-to-r from-sf-accent-cyan to-sf-accent via-sf-accent-cyan px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-[0_10px_25px_rgba(0,212,255,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2.5"
             >
               {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
               {mode === "create" ? "Create Ticket" : "Save Changes"}
