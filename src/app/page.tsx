@@ -1,20 +1,14 @@
-'use client'
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
 
-import { useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
-import { useRouter } from 'next/navigation'
-import MarketingPage from './(marketing)/page'
+export default async function RootPage() {
+  const { userId } = await auth()
 
-export default function RootPage() {
-  const { isSignedIn, isLoaded } = useAuth()
-  const router = useRouter()
+  if (userId) {
+    redirect('/portfolio')
+  }
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      router.push('/portfolio')
-    }
-  }, [isLoaded, isSignedIn, router])
-
-  // Show marketing page while checking auth status, or if not signed in
-  return <MarketingPage />
+  // If not signed in, the middleware will handle redirect to sign-in
+  // since "/" is no longer a public route.
+  return null
 }
