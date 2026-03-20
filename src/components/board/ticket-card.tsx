@@ -16,6 +16,7 @@ interface TicketCardProps {
   };
   className?: string;
   onClick?: () => void;
+  isClosed?: boolean;
 }
 
 export function TicketCard({
@@ -27,6 +28,7 @@ export function TicketCard({
   assignee,
   className,
   onClick,
+  isClosed = false,
 }: TicketCardProps) {
   const config = TICKET_CONFIG[type];
   
@@ -61,10 +63,13 @@ export function TicketCard({
         </div>
       </div>
 
-      <h4 className="text-[13px] font-medium leading-snug text-brand-text line-clamp-2">
+      <h4 className={cn(
+        "text-[13px] font-medium leading-snug text-brand-text line-clamp-2",
+        isClosed && "text-brand-muted line-through opacity-60"
+      )}>
         {title}
       </h4>
-
+      
       <div className="flex items-center justify-between mt-auto pt-1">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5">
