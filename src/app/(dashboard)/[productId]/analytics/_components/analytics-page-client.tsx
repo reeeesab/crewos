@@ -68,12 +68,12 @@ function StatCard({
   tone?: "default" | "good" | "warn";
 }) {
   const toneClass =
-    tone === "good" ? "text-sf-accent-emerald" : tone === "warn" ? "text-sf-accent-amber" : "text-sf-text-primary";
+    tone === "good" ? "text-emerald-400" : tone === "warn" ? "text-amber-500" : "text-white";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-5 shadow-lg backdrop-blur-xl">
-      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sf-accent-cyan/5 blur-[45px]" />
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted">{label}</p>
+    <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-lg">
+      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-brand-accent/5 blur-[45px]" />
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-muted">{label}</p>
       <p className={`mt-1 text-2xl font-bold tracking-tight ${toneClass}`}>{value}</p>
     </div>
   );
@@ -157,8 +157,8 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Analytics</h1>
-          <p className="mt-1 text-sm text-sf-text-secondary">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Analytics</h1>
+          <p className="mt-1 text-sm text-brand-muted">
             Connect GA4 to unlock founder-focused traffic, conversion, and growth insights.
           </p>
         </div>
@@ -166,7 +166,7 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowSetupGuide((prev) => !prev)}
-            className="rounded-lg border border-sf-border-subtle bg-sf-surface px-3 py-1.5 text-xs font-semibold text-sf-text-secondary transition-colors hover:border-sf-border-default hover:text-sf-text-primary"
+            className="rounded-lg border border-brand-border bg-brand-surface px-3 py-1.5 text-xs font-semibold text-brand-muted transition-colors hover:border-brand-primary/30 hover:text-white"
           >
             {showSetupGuide ? "Hide setup steps" : "How to get credentials"}
           </button>
@@ -174,37 +174,37 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
 
         {showSetupGuide && <SetupGuide />}
 
-        <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-sf-text-secondary">Connect your GA4 property</h2>
+        <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-xl">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-brand-muted">Connect your GA4 property</h2>
 
           <div className="mt-5 space-y-4">
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted">
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-brand-muted">
                 GA4 Property ID
               </label>
               <input
                 value={formPropertyId}
                 onChange={(event) => setFormPropertyId(event.target.value)}
                 placeholder="123456789"
-                className="w-full rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent-cyan focus:outline-none"
+                className="w-full rounded-lg border border-brand-border bg-brand-bg/50 px-3.5 py-2 text-sm text-white placeholder:text-brand-muted focus:border-brand-accent focus:outline-none"
               />
-              <p className="mt-1 text-[11px] text-sf-text-muted">Found in GA4 Admin → Property Settings.</p>
+              <p className="mt-1 text-[11px] text-brand-muted">Found in GA4 Admin → Property Settings.</p>
             </div>
 
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted">
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-brand-muted">
                 Service Account Email
               </label>
               <input
                 value={formClientEmail}
                 onChange={(event) => setFormClientEmail(event.target.value)}
                 placeholder="indiqo-analytics@project.iam.gserviceaccount.com"
-                className="w-full rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 text-sm text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent-cyan focus:outline-none"
+                className="w-full rounded-lg border border-brand-border bg-brand-bg/50 px-3.5 py-2 text-sm text-white placeholder:text-brand-muted focus:border-brand-accent focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted">
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-brand-muted">
                 Private Key
               </label>
               <textarea
@@ -212,13 +212,13 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
                 onChange={(event) => setFormPrivateKey(event.target.value)}
                 rows={5}
                 placeholder="-----BEGIN PRIVATE KEY-----"
-                className="w-full resize-none rounded-lg border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 font-mono text-xs text-sf-text-primary placeholder:text-sf-text-muted focus:border-sf-accent-cyan focus:outline-none"
+                className="w-full resize-none rounded-lg border border-brand-border bg-brand-bg/50 px-3.5 py-2 font-mono text-xs text-white placeholder:text-brand-muted focus:border-brand-accent focus:outline-none"
               />
-              <p className="mt-1 text-[11px] text-sf-text-muted">Paste the full `private_key` value from your JSON file.</p>
+              <p className="mt-1 text-[11px] text-brand-muted">Paste the full `private_key` value from your JSON file.</p>
             </div>
 
             {connect.error && (
-              <div className="rounded-lg border border-sf-accent-rose/30 bg-sf-accent-rose/10 px-3 py-2 text-xs text-sf-accent-rose">
+              <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-400">
                 {connect.error.message}
               </div>
             )}
@@ -233,7 +233,7 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
                 })
               }
               disabled={connect.isPending || !formPropertyId || !formClientEmail || !formPrivateKey}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sf-accent-cyan px-4 py-2.5 text-sm font-bold text-sf-bg-base transition-all hover:bg-[#00e5ff] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-brand-accent disabled:cursor-not-allowed disabled:opacity-50"
             >
               {connect.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlugZap className="h-4 w-4" />}
               {connect.isPending ? "Verifying connection..." : "Connect GA4"}
@@ -253,8 +253,8 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Analytics</h1>
-          <p className="mt-1 text-sm text-sf-text-secondary">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Analytics</h1>
+          <p className="mt-1 text-sm text-brand-muted">
             Property {config?.propertyId} ·{" "}
             {reportQuery.isFetching
               ? "Syncing..."
@@ -271,8 +271,8 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
               onClick={() => setDays(window as WindowDays)}
               className={`rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors ${
                 days === window
-                  ? "border-sf-accent-cyan bg-sf-accent-cyan/10 text-sf-accent-cyan"
-                  : "border-sf-border-subtle bg-sf-surface text-sf-text-secondary hover:text-sf-text-primary"
+                  ? "border-brand-primary bg-brand-primary/10 text-brand-primary"
+                  : "border-brand-border bg-brand-surface text-brand-muted hover:text-white"
               }`}
             >
               {window}d
@@ -284,7 +284,7 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
               realtimeQuery.refetch();
             }}
             disabled={reportQuery.isFetching}
-            className="inline-flex items-center gap-1.5 rounded-md border border-sf-border-subtle bg-sf-surface px-2.5 py-1 text-xs font-semibold text-sf-text-secondary transition-colors hover:text-sf-text-primary disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md border border-brand-border bg-brand-surface px-2.5 py-1 text-xs font-semibold text-brand-muted transition-colors hover:text-white disabled:opacity-50"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${reportQuery.isFetching ? "animate-spin" : ""}`} />
             Refresh
@@ -292,7 +292,7 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
           <button
             onClick={() => disconnect.mutate({ productId })}
             disabled={disconnect.isPending}
-            className="inline-flex items-center gap-1.5 rounded-md border border-sf-border-subtle bg-sf-surface px-2.5 py-1 text-xs font-semibold text-sf-text-secondary transition-colors hover:text-sf-text-primary disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md border border-brand-border bg-brand-surface px-2.5 py-1 text-xs font-semibold text-brand-muted transition-colors hover:text-white disabled:opacity-50"
           >
             <Unplug className="h-3.5 w-3.5" />
             Disconnect
@@ -301,32 +301,32 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
       </div>
 
       {reportError && (
-        <div className="rounded-xl border border-sf-accent-rose/30 bg-sf-accent-rose/10 px-4 py-3 text-sm text-sf-text-primary">
-          <div className="mb-1 font-semibold text-sf-accent-rose">Analytics sync failed</div>
-          <p className="text-xs text-sf-text-secondary">{reportError}</p>
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-white">
+          <div className="mb-1 font-semibold text-rose-400">Analytics sync failed</div>
+          <p className="text-xs text-brand-muted">{reportError}</p>
         </div>
       )}
 
       {report?.aiSummary && (
-        <div className="rounded-xl border border-sf-accent-violet/30 bg-sf-accent-violet/10 px-4 py-3">
-          <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sf-accent-violet">
+        <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 px-4 py-3">
+          <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
             <Sparkles className="h-3.5 w-3.5" />
             AI Insight
           </div>
-          <p className="text-sm leading-relaxed text-sf-text-primary">{report.aiSummary}</p>
+          <p className="text-sm leading-relaxed text-white">{report.aiSummary}</p>
         </div>
       )}
 
       {realtime && (
-        <div className="rounded-xl border border-sf-accent-cyan/25 bg-sf-accent-cyan/10 px-4 py-3">
+        <div className="rounded-xl border border-brand-primary/25 bg-brand-primary/10 px-4 py-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-sm font-semibold text-sf-text-primary">
-              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-sf-accent-cyan" />
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-brand-primary" />
               {realtime.totalActive} active users right now
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-sf-text-secondary">
+            <div className="flex items-center gap-2 text-[11px] text-brand-muted">
               {realtime.byCountry.slice(0, 3).map((country) => (
-                <span key={country.country} className="rounded-full bg-sf-bg-glass px-2 py-0.5">
+                <span key={country.country} className="rounded-full bg-white/[0.05] border border-brand-border px-2 py-0.5">
                   {countryFlag(country.country)} · {country.users}
                 </span>
               ))}
@@ -336,12 +336,12 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
       )}
 
       {trafficSpike && (
-        <div className="rounded-xl border border-sf-accent-amber/30 bg-sf-accent-amber/10 px-4 py-3 text-sm text-sf-text-primary">
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-white">
           <div className="flex items-center gap-2 font-semibold">
-            <AlertTriangle className="h-4 w-4 text-sf-accent-amber" />
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
             Traffic spike detected
           </div>
-          <p className="mt-1 text-xs text-sf-text-secondary">
+          <p className="mt-1 text-xs text-brand-muted">
             Live users are {trafficSpike.multiple}x above baseline ({trafficSpike.current} vs avg {trafficSpike.baseline} / hour).
           </p>
         </div>
@@ -399,9 +399,9 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
           </div>
 
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-5 shadow-lg">
-              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">
-                <Activity className="h-4 w-4 text-sf-accent-cyan" />
+            <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-lg">
+              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-muted">
+                <Activity className="h-4 w-4 text-brand-primary" />
                 Top Traffic Sources
               </div>
               <div className="space-y-2.5">
@@ -424,9 +424,9 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-5 shadow-lg">
-              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">
-                <Globe2 className="h-4 w-4 text-sf-accent-cyan" />
+            <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-lg">
+              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-muted">
+                <Globe2 className="h-4 w-4 text-brand-primary" />
                 Top Pages
               </div>
               <div className="space-y-2.5">
@@ -441,9 +441,9 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-5 shadow-lg">
-              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">
-                <Activity className="h-4 w-4 text-sf-accent-cyan" />
+            <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-lg">
+              <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-muted">
+                <Activity className="h-4 w-4 text-brand-primary" />
                 Users By Country
               </div>
               <div className="space-y-2.5">
@@ -460,8 +460,8 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-5 shadow-lg">
-            <div className="mb-3 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">New vs Returning Users</div>
+          <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-lg">
+            <div className="mb-3 text-xs font-bold uppercase tracking-wider text-brand-muted">New vs Returning Users</div>
             <div className="mb-4 flex items-center gap-4">
               <div>
                 <p className="text-2xl font-bold text-sf-text-primary">{report.newUsers.toLocaleString()}</p>
@@ -479,12 +479,12 @@ export function AnalyticsPageClient({ productId }: { productId: string }) {
                 <p className="text-xs text-sf-text-muted">returning share</p>
               </div>
             </div>
-            <div className="flex h-2 overflow-hidden rounded-full bg-sf-base">
+            <div className="flex h-2 overflow-hidden rounded-full bg-brand-bg">
               <div
-                className="bg-sf-accent-cyan"
+                className="bg-brand-primary"
                 style={{ width: `${report.totalUsers > 0 ? (report.newUsers / report.totalUsers) * 100 : 0}%` }}
               />
-              <div className="flex-1 bg-sf-accent-emerald" />
+              <div className="flex-1 bg-emerald-500" />
             </div>
           </div>
         </>

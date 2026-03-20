@@ -11,6 +11,8 @@ import {
   List, X, MagnifyingGlass, Bell, Kanban, Trophy
 } from "@phosphor-icons/react";
 import { trpc } from "@/lib/trpc/provider";
+import { IndiqoMark, IndiqoWordmark } from "@/components/ui/logo";
+import { cn } from "@/lib/utils";
 
 const navSections = [
   {
@@ -131,19 +133,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <motion.aside
         initial={false}
         animate={{ width: sidebarOpen ? 220 : 64 }}
-        className="hidden lg:flex flex-col h-full border-r border-sf-border-subtle bg-sf-bg-base shrink-0 relative overflow-hidden"
+        className="hidden lg:flex flex-col h-full border-r border-brand-border bg-brand-bg shrink-0 relative overflow-hidden"
       >
         {/* Logo */}
-        <div className="h-[52px] flex items-center px-4 shrink-0 transition-colors hover:bg-sf-bg-glass">
-          <Link href="/portfolio" className="flex items-center gap-3 w-full outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan rounded">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-gradient-to-br from-sf-accent-cyan to-blue-600 shadow-[0_0_12px_rgba(0,212,255,0.3)]">
-              <Lightning weight="fill" className="h-4 w-4 text-white" />
-            </div>
-            {sidebarOpen && (
-              <span className="font-display text-lg tracking-wide whitespace-nowrap text-white">
-                Indiqo
-              </span>
-            )}
+        <div className="h-[52px] flex items-center px-4 shrink-0 transition-colors hover:bg-brand-surface-2">
+          <Link href="/portfolio" className="flex items-center gap-3 w-full outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded">
+            {sidebarOpen ? <IndiqoWordmark size="sm" /> : <IndiqoMark size="md" />}
           </Link>
         </div>
 
@@ -152,11 +147,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {navSections.map((section) => (
             <div key={section.section}>
               {sidebarOpen && (
-                <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-sf-text-muted">
+                <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-brand-muted">
                   {section.section}
                 </div>
               )}
-              {!sidebarOpen && <div className="h-px w-8 mx-auto bg-sf-border-subtle mb-2 mt-4 opacity-50" />}
+              {!sidebarOpen && <div className="h-px w-8 mx-auto bg-brand-border mb-2 mt-4 opacity-50" />}
               <div className="space-y-0.5">
                 {section.items.map((item) => {
                   const isPortfolioItem = item.href === "__portfolio__";
@@ -165,40 +160,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   const href = isPortfolioItem ? "/portfolio"
                     : isDisabled ? "#"
                     : item.href === "" ? `/${productId}`
-                    : `/${productId}${item.href}`;
-
-                  const isActive = pathname === href ||
+                    : `/${productId}${item.href}`;                  const isActive = pathname === href ||
                     (item.href !== "" && productId && pathname?.startsWith(`/${productId}${item.href.split("?")[0]}`));
 
                   return isDisabled ? (
-                    <div key={item.label} className="flex items-center h-8 px-2 rounded-md opacity-40 cursor-not-allowed">
-                      <div className="flex items-center justify-center w-5 h-5 shrink-0 text-sf-text-muted">
+                    <div key={item.label} className="flex items-center h-8 px-2 rounded-md opacity-30 cursor-not-allowed">
+                      <div className="flex items-center justify-center w-5 h-5 shrink-0 text-brand-muted">
                         <item.icon weight="regular" size={18} />
                       </div>
-                      {sidebarOpen && <span className="ml-2.5 text-[13px] font-medium text-sf-text-muted whitespace-nowrap">{item.label}</span>}
+                      {sidebarOpen && <span className="ml-2.5 text-[13px] font-medium text-brand-muted whitespace-nowrap">{item.label}</span>}
                     </div>
                   ) : (
                     <Link
                       key={item.label}
                       href={href}
-                      className="group flex items-center h-8 px-2 rounded-md transition-all hover:bg-sf-bg-glass relative outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan"
-                    >
-                      {isActive && (
-                        <motion.div layoutId="activeNav" className="absolute left-0 top-1 bottom-1 w-[2px] bg-sf-accent-cyan rounded-r" />
+                      className={cn(
+                        "group flex items-center h-8 px-2 rounded-md transition-all relative outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
+                        isActive ? "bg-brand-surface border-l-2 border-brand-accent shadow-sm" : "hover:bg-brand-surface-2/40"
                       )}
-                      
-                      <div className={`flex items-center justify-center w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-sf-accent-cyan' : 'text-sf-text-secondary group-hover:text-sf-accent-cyan'}`}>
+                    >
+                      <div className={`flex items-center justify-center w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-brand-accent' : 'text-brand-muted group-hover:text-brand-accent'}`}>
                         <item.icon weight={isActive ? "fill" : "regular"} size={18} />
                       </div>
                       
                       {sidebarOpen && (
-                        <span className={`ml-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${isActive ? 'text-white' : 'text-sf-text-secondary group-hover:text-white'}`}>
+                        <span className={`ml-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${isActive ? 'text-brand-accent' : 'text-brand-muted group-hover:text-white'}`}>
                           {item.label}
                         </span>
                       )}
                       
                       {sidebarOpen && item.badge && (
-                        <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor === 'cyan' ? 'bg-sf-accent-cyan/10 text-sf-accent-cyan' : 'bg-sf-accent-violet/10 text-sf-accent-violet'}`}>
+                        <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor === 'cyan' ? 'bg-brand-accent/10 text-brand-accent' : 'bg-brand-accent-light/10 text-brand-accent-light'}`}>
                           {item.badge}
                         </span>
                       )}
@@ -211,8 +203,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-3 border-t border-sf-border-subtle shrink-0">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="w-full flex justify-center lg:justify-start items-center h-8 px-2 rounded-md text-sf-text-secondary hover:bg-sf-bg-glass hover:text-white transition-colors">
+        <div className="p-3 border-t border-brand-border shrink-0">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="w-full flex justify-center lg:justify-start items-center h-8 px-2 rounded-md text-brand-muted hover:bg-brand-surface-2 hover:text-white transition-colors">
              <List size={18} />
              {sidebarOpen && <span className="ml-2.5 text-[13px] font-medium">Collapse</span>}
           </button>
@@ -222,7 +214,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="flex flex-col flex-1 min-w-0">
                 <span className="text-[12px] font-medium text-white truncate">{user?.fullName || 'Builder'}</span>
               </div>
-              <Link href={productId ? `/${productId}/settings` : '#'} className="text-sf-text-secondary hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan rounded">
+              <Link href={productId ? `/${productId}/settings` : '#'} className="text-brand-muted hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded">
                 <Gear size={16} />
               </Link>
             </div>
@@ -233,22 +225,53 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile Drawer (Simplistic implementation matching design) */}
       {mobileMenuOpen && (
          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setMobileMenuOpen(false)}>
-           <div className="w-[240px] h-full bg-sf-bg-base border-r border-sf-border-subtle p-4" onClick={e => e.stopPropagation()}>
+           <div className="w-[240px] h-full bg-brand-bg border-r border-brand-border p-4" onClick={e => e.stopPropagation()}>
              {/* Simple mobile menu closure */}
              <div className="flex justify-between items-center mb-8">
-               <span className="font-display text-lg text-white">Indiqo</span>
-               <button onClick={() => setMobileMenuOpen(false)}><X size={24} className="text-sf-text-secondary" /></button>
+               <IndiqoWordmark size="sm" />
+               <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-brand-muted hover:text-white">
+                 <X size={20} />
+               </button>
              </div>
-             <nav className="space-y-6">
-               {navSections.map(s => (
-                 <div key={s.section}>
-                   <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-sf-text-muted">{s.section}</div>
-                   {s.items.map(i => (
-                     <Link key={i.label} href={i.href === "__portfolio__" ? "/portfolio" : (productId ? `/${productId}${i.href}` : "#")} className="flex items-center gap-3 py-2 text-sf-text-secondary">
-                        <i.icon size={20} />
-                        <span className="text-sm font-medium">{i.label}</span>
-                     </Link>
-                   ))}
+             <nav className="flex-1 overflow-y-auto p-4 space-y-8">
+               {navSections.map((section) => (
+                 <div key={section.section}>
+                   <div className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-muted opacity-60">
+                     {section.section}
+                   </div>
+                   <div className="space-y-1">
+                     {section.items.map((item) => {
+                       const isPortfolioItem = item.href === "__portfolio__";
+                       const isDisabled = !productId && !isPortfolioItem;
+
+                       const href = isPortfolioItem ? "/portfolio"
+                         : isDisabled ? "#"
+                         : item.href === "" ? `/${productId}`
+                         : `/${productId}${item.href}`;
+
+                       const isActive = pathname === href ||
+                         (item.href !== "" && productId && pathname?.startsWith(`/${productId}${item.href.split("?")[0]}`));
+
+                       return (
+                         <Link
+                           key={item.label}
+                           href={href}
+                           className={cn(
+                             "flex items-center grow h-10 px-3 rounded-lg transition-all",
+                             isActive ? "bg-brand-surface text-brand-accent border-l-2 border-brand-accent" : "text-brand-muted active:bg-brand-surface-2"
+                           )}
+                         >
+                           <item.icon weight={isActive ? "fill" : "bold"} size={20} />
+                           <span className="ml-3 text-[14px] font-semibold">{item.label}</span>
+                           {item.badge && (
+                             <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-accent-light/10 text-brand-accent-light">
+                               {item.badge}
+                             </span>
+                           )}
+                         </Link>
+                       );
+                     })}
+                   </div>
                  </div>
                ))}
              </nav>
@@ -259,21 +282,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* MAIN LAYOUT */}
       <div className="flex flex-col flex-1 min-w-0 relative z-10 transition-all">
         {/* TOPBAR */}
-        <header className="h-[52px] shrink-0 bg-sf-bg-base/80 backdrop-blur-md border-b border-sf-border-subtle flex items-center justify-between px-4 lg:px-6 relative z-30">
+        <header className="h-[52px] flex items-center justify-between px-4 lg:px-6 border-b border-brand-border bg-brand-bg/80 backdrop-blur-md sticky top-0 z-30">
           {/* Left: Breadcrumbs */}
-          <div className="flex items-center gap-3">
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-sf-text-secondary hover:text-white">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-1.5 rounded-md hover:bg-brand-surface-2 text-brand-muted">
                <List size={20} />
             </button>
-            <div className="flex items-center gap-2 text-[13px] font-medium text-sf-text-secondary">
-              <span className="text-sf-text-muted hidden sm:inline">sf</span>
-              <span className="text-sf-border-default hidden sm:inline">/</span>
+            <div className="flex items-center gap-2">
               {currentProduct ? (
                 <div className="relative">
-                  <button onClick={() => setShowProductMenu(!showProductMenu)} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-sf-bg-elevated border border-sf-border-subtle text-white hover:border-sf-border-default transition-all shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan">
-                    <span className={`w-2 h-2 rounded-full ${getHealthColor(currentProduct.healthScore??0)}`} />
-                    {currentProduct.name}
-                    <CaretDown size={12} className="text-sf-text-muted ml-0.5" />
+                  <button
+                    onClick={() => setShowProductMenu(!showProductMenu)}
+                    className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-[13px] font-bold text-white hover:border-brand-accent transition-all shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-brand-primary to-blue-600 font-black text-[10px] text-white">
+                      {currentProduct.name[0]}
+                    </div>
+                    <span>{currentProduct.name}</span>
+                    <CaretDown size={14} className={`transition-transform duration-200 ${showProductMenu ? "rotate-180" : ""}`} />
                   </button>
                   {/* Dropdown */}
                   <AnimatePresence>

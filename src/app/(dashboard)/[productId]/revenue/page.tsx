@@ -127,14 +127,14 @@ export default function RevenuePage() {
   if (productLoading || snapshotsLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-[#94a3b8]" />
+        <Loader2 className="h-5 w-5 animate-spin text-brand-muted" />
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="rounded-xl border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.05)] p-4 text-sm text-[#ef4444]">
+      <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-4 text-sm text-rose-500">
         Product not found.
       </div>
     );
@@ -142,15 +142,15 @@ export default function RevenuePage() {
 
   if (!integration) {
     return (
-      <div className="flex h-80 flex-col items-center justify-center rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0a1525] px-6 text-center">
-        <CreditCard className="mb-4 h-12 w-12 text-[#334155]" />
-        <h2 className="mb-2 text-lg font-semibold text-[#f1f5f9]">Connect your payment provider</h2>
-        <p className="mb-6 max-w-md text-sm text-[#94a3b8]">
+      <div className="flex h-80 flex-col items-center justify-center rounded-xl border border-brand-border bg-brand-surface px-6 text-center">
+        <CreditCard className="mb-4 h-12 w-12 text-brand-muted/40" />
+        <h2 className="mb-2 text-lg font-semibold text-white">Connect your payment provider</h2>
+        <p className="mb-6 max-w-md text-sm text-brand-muted">
           Add your Stripe or DodoPayment API key to sync revenue history, track MRR, and unlock customer analytics.
         </p>
         <button
           onClick={() => router.push(`/${productId}/settings`)}
-          className="inline-flex items-center gap-2 rounded-lg border border-[rgba(14,165,233,0.25)] bg-[rgba(14,165,233,0.08)] px-5 py-2.5 text-sm font-semibold text-[#0ea5e9] transition hover:bg-[rgba(14,165,233,0.14)]"
+          className="inline-flex items-center gap-2 rounded-lg border border-brand-primary/30 bg-brand-primary/10 px-5 py-2.5 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
         >
           <Settings className="h-4 w-4" />
           Configure in Settings
@@ -209,10 +209,10 @@ export default function RevenuePage() {
     .reverse();
 
   const metricConfig = {
-    MRR: { key: "mrr", color: "#0ea5e9", currency: true },
+    MRR: { key: "mrr", color: "#06b6d4", currency: true },
     "New MRR": { key: "newMrr", color: "#2dd4bf", currency: true },
-    Churned: { key: "churnedMrr", color: "#ef4444", currency: true },
-    Subs: { key: "subs", color: "#0ea5e9", currency: false },
+    Churned: { key: "churnedMrr", color: "#f43f5e", currency: true },
+    Subs: { key: "subs", color: "#06b6d4", currency: false },
   } as const;
 
   const currentMetric = metricConfig[activeMetric];
@@ -249,13 +249,13 @@ export default function RevenuePage() {
     <div className="space-y-6">
       <div className="mb-1 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-lg font-semibold tracking-tight text-[#f1f5f9]">Revenue & Analytics</h1>
-          <p className="mt-1 flex items-center gap-2 text-xs font-mono text-[#334155]">
+          <h1 className="text-lg font-semibold tracking-tight text-white">Revenue & Analytics</h1>
+          <p className="mt-1 flex items-center gap-2 text-xs font-mono text-brand-muted">
             <span className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#3ecf8e]" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
               Synced via {integration.provider === "STRIPE" ? "Stripe" : "DodoPayment"}
             </span>
-            <span className="text-[#1e3a5f]">·</span>
+            <span className="text-brand-border">·</span>
             <span>
               Last sync{" "}
               {integration.lastSyncedAt
@@ -279,12 +279,12 @@ export default function RevenuePage() {
           className={cn(
             "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-mono transition-all",
             syncNow.isPending
-              ? "border-[rgba(14,165,233,0.2)] bg-[rgba(14,165,233,0.05)] text-[#0ea5e9]"
+              ? "border-brand-primary/20 bg-brand-primary/5 text-brand-primary"
               : syncState === "success"
-                ? "border-[rgba(62,207,142,0.3)] bg-[rgba(62,207,142,0.05)] text-[#3ecf8e]"
+                ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-400"
                 : syncState === "error"
-                  ? "border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.05)] text-[#ef4444]"
-                  : "border-[rgba(14,165,233,0.15)] text-[#475569] hover:border-[rgba(14,165,233,0.25)] hover:text-[#94a3b8]",
+                  ? "border-rose-500/30 bg-rose-500/5 text-rose-400"
+                  : "border-brand-border text-brand-muted hover:border-brand-primary/30 hover:text-white",
           )}
         >
           {syncNow.isPending ? (
@@ -305,7 +305,7 @@ export default function RevenuePage() {
         </button>
       </div>
 
-      <div className="flex w-fit gap-1 rounded-lg border border-[rgba(14,165,233,0.1)] bg-[#0a1525] p-1">
+      <div className="flex w-fit gap-1 rounded-lg border border-brand-border bg-brand-surface p-1">
         {TIME_FILTERS.map((period) => (
           <button
             key={period.label}
@@ -313,8 +313,8 @@ export default function RevenuePage() {
             className={cn(
               "rounded-md px-3 py-1 text-xs font-mono transition-all",
               timeFilter === period.days
-                ? "bg-[#0ea5e9] text-white"
-                : "text-[#475569] hover:text-[#94a3b8]",
+                ? "bg-brand-primary text-white"
+                : "text-brand-muted hover:text-white",
             )}
           >
             {period.label}
@@ -323,62 +323,62 @@ export default function RevenuePage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0f1e35] p-5">
+        <div className="rounded-xl border border-brand-border bg-brand-surface p-5">
           <div className="mb-3 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-[#0ea5e9]" />
-            <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">MRR</span>
+            <BarChart3 className="h-4 w-4 text-brand-primary" />
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">MRR</span>
           </div>
-          <div className={cn("text-3xl font-mono font-semibold tracking-tight", (product.mrr || 0) > 0 ? "text-[#3ecf8e]" : "text-[#94a3b8]")}>{formatCompactCurrency(product.mrr || 0)}</div>
-          <div className={cn("mt-1 flex items-center gap-1 text-xs font-mono", mrrTrend >= 0 ? "text-[#3ecf8e]" : "text-[#ef4444]")}>
+          <div className={cn("text-3xl font-mono font-semibold tracking-tight", (product.mrr || 0) > 0 ? "text-emerald-400" : "text-brand-muted")}>{formatCompactCurrency(product.mrr || 0)}</div>
+          <div className={cn("mt-1 flex items-center gap-1 text-xs font-mono", mrrTrend >= 0 ? "text-emerald-400" : "text-rose-400")}>
             {mrrTrend >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
             {`${mrrTrend >= 0 ? "+" : ""}${mrrTrend.toFixed(1)}% this period`}
           </div>
         </div>
 
-        <div className="rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0f1e35] p-5">
+        <div className="rounded-xl border border-brand-border bg-brand-surface p-5">
           <div className="mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-[#2dd4bf]" />
-            <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">ARR</span>
+            <TrendingUp className="h-4 w-4 text-brand-accent" />
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">ARR</span>
           </div>
-          <div className={cn("text-3xl font-mono font-semibold tracking-tight", (product.mrr || 0) > 0 ? "text-[#3ecf8e]" : "text-[#94a3b8]")}>{formatCompactCurrency((product.mrr || 0) * 12)}</div>
-          <div className="mt-1 text-xs font-mono text-[#475569]">12x monthly recurring revenue</div>
+          <div className={cn("text-3xl font-mono font-semibold tracking-tight", (product.mrr || 0) > 0 ? "text-emerald-400" : "text-brand-muted")}>{formatCompactCurrency((product.mrr || 0) * 12)}</div>
+          <div className="mt-1 text-xs font-mono text-brand-muted">12x monthly recurring revenue</div>
         </div>
 
-        <div className="rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0f1e35] p-5">
+        <div className="rounded-xl border border-brand-border bg-brand-surface p-5">
           <div className="mb-3 flex items-center gap-2">
-            <Users className="h-4 w-4 text-[#0ea5e9]" />
-            <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">Active Subscriptions</span>
+            <Users className="h-4 w-4 text-brand-primary" />
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">Active Subscriptions</span>
           </div>
-          <div className="text-3xl font-mono font-semibold tracking-tight text-[#0ea5e9]">
+          <div className="text-3xl font-mono font-semibold tracking-tight text-brand-primary">
             {(product.activeSubscriptions || product.activeUsers || 0).toLocaleString()}
           </div>
-          <div className={cn("mt-1 flex items-center gap-1 text-xs font-mono", subsTrend >= 0 ? "text-[#3ecf8e]" : "text-[#ef4444]")}>
+          <div className={cn("mt-1 flex items-center gap-1 text-xs font-mono", subsTrend >= 0 ? "text-emerald-400" : "text-rose-400")}>
             {subsTrend >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
             {`${subsTrend >= 0 ? "+" : ""}${subsTrend.toFixed(1)}% this period`}
           </div>
         </div>
 
-        <div className="rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0f1e35] p-5">
+        <div className="rounded-xl border border-brand-border bg-brand-surface p-5">
           <div className="mb-3 flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-[#f97316]" />
-            <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">Churn Rate</span>
+            <TrendingDown className="h-4 w-4 text-amber-500" />
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">Churn Rate</span>
           </div>
           <div
             className={cn(
               "text-3xl font-mono font-semibold tracking-tight",
-              churn < 3 ? "text-[#3ecf8e]" : churn <= 7 ? "text-[#f97316]" : "text-red-400",
+              churn < 3 ? "text-emerald-400" : churn <= 7 ? "text-amber-500" : "text-rose-500",
             )}
           >
             {churn.toFixed(1)}%
           </div>
-          <div className="mt-1 text-xs font-mono text-[#475569]">Healthy target below 3%</div>
+          <div className="mt-1 text-xs font-mono text-brand-muted">Healthy target below 3%</div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0a1525] p-5">
+      <div className="rounded-xl border border-brand-border bg-brand-surface p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">Revenue Performance</span>
-          <div className="flex gap-1 rounded-lg border border-[rgba(14,165,233,0.08)] bg-[#070c17] p-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">Revenue Performance</span>
+          <div className="flex gap-1 rounded-lg border border-brand-border bg-brand-bg p-1">
             {CHART_METRICS.map((metric) => (
               <button
                 key={metric}
@@ -386,8 +386,8 @@ export default function RevenuePage() {
                 className={cn(
                   "rounded px-2 py-0.5 text-xs font-mono transition-all",
                   activeMetric === metric
-                    ? "border border-[rgba(14,165,233,0.2)] bg-[#0f1e35] text-[#0ea5e9]"
-                    : "text-[#334155] hover:text-[#475569]",
+                    ? "border border-brand-primary/20 bg-brand-surface text-brand-primary"
+                    : "text-brand-muted hover:text-white",
                 )}
               >
                 {metric}
@@ -406,15 +406,15 @@ export default function RevenuePage() {
                     <stop offset="95%" stopColor={currentMetric.color} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(14,165,233,0.06)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(6,182,212,0.06)" vertical={false} />
                 <XAxis
                   dataKey="label"
-                  tick={{ fill: "#334155", fontSize: 10, fontFamily: "var(--font-mono)" }}
+                  tick={{ fill: "var(--brand-muted)", fontSize: 10, fontFamily: "var(--font-mono)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fill: "#334155", fontSize: 10, fontFamily: "var(--font-mono)" }}
+                  tick={{ fill: "var(--brand-muted)", fontSize: 10, fontFamily: "var(--font-mono)" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(value: number) =>
@@ -423,14 +423,14 @@ export default function RevenuePage() {
                 />
                 <Tooltip
                   contentStyle={{
-                    background: "#0f1e35",
-                    border: "1px solid rgba(14,165,233,0.2)",
+                    background: "var(--brand-surface)",
+                    border: "1px solid var(--brand-border)",
                     borderRadius: "8px",
                     color: "#f1f5f9",
                     fontSize: "12px",
                     fontFamily: "var(--font-mono)",
                   }}
-                  labelStyle={{ color: "#94a3b8" }}
+                  labelStyle={{ color: "var(--brand-muted)" }}
                   formatter={(value) =>
                     currentMetric.currency
                       ? [formatCurrency(Number(value ?? 0)), activeMetric]
@@ -453,34 +453,34 @@ export default function RevenuePage() {
               {[40, 55, 48, 62, 58, 70, 65, 80, 75, 90, 85, 95].map((height, index) => (
                 <div
                   key={`placeholder-${index}`}
-                  className="w-6 rounded-t bg-[#0ea5e9]"
+                  className="w-6 rounded-t bg-brand-primary"
                   style={{ height: `${height * 0.6}px` }}
                 />
               ))}
             </div>
-            <p className="text-center text-xs font-mono text-[#334155]">
+            <p className="text-center text-xs font-mono text-brand-muted">
               No revenue history yet
               <br />
-              <span className="text-[#1e3a5f]">Data appears after your first real payment</span>
+              <span className="text-brand-border">Data appears after your first real payment</span>
             </p>
           </div>
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0a1525]">
-        <div className="flex items-center justify-between border-b border-[rgba(14,165,233,0.08)] px-5 py-4">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">History</span>
-          <span className="text-xs font-mono text-[#334155]">{historyRows.length} records</span>
+      <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface">
+        <div className="flex items-center justify-between border-b border-brand-border px-5 py-4">
+          <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">History</span>
+          <span className="text-xs font-mono text-brand-muted/60">{historyRows.length} records</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[rgba(14,165,233,0.06)]">
+              <tr className="border-b border-brand-border/30">
                 {["Date", "MRR", "New MRR", "Churned", "Subs", "Churn %"].map((column) => (
                   <th
                     key={column}
-                    className="px-5 py-3 text-left text-xs font-mono font-medium uppercase tracking-widest text-[#334155]"
+                    className="px-5 py-3 text-left text-xs font-mono font-medium uppercase tracking-widest text-brand-muted"
                   >
                     {column}
                   </th>
@@ -499,31 +499,31 @@ export default function RevenuePage() {
                   <tr
                     key={row.id}
                     className={cn(
-                      "border-b border-[rgba(14,165,233,0.04)] transition-colors hover:bg-[rgba(14,165,233,0.03)]",
-                      row.mrrDeltaPct > 20 && "bg-[rgba(62,207,142,0.03)]",
-                      row.mrrDeltaPct < -10 && "bg-[rgba(239,68,68,0.03)]",
+                      "border-b border-brand-border/20 transition-colors hover:bg-white/[0.02]",
+                      row.mrrDeltaPct > 20 && "bg-emerald-500/5",
+                      row.mrrDeltaPct < -10 && "bg-rose-500/5",
                     )}
                   >
-                    <td className="px-5 py-3 text-xs font-mono text-[#475569]">{row.dateLabel}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-brand-muted">{row.dateLabel}</td>
                     <td
                       className={cn(
                         "px-5 py-3 text-sm font-mono font-medium",
-                        row.mrr > 0 ? "text-[#3ecf8e]" : "text-[#94a3b8]",
+                        row.mrr > 0 ? "text-emerald-400" : "text-brand-muted",
                       )}
                     >
                       {formatCurrency(row.mrr)}
                     </td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#3ecf8e]">+{formatCurrency(row.newMrr)}</td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#ef4444]">-{formatCurrency(row.churnedMrr)}</td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#0ea5e9]">{row.subs.toLocaleString()}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-emerald-400">+{formatCurrency(row.newMrr)}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-rose-400">-{formatCurrency(row.churnedMrr)}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-brand-primary">{row.subs.toLocaleString()}</td>
                     <td
                       className={cn(
                         "px-5 py-3 text-xs font-mono",
                         row.churnPct > 5
-                          ? "text-[#ef4444]"
+                          ? "text-rose-400"
                           : row.churnPct > 2
-                            ? "text-[#f97316]"
-                            : "text-[#3ecf8e]",
+                            ? "text-amber-500"
+                            : "text-emerald-400",
                       )}
                     >
                       {row.churnPct.toFixed(1)}%
@@ -536,20 +536,20 @@ export default function RevenuePage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[rgba(14,165,233,0.15)] bg-[#0a1525]">
-        <div className="flex items-center justify-between border-b border-[rgba(14,165,233,0.08)] px-5 py-4">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#475569]">Customers</span>
-          <span className="text-xs font-mono text-[#0ea5e9]">{activeCount} active</span>
+      <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface">
+        <div className="flex items-center justify-between border-b border-brand-border px-5 py-4">
+          <span className="text-xs font-mono uppercase tracking-widest text-brand-muted">Customers</span>
+          <span className="text-xs font-mono text-brand-primary">{activeCount} active</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[rgba(14,165,233,0.06)]">
+              <tr className="border-b border-brand-border/30">
                 {["Customer", "Plan", "Amount", "Since", "Status"].map((column) => (
                   <th
                     key={column}
-                    className="px-5 py-3 text-left text-xs font-mono font-medium uppercase tracking-widest text-[#334155]"
+                    className="px-5 py-3 text-left text-xs font-mono font-medium uppercase tracking-widest text-brand-muted"
                   >
                     {column}
                   </th>
@@ -573,35 +573,35 @@ export default function RevenuePage() {
                 customers.map((customer) => (
                   <tr
                     key={customer.id}
-                    className="border-b border-[rgba(14,165,233,0.04)] transition-colors hover:bg-[rgba(14,165,233,0.03)]"
+                    className="border-b border-brand-border/10 transition-colors hover:bg-white/[0.02]"
                   >
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[rgba(14,165,233,0.15)] text-xs font-semibold text-[#0ea5e9]">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-primary/15 text-xs font-semibold text-brand-primary">
                           {customer.name[0]?.toUpperCase() ?? "?"}
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-[#f1f5f9]">{customer.name}</p>
-                          <p className="text-xs font-mono text-[#334155]">{customer.email}</p>
+                          <p className="text-xs font-medium text-white">{customer.name}</p>
+                          <p className="text-xs font-mono text-brand-muted/70">{customer.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#94a3b8]">{customer.plan}</td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#3ecf8e]">
+                    <td className="px-5 py-3 text-xs font-mono text-brand-muted">{customer.plan}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-emerald-400">
                       {customer.amount === 0 ? (
-                        <span className="text-[#334155]">100% off</span>
+                        <span className="text-brand-muted">100% off</span>
                       ) : (
                         formatCurrency(customer.amount, customer.currency)
                       )}
                     </td>
-                    <td className="px-5 py-3 text-xs font-mono text-[#475569]">{customer.since}</td>
+                    <td className="px-5 py-3 text-xs font-mono text-brand-muted">{customer.since}</td>
                     <td className="px-5 py-3">
                       <span
                         className={cn(
                           "rounded px-2 py-0.5 text-xs font-mono",
                           customer.status === "active"
-                            ? "bg-[rgba(62,207,142,0.1)] text-[#3ecf8e]"
-                            : "bg-[rgba(239,68,68,0.1)] text-[#ef4444]",
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-rose-500/10 text-rose-400",
                         )}
                       >
                         {customer.status}

@@ -51,41 +51,67 @@
   --color-co-teal: #2dd4bf;
   --color-co-tealbg: rgba(45, 212, 191, 0.08);
   --color-co-green: #3ecf8e;
+  --color-co-tealbg: rgba(45, 212, 191, 0.08);
   --color-co-grnbg: rgba(62, 207, 142, 0.08);
   --color-co-amber: #f97316;
   --color-co-ambbg: rgba(249, 115, 22, 0.08);
   --color-co-red: #ef4444;
   --color-co-redbg: rgba(239, 68, 68, 0.08);
   --color-co-purple: #a78bfa;
+
+  /* Indiqo Brand Tokens */
+  --color-brand-primary: #06b6d4;
+  --color-brand-accent: #22d3ee;
+  --color-brand-accent-light: #67e8f9;
+  --color-brand-bg: #0d1117;
+  --color-brand-surface: #131b2e;
+  --color-brand-surface-2: #1e2938;
+  --color-brand-text: #f1f5f9;
+  --color-brand-muted: #94a3b8;
+  --color-brand-border: #1e2938;
 }
 
 :root {
   --background: #0d1117;
-  --foreground: #f0f4ff;
-  --card: #131920;
-  --card-foreground: #f0f4ff;
-  --popover: #131920;
-  --popover-foreground: #f0f4ff;
-  --primary: #00d4ff;
-  --primary-foreground: #080b12;
-  --secondary: rgba(255, 255, 255, 0.03);
-  --secondary-foreground: #f0f4ff;
-  --muted: rgba(255, 255, 255, 0.03);
-  --muted-foreground: #8892a4;
-  --accent: rgba(0, 212, 255, 0.06);
-  --accent-foreground: #00d4ff;
-  --destructive: #f43f5e;
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.07);
-  --ring: #00d4ff;
-  --radius: 12px;
+  --foreground: #f1f5f9;
+  --card: #131b2e;
+  --card-foreground: #f1f5f9;
+  --popover: #131b2e;
+  --popover-foreground: #f1f5f9;
+  --primary: #06b6d4;
+  --primary-foreground: #0d1117;
+  --secondary: #1e2938;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e2938;
+  --muted-foreground: #94a3b8;
+  --accent: #22d3ee;
+  --accent-foreground: #0d1117;
+  --destructive: #ef4444;
+  --border: #1e2938;
+  --input: #1e2938;
+  --ring: #06b6d4;
+  --radius: 10px;
+
+  --brand-primary: #06b6d4;
+  --brand-accent: #22d3ee;
+  --brand-accent-light: #67e8f9;
+  --brand-bg: #0d1117;
+  --brand-surface: #131b2e;
+  --brand-surface-2: #1e2938;
+  --brand-text: #f1f5f9;
+  --brand-muted: #94a3b8;
+  --brand-border: #1e2938;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-brand-bg text-brand-text antialiased;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; }
+  h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.4px; }
+  h3 { font-size: 16px; font-weight: 500; }
 }
 
 @layer utilities {

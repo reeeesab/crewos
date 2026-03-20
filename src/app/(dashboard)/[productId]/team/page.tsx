@@ -10,9 +10,9 @@ type MemberRole = "OWNER" | "EDITOR" | "VIEWER";
 
 function RoleBadge({ role }: { role: MemberRole }) {
   const styles: Record<MemberRole, string> = {
-    OWNER: "bg-sf-accent/10 text-sf-accent border border-sf-accent/20",
-    EDITOR: "bg-sf-purple/10 text-sf-purple border border-sf-purple/20",
-    VIEWER: "bg-sf-text-muted/10 text-sf-text-muted border border-sf-text-muted/20",
+    OWNER: "bg-brand-primary/10 text-brand-primary border border-brand-primary/20",
+    EDITOR: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
+    VIEWER: "bg-brand-muted/10 text-brand-muted border border-brand-border",
   };
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider ${styles[role]}`}>
@@ -78,8 +78,8 @@ export default function TeamPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Team & Access</h1>
-          <p className="text-sm font-medium text-sf-text-secondary mt-1">Manage team members and invite codes</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Team & Access</h1>
+          <p className="text-sm font-medium text-brand-muted mt-1">Manage team members and invite codes</p>
         </div>
         {isOwner && (
           <button
@@ -88,7 +88,7 @@ export default function TeamPage() {
               rotateInvite.mutate({ productId });
             }}
             disabled={rotateInvite.isPending}
-            className="flex items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-sf-accent/90 disabled:opacity-50 shadow-[0_0_15px_rgba(0,212,255,0.3)] disabled:shadow-none"
+            className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-brand-accent disabled:opacity-50 shadow-[0_0_15px_rgba(6,182,212,0.3)] disabled:shadow-none"
           >
             {rotateInvite.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             {rotateInvite.isPending ? "Generating..." : (inviteInfo?.hasCode ? "Regenerate Code" : "Generate Code")}
@@ -105,14 +105,14 @@ export default function TeamPage() {
       )}
 
       {/* Invite Code Card */}
-      <div className="rounded-lg border border-sf-border bg-sf-sidebar/50 p-6">
+      <div className="rounded-lg border border-brand-border bg-brand-surface p-6">
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sf-accent/10">
-            <KeyRound className="h-5 w-5 text-sf-accent" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-accent/10">
+            <KeyRound className="h-5 w-5 text-brand-accent" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-sf-text-primary">Project Invite Code</h2>
-            <p className="text-xs text-sf-text-muted">Share this code with teammates to give them access</p>
+            <h2 className="text-sm font-bold text-white">Project Invite Code</h2>
+            <p className="text-xs text-brand-muted">Share this code with teammates to give them access</p>
           </div>
         </div>
 
@@ -148,12 +148,12 @@ export default function TeamPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed border-sf-border-subtle bg-sf-base/50 p-6 text-center">
-            <KeyRound className="h-8 w-8 text-sf-text-muted/40 mx-auto mb-2" />
-            <p className="text-sm text-sf-text-muted font-medium">
+          <div className="rounded-lg border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center">
+            <KeyRound className="h-8 w-8 text-brand-muted/40 mx-auto mb-2" />
+            <p className="text-sm text-brand-muted font-medium">
               {isOwner ? "No invite code yet" : "No invite code available"}
             </p>
-            <p className="text-xs text-sf-text-muted mt-1">
+            <p className="text-xs text-brand-muted mt-1">
               {isOwner 
                 ? "Click the button above to generate your first invite code" 
                 : "Ask the project owner to create one"}
@@ -163,10 +163,10 @@ export default function TeamPage() {
       </div>
 
       {/* Members Card */}
-      <div className="rounded-lg border border-sf-border bg-sf-sidebar/50 overflow-hidden">
-        <div className="border-b border-sf-border px-6 py-4">
-          <h2 className="text-sm font-bold text-sf-text-primary">Team Members</h2>
-          <p className="text-xs text-sf-text-muted mt-1">{allMembers.length} {allMembers.length === 1 ? "member" : "members"}</p>
+      <div className="rounded-lg border border-brand-border bg-brand-surface overflow-hidden">
+        <div className="border-b border-brand-border px-6 py-4">
+          <h2 className="text-sm font-bold text-white">Team Members</h2>
+          <p className="text-xs text-brand-muted mt-1">{allMembers.length} {allMembers.length === 1 ? "member" : "members"}</p>
         </div>
 
         {allMembers.length === 0 ? (
@@ -178,15 +178,15 @@ export default function TeamPage() {
             </div>
           </div>
         ) : (
-          <div className="divide-y divide-sf-border/50">
+          <div className="divide-y divide-brand-border/50">
             {allMembers.map((member) => (
-              <div key={member.id} className="flex items-center gap-4 px-6 py-4 hover:bg-sf-bg-glass/30 transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sf-accent/20 text-xs font-bold text-white">
+              <div key={member.id} className="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white">
                   {member.user.name?.charAt(0)?.toUpperCase() || member.user.email.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-sf-text-primary">{member.user.name || "Unknown User"}</div>
-                  <div className="truncate text-xs text-sf-text-muted">{member.user.email}</div>
+                  <div className="text-sm font-semibold text-white">{member.user.name || "Unknown User"}</div>
+                  <div className="truncate text-xs text-brand-muted">{member.user.email}</div>
                 </div>
                 <RoleBadge role={member.role as MemberRole} />
               </div>

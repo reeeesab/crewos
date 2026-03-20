@@ -28,9 +28,9 @@ function formatK(n: number) {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    LIVE: "bg-sf-accent-emerald/10 text-sf-accent-emerald ring-1 ring-inset ring-sf-accent-emerald/20",
-    BETA: "bg-sf-accent-cyan/10 text-sf-accent-cyan ring-1 ring-inset ring-sf-accent-cyan/20",
-    ARCHIVED: "bg-sf-bg-glass text-sf-text-secondary ring-1 ring-inset ring-sf-border-subtle",
+    LIVE: "bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20",
+    BETA: "bg-brand-accent/10 text-brand-accent ring-1 ring-inset ring-brand-accent/20",
+    ARCHIVED: "bg-brand-surface-2 text-brand-muted ring-1 ring-inset ring-brand-border",
   };
   return (
     <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${styles[status] ?? ""}`}>
@@ -57,23 +57,23 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-sf-border-default bg-sf-bg-elevated p-6 shadow-2xl"
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-2xl"
       >
-        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-sf-accent-cyan to-blue-600" />
+        <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-brand-accent to-blue-600" />
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded border border-sf-border-subtle bg-sf-bg-glass">
-            <Lightning weight="fill" className="h-4 w-4 text-sf-accent-cyan" />
+          <div className="flex h-8 w-8 items-center justify-center rounded border border-brand-border bg-brand-bg">
+            <Lightning weight="fill" className="h-4 w-4 text-brand-accent" />
           </div>
           <h3 className="font-display text-xl text-white">Add Product</h3>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-sf-text-secondary">Product name *</label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-brand-muted">Product name *</label>
             <input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-lg border border-sf-border-subtle bg-sf-bg-base px-3 py-2.5 text-sm text-sf-text-primary placeholder:text-sf-text-muted shadow-inner transition-all focus:border-sf-border-default focus:outline-none focus:ring-1 focus:ring-sf-accent-cyan"
+              className="w-full rounded-lg border border-brand-border bg-brand-bg px-3 py-2.5 text-sm text-brand-text placeholder:text-brand-muted shadow-inner transition-all focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-accent"
               placeholder='e.g. "ShipFast"'
             />
           </div>
@@ -130,14 +130,14 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
         <div className="mt-8 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 rounded-lg border border-sf-border-subtle bg-sf-bg-glass px-4 py-2.5 text-sm font-semibold text-sf-text-secondary transition-all hover:bg-sf-border-subtle hover:text-white focus-visible:ring-2 focus-visible:ring-sf-accent-cyan"
+            className="flex-1 rounded-lg border border-brand-border bg-brand-surface-2 px-4 py-2.5 text-sm font-semibold text-brand-muted transition-all hover:bg-brand-surface hover:text-white"
           >
             Cancel
           </button>
           <button
             onClick={() => create.mutate(form)}
             disabled={!form.name || create.isPending}
-            className="flex-1 rounded-lg bg-sf-accent-cyan px-4 py-2.5 text-sm font-bold text-sf-bg-base shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all hover:bg-[#00e5ff] disabled:opacity-50 disabled:shadow-none focus-visible:ring-2 focus-visible:ring-white"
+            className="flex-1 rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all hover:bg-brand-accent disabled:opacity-50 disabled:shadow-none"
           >
             {create.isPending ? <CircleNotch weight="bold" className="mx-auto h-4 w-4 animate-spin" /> : "Create Product"}
           </button>
@@ -168,7 +168,7 @@ function JoinProjectModal({ onClose }: { onClose: () => void }) {
         className="w-full max-w-md rounded-2xl border border-sf-border-default bg-sf-bg-elevated p-6 shadow-2xl"
       >
         <div className="mb-4 flex items-center gap-2">
-          <Key weight="duotone" className="h-5 w-5 text-sf-accent-cyan" />
+          <Key weight="duotone" className="h-5 w-5 text-brand-accent" />
           <h3 className="font-display text-xl text-white">Join Project</h3>
         </div>
         <p className="mb-4 text-sm text-sf-text-secondary">Paste the invite code shared by the project owner.</p>
@@ -256,13 +256,13 @@ export default function PortfolioPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowJoin(true)}
-            className="group flex w-fit items-center gap-2 rounded-lg border border-sf-border-default bg-sf-bg-glass px-4 py-2 text-sm font-bold text-white transition-all hover:bg-sf-border-subtle focus-visible:ring-2 focus-visible:ring-sf-accent-cyan"
+            className="group flex w-fit items-center gap-2 rounded-lg border border-brand-border bg-brand-surface-2 px-4 py-2 text-sm font-bold text-brand-muted transition-all hover:bg-brand-surface hover:text-white focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <Key weight="bold" className="h-4 w-4" /> Join Project
           </button>
           <button
             onClick={() => setShowCreate(true)}
-            className="group flex w-fit items-center gap-2 rounded-lg bg-sf-text-primary px-4 py-2 text-sm font-bold text-sf-bg-base shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:bg-white focus-visible:ring-2 focus-visible:ring-sf-accent-cyan"
+            className="group flex w-fit items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all hover:bg-brand-accent focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <Plus weight="bold" className="h-4 w-4" /> Add Product
           </button>
@@ -277,9 +277,9 @@ export default function PortfolioPage() {
             prefix: "$",
             suffix: "",
             icon: ChartBar,
-            color: "text-sf-accent-cyan",
-            bg: "from-sf-accent-cyan/10 to-transparent",
-            blur: "bg-sf-accent-cyan",
+            color: "text-brand-accent",
+            bg: "from-brand-accent/10 to-transparent",
+            blur: "bg-brand-accent",
           },
           {
             label: "Total ARR",
@@ -287,9 +287,9 @@ export default function PortfolioPage() {
             prefix: "$",
             suffix: "",
             icon: TrendUp,
-            color: "text-sf-accent-emerald",
-            bg: "from-sf-accent-emerald/10 to-transparent",
-            blur: "bg-sf-accent-emerald",
+            color: "text-emerald-500",
+            bg: "from-emerald-500/10 to-transparent",
+            blur: "bg-emerald-500",
           },
           {
             label: "Active Users",
@@ -297,9 +297,9 @@ export default function PortfolioPage() {
             prefix: "",
             suffix: "",
             icon: Users,
-            color: "text-sf-accent-amber",
-            bg: "from-sf-accent-amber/10 to-transparent",
-            blur: "bg-sf-accent-amber",
+            color: "text-amber-500",
+            bg: "from-amber-500/10 to-transparent",
+            blur: "bg-amber-500",
           },
           {
             label: "Avg Health",
@@ -307,12 +307,12 @@ export default function PortfolioPage() {
             prefix: "",
             suffix: "/100",
             icon: Pulse,
-            color: avgHealth >= 75 ? "text-sf-accent-emerald" : "text-sf-accent-amber",
+            color: avgHealth >= 75 ? "text-emerald-500" : "text-amber-500",
             bg:
               avgHealth >= 75
-                ? "from-sf-accent-emerald/10 to-transparent"
-                : "from-sf-accent-amber/10 to-transparent",
-            blur: avgHealth >= 75 ? "bg-sf-accent-emerald" : "bg-sf-accent-amber",
+                ? "from-emerald-500/10 to-transparent"
+                : "from-amber-500/10 to-transparent",
+            blur: avgHealth >= 75 ? "bg-emerald-500" : "bg-amber-500",
           },
         ].map((stat, index) => (
           <motion.div
@@ -320,7 +320,7 @@ export default function PortfolioPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: index * 0.05 + 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative overflow-hidden rounded-xl border border-sf-border-subtle bg-sf-bg-elevated p-5"
+            className="group relative overflow-hidden rounded-xl border border-brand-border bg-brand-surface p-5"
           >
             <div className={`absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-gradient-to-bl ${stat.bg} opacity-50`} />
             <div className={`absolute -right-6 -top-6 h-12 w-12 rounded-full ${stat.blur} opacity-20 blur-xl`} />
@@ -328,13 +328,13 @@ export default function PortfolioPage() {
             <div className="relative z-10">
               <div className="mb-3 flex items-center gap-2">
                 <stat.icon weight="duotone" className={`h-5 w-5 ${stat.color}`} />
-                <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-sf-text-muted">{stat.label}</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-brand-muted">{stat.label}</span>
               </div>
               <div className="flex items-baseline">
                 <span className="font-display text-3xl text-white">
                   {stat.prefix}
                   <CountUp end={stat.value} duration={2} separator="," />
-                  {stat.suffix && <span className="text-lg text-sf-text-muted">{stat.suffix}</span>}
+                  {stat.suffix && <span className="text-lg text-brand-muted">{stat.suffix}</span>}
                 </span>
               </div>
             </div>
@@ -393,13 +393,13 @@ export default function PortfolioPage() {
       ) : (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {allProducts.map((product) => (
-            <Link key={product.id} href={`/${product.id}`} className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan">
+            <Link key={product.id} href={`/${product.id}`} className="block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand-primary">
               <motion.div
                 variants={itemVariants}
-                className="group relative overflow-hidden rounded-xl border border-sf-border-subtle bg-sf-bg-elevated p-5 transition-all hover:-translate-y-1 hover:border-sf-border-default hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+                className="group relative overflow-hidden rounded-xl border border-brand-border bg-brand-surface p-5 transition-all hover:-translate-y-1 hover:border-brand-accent hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
               >
                 <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                  <div className="absolute right-0 top-0 h-32 w-32 bg-sf-accent-cyan opacity-5 blur-[60px]" />
+                  <div className="absolute right-0 top-0 h-32 w-32 bg-brand-accent opacity-5 blur-[60px]" />
                 </div>
 
                 <div className="relative z-10 mb-4 flex items-start justify-between">
@@ -445,8 +445,8 @@ export default function PortfolioPage() {
                 </div>
 
                 <div className="absolute bottom-5 right-5 -translate-x-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-sf-border-subtle bg-sf-bg-glass">
-                    <CaretRight weight="bold" className="h-4 w-4 text-sf-text-primary" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-border bg-brand-surface-2 shadow-sm">
+                    <CaretRight weight="bold" className="h-4 w-4 text-brand-text" />
                   </div>
                 </div>
               </motion.div>

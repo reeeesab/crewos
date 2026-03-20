@@ -31,7 +31,7 @@ function GaugeRing({ value, label, color }: { value: number; label: string; colo
           r="42"
           fill="none"
           stroke="currentColor"
-          className="text-sf-border-subtle"
+          className="text-brand-border/30"
           strokeWidth="6"
         />
         <circle
@@ -53,13 +53,13 @@ function GaugeRing({ value, label, color }: { value: number; label: string; colo
           textAnchor="middle"
           dominantBaseline="central"
           className="text-lg font-bold"
-          fill="#F0F4FF"
+          fill="white"
           fontSize="22"
         >
           {value}
         </text>
       </svg>
-      <span className="mt-3 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">{label}</span>
+      <span className="mt-3 text-xs font-bold uppercase tracking-wider text-brand-muted">{label}</span>
     </div>
   );
 }
@@ -67,24 +67,24 @@ function GaugeRing({ value, label, color }: { value: number; label: string; colo
 function toneClasses(tone: ScoreTone) {
   if (tone === "healthy") {
     return {
-      border: "border-sf-green/20",
-      value: "text-sf-green drop-shadow-[0_0_8px_rgba(34,197,94,0.4)]",
-      badge: "text-sf-green/80",
+      border: "border-emerald-500/20",
+      value: "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]",
+      badge: "text-emerald-400/80",
       badgeText: "HEALTHY",
     };
   }
   if (tone === "attention") {
     return {
-      border: "border-sf-red/30",
-      value: "text-sf-red drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]",
-      badge: "text-sf-red/80",
+      border: "border-rose-500/30",
+      value: "text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,113,0.4)]",
+      badge: "text-rose-400/80",
       badgeText: "ATTENTION",
     };
   }
   return {
-    border: "border-sf-border-subtle",
-    value: "text-sf-text-primary",
-    badge: "text-sf-text-muted",
+    border: "border-brand-border",
+    value: "text-white",
+    badge: "text-brand-muted",
     badgeText: "NO DATA",
   };
 }
@@ -202,7 +202,7 @@ export default function HealthPage() {
   if (productQuery.isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-sf-text-muted" />
+        <Loader2 className="h-5 w-5 animate-spin text-brand-muted" />
       </div>
     );
   }
@@ -231,7 +231,7 @@ export default function HealthPage() {
   const productRing = Math.round((health.productScore / 30) * 100);
   const financialRing = Math.round((health.financialScore / 30) * 100);
 
-  const scoreColor = health.totalScore >= 75 ? "#22c55e" : health.totalScore >= 50 ? "#f59e0b" : "#ef4444";
+  const scoreColor = health.totalScore >= 75 ? "#10b981" : health.totalScore >= 50 ? "#f59e0b" : "#f43f5e";
 
   const trendPoints = useMemo(() => {
     if (allSnapshots.length === 0) return [] as Array<{ label: string; score: number; date: string }>;
@@ -258,7 +258,7 @@ export default function HealthPage() {
         score: miniScores.totalScore,
       };
     });
-  }, [allSnapshots, closedIssues, openBugs, product.churnRate, totalCosts, totalIssues]);
+  }, [allSnapshots, product.churnRate, totalCosts, openBugs, totalIssues, closedIssues]);
 
   const factors = [
     {
@@ -352,7 +352,7 @@ export default function HealthPage() {
       max: 40,
       weight: 40,
       icon: TrendingUp,
-      color: "#00D4FF",
+      color: "#22d3ee",
       desc: "MRR growth rate and churn stability",
     },
     {
@@ -361,7 +361,7 @@ export default function HealthPage() {
       max: 30,
       weight: 30,
       icon: Bug,
-      color: "#22c55e",
+      color: "#10b981",
       desc: "Bug count and issue resolution rate",
     },
     {
@@ -390,8 +390,8 @@ export default function HealthPage() {
     <div className="space-y-6 pb-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Health Score</h1>
-          <p className="mt-1 text-sm text-sf-text-secondary">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Health Score</h1>
+          <p className="mt-1 text-sm text-brand-muted">
             Computed from your live data
             <span className="mx-2">·</span>
             Last calculated: {formatRelativeTime(lastCalculatedAt)}
@@ -400,19 +400,19 @@ export default function HealthPage() {
         <button
           onClick={() => recalculate.mutate({ productId })}
           disabled={recalculate.isPending}
-          className="inline-flex items-center gap-2 rounded-xl border border-sf-border-subtle bg-sf-surface px-4 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-4 py-2 text-xs font-semibold text-brand-muted hover:text-white disabled:opacity-50"
         >
           {recalculate.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
           Recalculate now
         </button>
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl">
-        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sf-accent/5 blur-[80px]" />
+      <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl">
+        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-primary/5 blur-[80px]" />
         <div className="relative flex flex-col items-center justify-center gap-14 md:flex-row">
           <div className="flex flex-col items-center">
             <svg width="180" height="180" viewBox="0 0 160 160">
-              <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" className="text-sf-border-subtle" strokeWidth="10" />
+              <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" className="text-brand-border/30" strokeWidth="10" />
               <circle
                 cx="80"
                 cy="80"
@@ -426,10 +426,10 @@ export default function HealthPage() {
                 transform="rotate(-90 80 80)"
                 className="transition-all duration-1000 drop-shadow-[0_0_12px_currentColor]"
               />
-              <text x="80" y="74" textAnchor="middle" dominantBaseline="central" fill="#F0F4FF" fontSize="36" fontWeight="bold">
+              <text x="80" y="74" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="36" fontWeight="bold">
                 {health.totalScore}
               </text>
-              <text x="80" y="100" textAnchor="middle" fill="#8892A4" fontSize="11" fontWeight="600">
+              <text x="80" y="100" textAnchor="middle" fill="var(--color-brand-muted)" fontSize="11" fontWeight="600">
                 / 100
               </text>
             </svg>
@@ -439,14 +439,14 @@ export default function HealthPage() {
           </div>
 
           <div className="flex gap-6">
-            <GaugeRing value={revenueRing} label="Revenue" color="#4f6ef7" />
-            <GaugeRing value={productRing} label="Product" color="#22c55e" />
+            <GaugeRing value={revenueRing} label="Revenue" color="#06b6d4" />
+            <GaugeRing value={productRing} label="Product" color="#10b981" />
             <GaugeRing value={financialRing} label="Financial" color="#f59e0b" />
           </div>
         </div>
 
-        <div className="mt-8 rounded-xl border border-sf-border-subtle bg-sf-base/40 p-4">
-          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-sf-text-secondary">
+        <div className="mt-8 rounded-xl border border-brand-border bg-brand-bg/40 p-4">
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-brand-muted">
             <CalendarClock className="h-3.5 w-3.5" />
             30-day score trend
           </div>
@@ -458,51 +458,51 @@ export default function HealthPage() {
                     dataKey="label"
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fill: "#8D97AA", fontSize: 10 }}
+                    tick={{ fill: "var(--color-brand-muted)", fontSize: 10 }}
                     minTickGap={28}
                   />
                   <YAxis hide domain={[0, 100]} />
                   <Tooltip
-                    cursor={{ stroke: "#2A3444", strokeDasharray: "4 4" }}
+                    cursor={{ stroke: "var(--color-brand-border)", strokeDasharray: "4 4" }}
                     contentStyle={{
-                      background: "#0E1622",
-                      border: "1px solid #2A3444",
+                      background: "var(--color-brand-surface)",
+                      border: "1px solid var(--color-brand-border)",
                       borderRadius: "10px",
-                      color: "#F0F4FF",
+                      color: "white",
                     }}
                     formatter={(value) => [`${Number(value ?? 0)}/100`, "Score"] as [string, string]}
                   />
                   <Line
                     type="monotone"
                     dataKey="score"
-                    stroke="#00D4FF"
+                    stroke="#22d3ee"
                     strokeWidth={2.5}
-                    dot={{ r: 2, fill: "#00D4FF" }}
+                    dot={{ r: 2, fill: "#22d3ee" }}
                     activeDot={{ r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="text-xs text-sf-text-muted">Not enough history yet. Keep syncing snapshots to see health momentum.</p>
+            <p className="text-xs text-brand-muted">Not enough history yet. Keep syncing snapshots to see health momentum.</p>
           )}
         </div>
       </div>
 
       {health.financialScore <= 20 && (
-        <div className="rounded-2xl border border-sf-amber/40 bg-sf-amber/10 p-4">
+        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-sf-amber">
+              <p className="text-sm font-semibold text-amber-500">
                 Financial Health is critically low ({health.financialScore}/30)
               </p>
-              <p className="mt-1 text-xs text-sf-text-secondary">
+              <p className="mt-1 text-xs text-brand-muted">
                 This is dragging your overall score by {Math.max(0, 30 - health.financialScore)} points. Add or optimize monthly costs in Cost Tracker.
               </p>
             </div>
             <button
               onClick={() => router.push(`/${productId}/costs`)}
-              className="shrink-0 rounded-lg border border-sf-amber/50 px-3 py-1.5 text-xs font-semibold text-sf-amber hover:bg-sf-amber/10"
+              className="shrink-0 rounded-lg border border-amber-500/50 px-3 py-1.5 text-xs font-semibold text-amber-500 hover:bg-amber-500/10"
             >
               Open Cost Tracker
             </button>
@@ -518,47 +518,47 @@ export default function HealthPage() {
               key={factor.label}
               onClick={() => router.push(factor.href)}
               className={cn(
-                "relative overflow-hidden rounded-2xl border bg-sf-surface/50 p-5 text-left shadow-lg backdrop-blur-md transition-all hover:border-sf-border-default",
+                "relative overflow-hidden rounded-2xl border bg-brand-surface/50 p-5 text-left shadow-lg backdrop-blur-md transition-all hover:border-brand-border",
                 styles.border,
               )}
             >
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent to-sf-base/50 opacity-50" />
-              <div className="relative z-10 mb-2 w-full truncate text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary">{factor.label}</div>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent to-brand-bg/50 opacity-50" />
+              <div className="relative z-10 mb-2 w-full truncate text-[11px] font-bold uppercase tracking-widest text-brand-muted">{factor.label}</div>
               <div className={cn("relative z-10 text-2xl font-bold tracking-tight", styles.value)}>{factor.value}</div>
               <div className={cn("relative z-10 mt-2 text-[10px] font-bold uppercase tracking-wider", styles.badge)}>
                 {styles.badgeText}
               </div>
-              <p className="relative z-10 mt-3 text-xs text-sf-text-secondary">{factor.detail}</p>
-              <p className="relative z-10 mt-2 text-[11px] text-sf-text-muted">{factor.benchmark}</p>
-              <div className="relative z-10 mt-3 text-[11px] font-semibold text-sf-accent">→ {factor.cta}</div>
+              <p className="relative z-10 mt-3 text-xs text-brand-muted">{factor.detail}</p>
+              <p className="relative z-10 mt-2 text-[11px] text-brand-muted">{factor.benchmark}</p>
+              <div className="relative z-10 mt-3 text-[11px] font-semibold text-brand-primary">→ {factor.cta}</div>
             </button>
           );
         })}
       </div>
 
-      <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-7 shadow-lg backdrop-blur-xl">
-        <h2 className="mb-6 text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary">Score Breakdown</h2>
+      <div className="rounded-2xl border border-brand-border bg-brand-surface p-7 shadow-lg backdrop-blur-xl">
+        <h2 className="mb-6 text-[11px] font-bold uppercase tracking-widest text-brand-muted">Score Breakdown</h2>
         <div className="space-y-5">
           {breakdown.map((section) => {
             const percent = Math.round((section.score / section.max) * 100);
             return (
               <div key={section.label} className="flex items-center gap-5">
                 <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-sf-border-subtle bg-sf-base"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-border bg-brand-bg"
                   style={{ boxShadow: `0 0 10px ${section.color}20` }}
                 >
                   <section.icon className="h-5 w-5 shrink-0" style={{ color: section.color }} />
                 </div>
                 <div className="flex-1">
                   <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-sm font-bold text-sf-text-primary">
+                    <span className="text-sm font-bold text-white">
                       {section.label} ({section.weight}%)
                     </span>
-                    <span className="text-xs font-bold text-sf-text-secondary">
+                    <span className="text-xs font-bold text-brand-muted">
                       {section.score}/{section.max} · {percent}%
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full border border-sf-border-subtle/30 bg-sf-base shadow-inner">
+                  <div className="h-2 overflow-hidden rounded-full border border-brand-border bg-brand-bg shadow-inner">
                     <div
                       className="h-full rounded-full shadow-sm transition-all duration-700"
                       style={{
@@ -568,7 +568,7 @@ export default function HealthPage() {
                       }}
                     />
                   </div>
-                  <p className="mt-2 text-[11px] font-medium text-sf-text-muted">{section.desc}</p>
+                  <p className="mt-2 text-[11px] font-medium text-brand-muted">{section.desc}</p>
                 </div>
               </div>
             );
@@ -576,27 +576,27 @@ export default function HealthPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-lg">
-        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-sf-text-primary">
-          <Sparkles className="h-4 w-4 text-sf-accent" />
+      <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-lg">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
+          <Sparkles className="h-4 w-4 text-brand-primary" />
           What to improve
         </div>
 
         {recommendationsQuery.isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-sf-text-muted">
+          <div className="flex items-center gap-2 text-sm text-brand-muted">
             <Loader2 className="h-4 w-4 animate-spin" />
             Generating founder recommendations...
           </div>
         ) : recommendationsQuery.isError ? (
-          <div className="rounded-xl border border-sf-amber/30 bg-sf-amber/10 p-3 text-xs text-sf-amber">
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-500">
             AI recommendations are unavailable right now. Showing fallback suggestions.
           </div>
         ) : null}
 
-        <ol className="space-y-2 text-sm text-sf-text-secondary">
+        <ol className="space-y-2 text-sm text-brand-muted">
           {recommendationItems.slice(0, 3).map((item, index) => (
             <li key={`${index}-${item}`} className="flex items-start gap-2">
-              <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sf-base text-[11px] font-bold text-sf-text-primary">
+              <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-bg text-[11px] font-bold text-white">
                 {index + 1}
               </span>
               <span>{item}</span>
@@ -604,7 +604,7 @@ export default function HealthPage() {
           ))}
         </ol>
 
-        <div className="mt-4 flex items-center gap-2 text-xs text-sf-text-muted">
+        <div className="mt-4 flex items-center gap-2 text-xs text-brand-muted">
           <AlertTriangle className="h-3.5 w-3.5" />
           Ranked by impact based on your current metrics.
         </div>

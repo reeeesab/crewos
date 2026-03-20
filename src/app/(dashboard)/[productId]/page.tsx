@@ -17,9 +17,9 @@ function formatK(n: number) {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    LIVE: "bg-sf-accent-emerald/10 text-sf-accent-emerald ring-1 ring-inset ring-sf-accent-emerald/20",
-    BETA: "bg-sf-accent-cyan/10 text-sf-accent-cyan ring-1 ring-inset ring-sf-accent-cyan/20",
-    ARCHIVED: "bg-sf-bg-glass text-sf-text-secondary ring-1 ring-inset ring-sf-border-subtle",
+    LIVE: "bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20",
+    BETA: "bg-brand-accent/10 text-brand-accent ring-1 ring-inset ring-brand-accent/20",
+    ARCHIVED: "bg-brand-surface-2 text-brand-muted ring-1 ring-inset ring-brand-border",
   };
   return <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest ${styles[status] ?? ""}`}>{status}</span>;
 }
@@ -43,10 +43,10 @@ export default function ProductDashboard() {
   }
 
   if (!product) return (
-    <div className="flex flex-col items-center justify-center h-64 rounded-xl border border-sf-border-subtle bg-sf-bg-elevated/50">
-      <Lightning weight="duotone" className="h-8 w-8 text-sf-accent-rose mb-3 opacity-80" />
+    <div className="flex flex-col items-center justify-center h-64 rounded-xl border border-brand-border bg-brand-surface/50">
+      <Lightning weight="duotone" className="h-8 w-8 text-rose-500 mb-3 opacity-80" />
       <div className="text-xl font-display text-white">Product not found</div>
-      <p className="text-sm text-sf-text-secondary mt-1">The product you requested does not exist or has been deleted.</p>
+      <p className="text-sm text-brand-muted mt-1">The product you requested does not exist or has been deleted.</p>
     </div>
   );
 
@@ -63,15 +63,15 @@ export default function ProductDashboard() {
 
   const healthScore = product.healthScore ?? 0;
   const isHealthy = healthScore >= 75;
-  const healthColor = isHealthy ? "text-sf-accent-emerald" : healthScore >= 50 ? "text-sf-accent-amber" : "text-sf-accent-rose";
-  const healthBg = isHealthy ? "from-sf-accent-emerald/10" : healthScore >= 50 ? "from-sf-accent-amber/10" : "from-sf-accent-rose/10";
-  const healthBlur = isHealthy ? "bg-sf-accent-emerald" : healthScore >= 50 ? "bg-sf-accent-amber" : "bg-sf-accent-rose";
+  const healthColor = isHealthy ? "text-emerald-500" : healthScore >= 50 ? "text-amber-500" : "text-rose-500";
+  const healthBg = isHealthy ? "from-emerald-500/10" : healthScore >= 50 ? "from-amber-500/10" : "from-rose-500/10";
+  const healthBlur = isHealthy ? "bg-emerald-500" : healthScore >= 50 ? "bg-amber-500" : "bg-rose-500";
 
   const stats = [
-    { label: "Monthly Revenue", value: product.mrr, prefix: "$", suffix: "", icon: ChartBar, color: "text-sf-accent-cyan", bg: "from-sf-accent-cyan/10", blur: "bg-sf-accent-cyan" },
+    { label: "Monthly Revenue", value: product.mrr, prefix: "$", suffix: "", icon: ChartBar, color: "text-brand-accent", bg: "from-brand-accent/10", blur: "bg-brand-accent" },
     { label: "Integration Health", value: healthScore, prefix: "", suffix: "/100", icon: Pulse, color: healthColor, bg: healthBg, blur: healthBlur },
     { label: "Active Subs/Users", value: product.activeSubscriptions || product.activeUsers || 0, prefix: "", suffix: "", icon: Users, color: "text-purple-400", bg: "from-purple-500/10", blur: "bg-purple-500" },
-    { label: "Open Bug Tickets", value: openBugs, prefix: "", suffix: "", icon: Bug, color: openBugs > 3 ? "text-sf-accent-rose" : "text-sf-text-muted", bg: openBugs > 3 ? "from-sf-accent-rose/10" : "from-transparent", blur: openBugs > 3 ? "bg-sf-accent-rose" : "bg-sf-bg-glass" },
+    { label: "Open Bug Tickets", value: openBugs, prefix: "", suffix: "", icon: Bug, color: openBugs > 3 ? "text-rose-500" : "text-brand-muted", bg: openBugs > 3 ? "from-rose-500/10" : "from-transparent", blur: openBugs > 3 ? "bg-rose-500" : "bg-brand-surface-2" },
   ];
 
   const containerVariants = {
@@ -94,7 +94,7 @@ export default function ProductDashboard() {
             <StatusBadge status={product.status} />
           </div>
           {product.website && (
-             <a href={product.website} target="_blank" rel="noreferrer" className="text-sm font-medium text-sf-accent-cyan hover:text-white transition-colors flex items-center gap-1.5 w-fit">
+             <a href={product.website} target="_blank" rel="noreferrer" className="text-sm font-medium text-brand-accent hover:text-white transition-colors flex items-center gap-1.5 w-fit">
                {product.website} <ArrowRight weight="bold" className="h-3 w-3 -rotate-45" />
              </a>
           )}
@@ -107,7 +107,7 @@ export default function ProductDashboard() {
           <motion.div
             key={s.label}
             variants={itemVariants}
-            className="relative rounded-2xl border border-sf-border-subtle bg-sf-bg-elevated p-5 overflow-hidden group"
+            className="relative rounded-2xl border border-brand-border bg-brand-surface p-5 overflow-hidden group"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${s.bg} to-transparent opacity-50 rounded-bl-full`} />
             <div className={`absolute -top-6 -right-6 w-12 h-12 ${s.blur} opacity-20 blur-xl rounded-full`} />
@@ -115,13 +115,13 @@ export default function ProductDashboard() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <s.icon weight="duotone" className={`h-5 w-5 ${s.color}`} />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-sf-text-muted">{s.label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand-muted">{s.label}</span>
               </div>
               <div className="flex items-baseline">
                 <span className="text-3xl font-display text-white">
                   {s.prefix}
                   <CountUp end={s.value} duration={2} separator="," />
-                  <span className="text-lg text-sf-text-secondary ml-0.5">{s.suffix}</span>
+                  <span className="text-lg text-brand-muted ml-0.5">{s.suffix}</span>
                 </span>
               </div>
             </div>
@@ -133,12 +133,12 @@ export default function ProductDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* MRR Trend Chart */}
-        <motion.div variants={itemVariants} className="lg:col-span-2 rounded-2xl border border-sf-border-subtle bg-sf-bg-elevated p-6 shadow-sm overflow-hidden relative group">
-          <div className="absolute inset-0 bg-noise opacity-[0.02] mix-blend-overlay pointer-events-none" />
+        <motion.div variants={itemVariants} className="lg:col-span-2 rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-sm overflow-hidden relative group">
+          <div className="absolute inset-0 bg-brand-bg opacity-[0.02] mix-blend-overlay pointer-events-none" />
           
           <div className="flex items-center justify-between mb-8 relative z-10">
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-sf-text-muted">Trailing MRR Trend</h2>
-            <button onClick={() => router.push(`/${productId}/revenue`)} className="text-xs font-bold text-sf-accent-cyan hover:text-white transition-colors flex items-center gap-1.5 rounded-full bg-sf-accent-cyan/10 px-3 py-1 hover:bg-sf-accent-cyan/20">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-brand-muted">Trailing MRR Trend</h2>
+            <button onClick={() => router.push(`/${productId}/revenue`)} className="text-xs font-bold text-brand-accent hover:text-white transition-colors flex items-center gap-1.5 rounded-full bg-brand-accent/10 px-3 py-1 hover:bg-brand-accent/20">
               Explore Data <ArrowRight weight="bold" className="h-3 w-3" />
             </button>
           </div>
@@ -175,31 +175,31 @@ export default function ProductDashboard() {
         </motion.div>
 
         {/* Core Financials Bento */}
-        <motion.div variants={itemVariants} className="rounded-2xl border border-sf-border-subtle bg-sf-bg-elevated p-6 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+        <motion.div variants={itemVariants} className="rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-sm flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute -right-16 -bottom-16 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none transition-opacity group-hover:opacity-100 opacity-50" />
           
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-sf-text-muted mb-6 relative z-10">Net Financials</h2>
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-brand-muted mb-6 relative z-10">Net Financials</h2>
             <div className="space-y-6 relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                   <div className="text-[10px] font-bold uppercase tracking-wider text-sf-text-muted mb-1 flex items-center gap-1.5"><TrendUp /> Gross MRR</div>
+                   <div className="text-[10px] font-bold uppercase tracking-wider text-brand-muted mb-1 flex items-center gap-1.5"><TrendUp /> Gross MRR</div>
                    <div className="text-xl font-mono font-bold text-white">{product.mrr > 0 ? '$' : ''}<CountUp end={product.mrr} duration={1.5} separator="," /></div>
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                   <div className="text-[10px] font-bold uppercase tracking-wider text-sf-text-muted mb-1 flex items-center gap-1.5"><CurrencyDollar /> Total OPEX</div>
-                   <div className="text-xl font-mono font-bold text-sf-accent-rose">{totalCosts > 0 ? '$' : ''}<CountUp end={totalCosts} duration={1.5} separator="," /></div>
+                   <div className="text-[10px] font-bold uppercase tracking-wider text-brand-muted mb-1 flex items-center gap-1.5"><CurrencyDollar /> Total OPEX</div>
+                   <div className="text-xl font-mono font-bold text-rose-500">{totalCosts > 0 ? '$' : ''}<CountUp end={totalCosts} duration={1.5} separator="," /></div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="mt-8 pt-5 border-t border-sf-border-subtle relative z-10">
-             <div className="text-[10px] font-bold uppercase tracking-wider text-sf-text-muted mb-1">Net Operating Margin</div>
+          <div className="mt-8 pt-5 border-t border-brand-border relative z-10">
+             <div className="text-[10px] font-bold uppercase tracking-wider text-brand-muted mb-1">Net Operating Margin</div>
              <div className="flex items-end gap-3">
-                <div className={`text-3xl font-display ${netMargin >= 0 ? "text-sf-accent-emerald" : "text-sf-accent-rose"}`}>
+                <div className={`text-3xl font-display ${netMargin >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
                   ${formatK(Math.abs(netMargin))}
                 </div>
                 {product.mrr > 0 && (
@@ -209,7 +209,7 @@ export default function ProductDashboard() {
                 )}
              </div>
              
-             <button onClick={() => router.push(`/${productId}/costs`)} className="w-full mt-6 flex items-center justify-center gap-2 rounded-lg bg-sf-bg-glass border border-sf-border-subtle px-4 py-2.5 text-xs font-bold text-sf-text-secondary hover:text-white hover:border-sf-border-default transition-all">
+             <button onClick={() => router.push(`/${productId}/costs`)} className="w-full mt-6 flex items-center justify-center gap-2 rounded-lg bg-brand-surface-2 border border-brand-border px-4 py-2.5 text-xs font-bold text-brand-muted hover:text-white hover:border-brand-primary transition-all">
                Analyze Cost Centers
              </button>
           </div>
@@ -218,26 +218,26 @@ export default function ProductDashboard() {
 
       {/* Row 3: Quick Modules (Bento Grid tiles) */}
       <motion.div variants={itemVariants}>
-         <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-sf-text-muted mb-4 ml-1">Core Modules</h2>
+         <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-brand-muted mb-4 ml-1">Core Modules</h2>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
            {[
-             { label: "Revenue Engine", href: `/${productId}/revenue`, icon: ChartBar, desc: "MRR & churn analytics", color: "text-sf-accent-cyan" },
+             { label: "Revenue Engine", href: `/${productId}/revenue`, icon: ChartBar, desc: "MRR & churn analytics", color: "text-brand-accent" },
              { label: "Growth Predictor", href: `/${productId}/forecast`, icon: TrendUp, desc: "AI 12-month projections", color: "text-purple-400" },
              { label: "System Health", href: `/${productId}/health`, icon: Pulse, desc: `Real-time status: ${healthScore}`, color: healthColor },
-             { label: "Exit Strategy", href: `/${productId}/acquisition`, icon: ArrowsClockwise, desc: "AI acquisition report", color: "text-sf-accent-amber" },
+             { label: "Exit Strategy", href: `/${productId}/acquisition`, icon: ArrowsClockwise, desc: "AI acquisition report", color: "text-amber-500" },
            ].map((link, i) => (
              <button key={link.label} onClick={() => router.push(link.href)}
-               className="group relative rounded-2xl border border-sf-border-subtle bg-sf-bg-elevated p-5 text-left overflow-hidden transition-all hover:border-sf-border-default hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sf-accent-cyan"
+               className="group relative rounded-2xl border border-brand-border bg-brand-surface p-5 text-left overflow-hidden transition-all hover:border-brand-accent hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
              >
                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none">
                   <div className={`absolute top-0 right-0 w-24 h-24 bg-current blur-3xl ${link.color}`} />
                </div>
                
-               <div className={`h-10 w-10 rounded-xl bg-sf-bg-glass border border-sf-border-subtle flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${link.color}`}>
+               <div className={`h-10 w-10 rounded-xl bg-brand-surface-2 border border-brand-border flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${link.color}`}>
                  <link.icon weight="duotone" className="h-5 w-5" />
                </div>
                <div className="text-sm font-bold text-white mb-1 tracking-tight">{link.label}</div>
-               <div className="text-[11px] font-medium text-sf-text-secondary">{link.desc}</div>
+               <div className="text-[11px] font-medium text-brand-muted">{link.desc}</div>
                
                <div className="absolute top-5 right-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                   <ArrowRight weight="bold" className={`h-4 w-4 ${link.color}`} />

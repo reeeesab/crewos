@@ -255,9 +255,9 @@ export default function SettingsPage() {
   ] as const;
 
   const renderStatusDot = (state: "connected" | "amber" | "disconnected") => {
-    if (state === "connected") return <CheckCircle2 className="h-4 w-4 text-sf-accent-emerald" />;
-    if (state === "amber") return <AlertCircle className="h-4 w-4 text-sf-accent-amber" />;
-    return <Circle className="h-4 w-4 text-sf-accent-rose" />;
+    if (state === "connected") return <CheckCircle2 className="h-4 w-4 text-emerald-400" />;
+    if (state === "amber") return <AlertCircle className="h-4 w-4 text-amber-500" />;
+    return <Circle className="h-4 w-4 text-rose-500" />;
   };
 
   const sendWebhookTest = async (provider: "stripe" | "dodo") => {
@@ -319,14 +319,14 @@ export default function SettingsPage() {
   };
 
   if (isLoading || !form) {
-    return <div className="flex h-64 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-sf-text-muted" /></div>;
+    return <div className="flex h-64 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-brand-muted" /></div>;
   }
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Settings</h1>
-        <p className="text-sm text-sf-text-secondary mt-1">Manage {product?.name} configuration</p>
+        <h1 className="text-2xl font-bold tracking-tight text-white">Settings</h1>
+        <p className="text-sm text-brand-muted mt-1">Manage {product?.name} configuration</p>
 
         <div className="mt-4">
           <div className="flex flex-wrap gap-2">
@@ -344,8 +344,8 @@ export default function SettingsPage() {
                 onClick={() => setActiveTab(t.id)}
                 className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
                   activeTab === t.id
-                    ? 'bg-sf-accent text-white shadow-sm'
-                    : 'bg-sf-base/50 text-sf-text-secondary border border-sf-border-subtle hover:border-sf-border-default'
+                    ? 'bg-brand-primary text-white shadow-sm'
+                    : 'bg-brand-surface/50 text-brand-muted border border-brand-border hover:border-brand-muted'
                 }`}
               >
                 {t.label}
@@ -357,8 +357,8 @@ export default function SettingsPage() {
 
       {/* Integration Status */}
       <div hidden={activeTab !== 'status'}>
-        <section className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl">
-        <h2 className="text-sm font-bold text-sf-text-primary mb-4">Integration status</h2>
+        <section className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-xl backdrop-blur-xl">
+        <h2 className="text-sm font-bold text-white mb-4">Integration status</h2>
         <div className="space-y-2.5">
           {integrationStatusRows.map((row) => (
             <button
@@ -367,12 +367,12 @@ export default function SettingsPage() {
                 const target = document.getElementById(row.sectionId);
                 target?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="flex w-full items-center gap-3 rounded-xl border border-sf-border-subtle bg-sf-base/40 px-3.5 py-2.5 text-left transition-colors hover:border-sf-border-default"
+              className="flex w-full items-center gap-3 rounded-xl border border-brand-border bg-brand-bg/40 px-3.5 py-2.5 text-left transition-colors hover:border-brand-muted"
             >
               {renderStatusDot(row.state)}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-sf-text-primary">{row.label}</p>
-                <p className="text-xs text-sf-text-muted">{row.sublabel}</p>
+                <p className="text-sm font-semibold text-white">{row.label}</p>
+                <p className="text-xs text-brand-muted">{row.sublabel}</p>
               </div>
             </button>
           ))}
@@ -382,10 +382,10 @@ export default function SettingsPage() {
 
       {/* Notifications */}
       <div hidden={activeTab !== 'notifications'}>
-        <section id="notifications-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+        <section id="notifications-settings" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted">
         <div className="flex items-center gap-2.5 mb-6">
-          <Bell className="h-5 w-5 text-sf-accent" />
-          <h2 className="text-sm font-bold text-sf-text-primary">Notifications</h2>
+          <Bell className="h-5 w-5 text-brand-primary" />
+          <h2 className="text-sm font-bold text-white">Notifications</h2>
         </div>
         <div className="space-y-4">
           {[
@@ -410,14 +410,14 @@ export default function SettingsPage() {
               onToggle: () => setNotificationsForm((prev) => ({ ...prev, issueOverdueEnabled: !prev.issueOverdueEnabled })),
             },
           ].map((item) => (
-            <div key={item.label} className="flex items-center justify-between rounded-xl border border-sf-border-subtle bg-sf-base/40 px-4 py-3">
-              <span className="text-sm font-medium text-sf-text-primary">{item.label}</span>
+            <div key={item.label} className="flex items-center justify-between rounded-xl border border-brand-border bg-brand-bg/40 px-4 py-3">
+              <span className="text-sm font-medium text-white">{item.label}</span>
               <button
                 onClick={item.onToggle}
                 className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
                   item.value
-                    ? "bg-sf-accent text-white"
-                    : "bg-sf-base/70 text-sf-text-secondary border border-sf-border-subtle"
+                    ? "bg-brand-primary text-white"
+                    : "bg-brand-bg/70 text-brand-muted border border-brand-border"
                 }`}
               >
                 {item.value ? "on" : "off"}
@@ -425,15 +425,15 @@ export default function SettingsPage() {
             </div>
           ))}
 
-          <div className="rounded-xl border border-sf-border-subtle bg-sf-base/40 px-4 py-4 space-y-3">
+          <div className="rounded-xl border border-brand-border bg-brand-bg/40 px-4 py-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-sf-text-primary">Weekly digest email</span>
+              <span className="text-sm font-medium text-white">Weekly digest email</span>
               <button
                 onClick={() => setNotificationsForm((prev) => ({ ...prev, weeklyDigestEnabled: !prev.weeklyDigestEnabled }))}
                 className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
                   notificationsForm.weeklyDigestEnabled
-                    ? "bg-sf-accent text-white"
-                    : "bg-sf-base/70 text-sf-text-secondary border border-sf-border-subtle"
+                    ? "bg-brand-primary text-white"
+                    : "bg-brand-bg/70 text-brand-muted border border-brand-border"
                 }`}
               >
                 {notificationsForm.weeklyDigestEnabled ? "on" : "off"}
@@ -443,7 +443,7 @@ export default function SettingsPage() {
               <select
                 value={notificationsForm.weeklyDigestDay}
                 onChange={(e) => setNotificationsForm((prev) => ({ ...prev, weeklyDigestDay: Number(e.target.value) }))}
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none"
+                className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:outline-none"
               >
                 {weeklyDayLabels.map((day, idx) => (
                   <option key={day} value={idx}>{day}</option>
@@ -453,15 +453,15 @@ export default function SettingsPage() {
                 type="time"
                 value={notificationsForm.weeklyDigestTime}
                 onChange={(e) => setNotificationsForm((prev) => ({ ...prev, weeklyDigestTime: e.target.value }))}
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none"
+                className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:outline-none"
               />
             </div>
-            <p className="text-xs text-sf-text-muted">{weeklyDigestLabel}</p>
+            <p className="text-xs text-brand-muted">{weeklyDigestLabel}</p>
           </div>
 
           <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
             <div>
-              <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Health threshold</label>
+              <label className="block text-xs font-semibold text-brand-muted mb-1.5 uppercase tracking-wider">Health threshold</label>
               <input
                 type="number"
                 min={1}
@@ -473,7 +473,7 @@ export default function SettingsPage() {
                     healthScoreThreshold: Math.max(1, Math.min(100, Number(e.target.value) || 60)),
                   }))
                 }
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none"
+                className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:outline-none"
               />
             </div>
             <button
@@ -484,29 +484,29 @@ export default function SettingsPage() {
                 })
               }
               disabled={updateNotifications.isPending}
-              className="flex h-[42px] items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-accent/90 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)]"
+              className="flex h-[42px] items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(var(--color-brand-primary-rgb),0.3)]"
             >
               {updateNotifications.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Save
             </button>
           </div>
-          {notificationsSaved && <p className="text-xs font-semibold text-green-600">✓ Notification settings saved</p>}
+          {notificationsSaved && <p className="text-xs font-semibold text-brand-success">✓ Notification settings saved</p>}
         </div>
         </section>
       </div>
 
       {/* Analytics Status */}
       <div hidden={activeTab !== 'integrations'}>
-        <section id="analytics-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-6 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
-        <h2 className="text-sm font-bold text-sf-text-primary">Google Analytics</h2>
-        <p className="text-xs text-sf-text-secondary mt-1">
+        <section id="analytics-settings" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted">
+        <h2 className="text-sm font-bold text-white">Google Analytics</h2>
+        <p className="text-xs text-brand-muted mt-1">
           {analyticsConfig?.isConnected
             ? `Connected${analyticsConfig.propertyId ? ` · Property ${analyticsConfig.propertyId}` : ""}`
             : "Not connected"}
         </p>
         <button
           onClick={() => router.push(`/${productId}/analytics`)}
-          className="mt-4 rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2 text-sm font-semibold text-sf-text-secondary hover:text-sf-text-primary"
+          className="mt-4 rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2 text-sm font-semibold text-brand-muted hover:text-white"
         >
           Open Analytics Settings
         </button>
@@ -515,33 +515,33 @@ export default function SettingsPage() {
 
       {/* General */}
       <div hidden={activeTab !== 'general'}>
-        <section id="general-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
-        <h2 className="text-sm font-bold text-sf-text-primary mb-6">General</h2>
+        <section id="general-settings" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted">
+        <h2 className="text-sm font-bold text-white mb-6">General</h2>
         <div className="space-y-5">
           <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Product Name</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all" />
+            <label className="block text-xs font-semibold text-brand-muted mb-1.5 uppercase tracking-wider">Product Name</label>
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none transition-all" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Description</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none resize-none transition-all" />
+            <label className="block text-xs font-semibold text-brand-muted mb-1.5 uppercase tracking-wider">Description</label>
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none resize-none transition-all" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Website</label>
-            <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://" className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all" />
+            <label className="block text-xs font-semibold text-brand-muted mb-1.5 uppercase tracking-wider">Website</label>
+            <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://" className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none transition-all" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Status</label>
-            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all appearance-none">
-              <option value="BETA" className="bg-sf-elevated">Beta</option>
-              <option value="LIVE" className="bg-sf-elevated">Live</option>
-              <option value="ARCHIVED" className="bg-sf-elevated">Archived</option>
+            <label className="block text-xs font-semibold text-brand-muted mb-1.5 uppercase tracking-wider">Status</label>
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none transition-all appearance-none">
+              <option value="BETA" className="bg-brand-surface">Beta</option>
+              <option value="LIVE" className="bg-brand-surface">Live</option>
+              <option value="ARCHIVED" className="bg-brand-surface">Archived</option>
             </select>
           </div>
           <button
             onClick={() => updateProduct.mutate({ id: productId, name: form.name, description: form.description, website: form.website, status: form.status })}
             disabled={updateProduct.isPending}
-            className="flex items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-accent/90 transition-all disabled:opacity-50 mt-2 shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)]"
+            className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 mt-2 shadow-[0_0_15px_rgba(var(--color-brand-primary-rgb),0.3)]"
           >
             {updateProduct.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Save Changes
@@ -552,18 +552,18 @@ export default function SettingsPage() {
 
       {/* Integration */}
       <div hidden={activeTab !== 'integrations'}>
-        <section id="revenue-integration" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
+        <section id="revenue-integration" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted">
         <div className="flex items-center gap-2.5 mb-6">
-          <Shield className="h-5 w-5 text-sf-accent" />
-          <h2 className="text-sm font-bold text-sf-text-primary">Revenue Integration</h2>
+          <Shield className="h-5 w-5 text-brand-primary" />
+          <h2 className="text-sm font-bold text-white">Revenue Integration</h2>
         </div>
         <div className="space-y-5">
           <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-2.5 uppercase tracking-wider">Provider</label>
+            <label className="block text-xs font-semibold text-brand-muted mb-2.5 uppercase tracking-wider">Provider</label>
             <div className="grid grid-cols-2 gap-3">
               {(["STRIPE", "DODO_PAYMENTS"] as const).map((p: any) => (
                 <button key={p} onClick={() => setIntegrationForm({ ...integrationForm, provider: p })}
-                  className={`px-4 py-3 rounded-xl border text-xs font-bold transition-all ${integrationForm.provider === p ? "bg-sf-accent/10 text-sf-accent border-sf-accent shadow-[0_0_10px_rgba(var(--color-sf-accent-rgb),0.2)]" : "bg-sf-base/50 border-sf-border-subtle text-sf-text-secondary hover:border-sf-accent/40"}`}>
+                  className={`px-4 py-3 rounded-xl border text-xs font-bold transition-all ${integrationForm.provider === p ? "bg-brand-primary/10 text-brand-primary border-brand-primary shadow-[0_0_10px_rgba(var(--color-brand-primary-rgb),0.2)]" : "bg-brand-bg/50 border-brand-border text-brand-muted hover:border-brand-primary/40"}`}>
                   {p === "STRIPE" ? "Stripe" : "DodoPayment"}
                 </button>
               ))}
@@ -572,288 +572,180 @@ export default function SettingsPage() {
 
           {integrationForm.provider === "STRIPE" && (
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold text-sf-text-secondary mb-2 uppercase tracking-wider"><Key className="h-3.5 w-3.5" /> Stripe Restricted Key</label>
-              <input type="text" value={integrationForm.stripeApiKey} onChange={(e) => setIntegrationForm({ ...integrationForm, stripeApiKey: e.target.value })} placeholder="rk_live_..." className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-mono text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all" />
-              <p className="text-[11px] text-sf-text-muted mt-2">Read-only key with access to Subscriptions, Customers, Charges.</p>
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-brand-muted mb-2 uppercase tracking-wider"><Key className="h-3.5 w-3.5" /> Stripe Restricted Key</label>
+              <input type="text" value={integrationForm.stripeApiKey} onChange={(e) => setIntegrationForm({ ...integrationForm, stripeApiKey: e.target.value })} placeholder="rk_live_..." className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm font-mono text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none transition-all" />
+              <p className="text-[11px] text-brand-muted mt-2">Read-only key with access to Subscriptions, Customers, Charges.</p>
             </div>
           )}
 
           {integrationForm.provider === "DODO_PAYMENTS" && (
             <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold text-sf-text-secondary mb-2 uppercase tracking-wider"><Key className="h-3.5 w-3.5" /> DodoPayment API Key</label>
-              <input type="text" value={integrationForm.dodoApiKey} onChange={(e) => setIntegrationForm({ ...integrationForm, dodoApiKey: e.target.value })} placeholder="Your DodoPayments API key" className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-mono text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all" />
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-brand-muted mb-2 uppercase tracking-wider"><Key className="h-3.5 w-3.5" /> DodoPayment API Key</label>
+              <input type="text" value={integrationForm.dodoApiKey} onChange={(e) => setIntegrationForm({ ...integrationForm, dodoApiKey: e.target.value })} placeholder="Your DodoPayments API key" className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-4 py-2.5 text-sm font-mono text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 focus:outline-none transition-all" />
             </div>
           )}
 
           <button
             onClick={() => updateIntegration.mutate({ productId, ...integrationForm })}
             disabled={updateIntegration.isPending}
-            className="flex items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-accent/90 transition-all disabled:opacity-50 mt-2 shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)]"
+            className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 mt-2 shadow-[0_0_15px_rgba(var(--color-brand-primary-rgb),0.3)]"
           >
             {updateIntegration.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Save Integration
           </button>
-          {integrationSaved && <p className="text-xs font-semibold text-green-600 mt-2">✓ Integration saved successfully</p>}
+          {integrationSaved && <p className="text-xs font-semibold text-emerald-400 mt-2">✓ Integration saved successfully</p>}
         </div>
         </section>
       </div>
 
       {/* Dunning */}
       <div hidden={activeTab !== 'dunning'}>
-        <section id="dunning-settings" className="relative overflow-hidden rounded-2xl border border-sf-border-subtle bg-sf-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-sf-border-default">
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2.5">
-            <Mail className="h-5 w-5 text-sf-accent" />
-            <h2 className="text-sm font-bold text-sf-text-primary">Dunning / Failed Payment Recovery</h2>
-          </div>
-          <button
-            onClick={() => setShowEmailPreview(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-sf-border-subtle bg-sf-base/40 px-3 py-1.5 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            Preview emails
-          </button>
-        </div>
-        <p className="text-xs text-sf-text-secondary mb-5">
-          Automated 3-email sequence for failed payments. Connect Stripe or DodoPayment first.
-        </p>
-
-        <div className="rounded-xl border border-sf-accent/25 bg-sf-accent/8 px-4 py-3 mb-5">
-          <p className="text-sm font-semibold text-sf-text-primary">
-            {recoveredUsd > 0
-              ? `Indiqo recovered $${recoveredUsd.toFixed(0)} in failed payments this month, which is ${roiMultiple.toFixed(1)}x your subscription cost.`
-              : "Once enabled, Indiqo will track recovered failed payments and show your monthly ROI here."}
-          </p>
-          <p className="mt-1 text-[11px] text-sf-text-muted">
-            Recovered invoices this month: {dunningSummary?.recoveredInvoicesThisMonth || 0} · At-risk invoices: {dunningSummary?.atRiskInvoices || 0}
-          </p>
-        </div>
-
-        <div className="space-y-5">
-          <div className="flex items-center justify-between rounded-xl border border-sf-border-subtle bg-sf-base/40 px-4 py-3">
-            <div>
-              <p className="text-sm font-semibold text-sf-text-primary">Enable recovery sequence</p>
-              <p className="text-[11px] text-sf-text-muted">Email 1 on first failure, then up to 2 follow-ups.</p>
+        <section id="dunning-settings" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5">
+              <Mail className="h-5 w-5 text-brand-primary" />
+              <h2 className="text-sm font-bold text-white">Dunning & Recover</h2>
             </div>
             <button
-              onClick={() => setDunningForm((prev) => ({ ...prev, dunningEnabled: !prev.dunningEnabled }))}
+              onClick={() => setDunningForm((prev) => ({ ...prev, enabled: !prev.enabled }))}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                dunningForm.dunningEnabled
-                  ? "bg-sf-accent text-white"
-                  : "bg-sf-base/70 text-sf-text-secondary border border-sf-border-subtle"
+                dunningForm.enabled ? "bg-brand-primary text-white" : "bg-brand-bg/70 text-brand-muted border border-brand-border"
               }`}
             >
-              {dunningForm.dunningEnabled ? "Enabled" : "Disabled"}
+              {dunningForm.enabled ? "Automated" : "Disabled"}
             </button>
           </div>
+          <p className="text-xs text-brand-muted mb-6">Automatically email customers when a failed payment occurs. Each attempt includes a secure link to update payment methods.</p>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">From Email</label>
-              <input
-                type="email"
-                value={dunningForm.dunningFromEmail}
-                onChange={(e) => setDunningForm((prev) => ({ ...prev, dunningFromEmail: e.target.value }))}
-                placeholder="billing@yourdomain.com"
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Sender Name</label>
-              <input
-                value={dunningForm.dunningSenderName}
-                onChange={(e) => setDunningForm((prev) => ({ ...prev, dunningSenderName: e.target.value }))}
-                placeholder="Indiqo Billing"
-                className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Reply-To (optional)</label>
-            <input
-              type="email"
-              value={dunningForm.dunningReplyTo}
-              onChange={(e) => setDunningForm((prev) => ({ ...prev, dunningReplyTo: e.target.value }))}
-              placeholder="support@yourdomain.com"
-              className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
-            />
-          </div>
-
-          <div className="rounded-xl border border-sf-border-subtle bg-sf-base/30 p-4 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sf-text-secondary">
-              <LinkIcon className="h-3.5 w-3.5" />
-              Webhook Setup
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold text-sf-text-primary mb-1">Stripe webhook endpoint</p>
-              <div className="flex gap-2">
-                <input
-                  readOnly
-                  value={stripeWebhookUrl}
-                  className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-3 py-2 text-xs text-sf-text-secondary"
-                />
-                <button
-                  onClick={() => copyText("stripe_url", stripeWebhookUrl)}
-                  className="rounded-lg border border-sf-border-subtle px-3 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
-                >
-                  {copiedItem === "stripe_url" ? "Copied" : <Copy className="h-3.5 w-3.5" />}
-                </button>
-                <button
-                  onClick={() => sendWebhookTest("stripe")}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-sf-border-subtle px-3 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
-                >
-                  <FlaskConical className="h-3.5 w-3.5" />
-                  Send test event
-                </button>
-              </div>
-              <p className="text-[11px] text-sf-text-muted mt-1">
-                In Stripe Dashboard → Developers → Webhooks → Add endpoint. Subscribe to:
-                <code className="mx-1 rounded bg-sf-base px-1">invoice.payment_failed</code> and
-                <code className="mx-1 rounded bg-sf-base px-1">invoice.payment_succeeded</code>.
-              </p>
-              {stripeTestResult && <p className="mt-1 text-[11px] font-semibold text-sf-text-primary">{stripeTestResult}</p>}
-            </div>
-
-            {integrationForm.provider === "STRIPE" && (
-              <div>
-                <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Stripe Webhook Secret</label>
-                <input
-                  value={dunningForm.stripeWebhookSecret}
-                  onChange={(e) => setDunningForm((prev) => ({ ...prev, stripeWebhookSecret: e.target.value }))}
-                  placeholder="whsec_..."
-                  className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-mono text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
-                />
-              </div>
-            )}
-
-            <div>
-              <p className="text-xs font-semibold text-sf-text-primary mb-1">DodoPayment webhook endpoint</p>
-              <div className="flex gap-2">
-                <input
-                  readOnly
-                  value={dodoWebhookUrl}
-                  className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-3 py-2 text-xs text-sf-text-secondary"
-                />
-                <button
-                  onClick={() => copyText("dodo_url", dodoWebhookUrl)}
-                  className="rounded-lg border border-sf-border-subtle px-3 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
-                >
-                  {copiedItem === "dodo_url" ? "Copied" : <Copy className="h-3.5 w-3.5" />}
-                </button>
-                <button
-                  onClick={() => sendWebhookTest("dodo")}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-sf-border-subtle px-3 py-2 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
-                >
-                  <FlaskConical className="h-3.5 w-3.5" />
-                  Send test event
-                </button>
-              </div>
-              <p className="text-[11px] text-sf-text-muted mt-1">
-                In DodoPayment Webhooks, add this URL and subscribe to failed/succeeded payment events.
-              </p>
-              {dodoTestResult && <p className="mt-1 text-[11px] font-semibold text-sf-text-primary">{dodoTestResult}</p>}
-            </div>
-
-            {integrationForm.provider === "DODO_PAYMENTS" && (
-              <div>
-                <label className="block text-xs font-semibold text-sf-text-secondary mb-1.5 uppercase tracking-wider">Dodo Webhook Token</label>
-                <input
-                  value={dunningForm.dodoWebhookSecret}
-                  onChange={(e) => setDunningForm((prev) => ({ ...prev, dodoWebhookSecret: e.target.value }))}
-                  placeholder="Set any long random token"
-                  className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-mono text-sf-text-primary focus:border-sf-accent focus:ring-1 focus:ring-sf-accent/30 focus:outline-none transition-all"
-                />
-                <p className="text-[11px] text-sf-text-muted mt-1">This token is appended to the URL and validated by Indiqo.</p>
-              </div>
-            )}
-
-            <p className="text-[11px] text-sf-text-muted">
-              Optional but recommended: run follow-ups hourly via Vercel Cron hitting
-              <code className="mx-1 rounded bg-sf-base px-1">/api/cron/dunning</code>
-              with header <code className="mx-1 rounded bg-sf-base px-1">Authorization: Bearer CRON_SECRET</code>.
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border border-sf-border-subtle bg-sf-base/40 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted mb-2">Stripe Event Log</p>
-                <div className="space-y-1.5">
-                  {(stripeWebhookEvents || []).map((event) => (
-                    <div key={event.id} className="rounded-md border border-sf-border-subtle bg-sf-base/50 px-2.5 py-2">
-                      <p className="text-[11px] font-semibold text-sf-text-primary">{event.eventType}</p>
-                      <p className="text-[10px] text-sf-text-muted">{new Date(event.createdAt).toLocaleString()}</p>
-                    </div>
-                  ))}
-                  {(!stripeWebhookEvents || stripeWebhookEvents.length === 0) && (
-                    <p className="text-[11px] text-sf-text-muted">No events yet.</p>
-                  )}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Retry Schedule</label>
+                <div className="flex items-center gap-2">
+                  <input type="number" min={1} value={dunningForm.intervalDays} onChange={(e) => setDunningForm({ ...dunningForm, intervalDays: Number(e.target.value) })} className="w-16 rounded-xl border border-brand-border bg-brand-bg/50 px-3 py-2 text-sm text-white focus:border-brand-primary focus:outline-none" />
+                  <span className="text-xs text-brand-muted font-medium">days between attempts</span>
                 </div>
               </div>
-              <div className="rounded-lg border border-sf-border-subtle bg-sf-base/40 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-sf-text-muted mb-2">Dodo Event Log</p>
-                <div className="space-y-1.5">
-                  {(dodoWebhookEvents || []).map((event) => (
-                    <div key={event.id} className="rounded-md border border-sf-border-subtle bg-sf-base/50 px-2.5 py-2">
-                      <p className="text-[11px] font-semibold text-sf-text-primary">{event.eventType}</p>
-                      <p className="text-[10px] text-sf-text-muted">{new Date(event.createdAt).toLocaleString()}</p>
-                    </div>
-                  ))}
-                  {(!dodoWebhookEvents || dodoWebhookEvents.length === 0) && (
-                    <p className="text-[11px] text-sf-text-muted">No events yet.</p>
-                  )}
-                </div>
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Max Attempts</label>
+                <input type="number" min={1} max={5} value={dunningForm.maxRetries} onChange={(e) => setDunningForm({ ...dunningForm, maxRetries: Number(e.target.value) })} className="w-16 rounded-xl border border-brand-border bg-brand-bg/50 px-3 py-2 text-sm text-white focus:border-brand-primary focus:outline-none" />
               </div>
             </div>
-          </div>
 
-          <button
-            onClick={() =>
-              updateDunning.mutate({
-                productId,
-                ...dunningForm,
-              })
-            }
-            disabled={updateDunning.isPending}
-            className="flex items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-accent/90 transition-all disabled:opacity-50 mt-2 shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)]"
-          >
-            {updateDunning.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            Save Dunning Settings
-          </button>
-          {updateDunning.error && (
-            <p className="text-xs font-semibold text-sf-red mt-2">{updateDunning.error.message}</p>
-          )}
-          {dunningSaved && <p className="text-xs font-semibold text-green-600 mt-2">✓ Dunning settings saved</p>}
-        </div>
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => updateDunning.mutate({ productId, ...dunningForm })}
+                disabled={updateDunning.isPending}
+                className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(var(--color-brand-primary-rgb),0.3)]"
+              >
+                {updateDunning.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Save Dunning Rules
+              </button>
+              <button
+                onClick={() => setShowEmailPreview(true)}
+                className="flex items-center gap-2 rounded-xl border border-brand-border bg-brand-bg/50 px-5 py-2.5 text-sm font-bold text-brand-muted hover:text-white transition-all"
+              >
+                <Eye className="h-4 w-4" />
+                Preview Emails
+              </button>
+            </div>
+            {dunningSaved && <p className="text-xs font-semibold text-emerald-400">✓ Dunning settings updated</p>}
+          </div>
+        </section>
+      </div>
+
+      {/* Webhooks (under Integrations) */}
+      <div hidden={activeTab !== 'integrations'}>
+        <section id="webhook-settings" className="relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 shadow-xl backdrop-blur-xl transition-all hover:border-brand-muted mt-6">
+          <div className="flex items-center gap-2.5 mb-6">
+            <Globe className="h-5 w-5 text-brand-primary" />
+            <h2 className="text-sm font-bold text-white">Platform Webhooks</h2>
+          </div>
+          <p className="text-xs text-brand-muted mb-6">These URLs are automatically configured in your billing provider. If you see status issues, you can trigger a manual test.</p>
+          <div className="space-y-3">
+            {webhookCallbacks.map((item) => (
+              <div key={item.provider} className="flex items-center justify-between rounded-xl border border-brand-border bg-brand-bg/40 px-4 py-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">{item.provider} Callback</span>
+                  <p className="text-xs font-mono text-brand-muted truncate max-w-[300px]">{item.url}</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <div className={`h-1.5 w-1.5 rounded-full ${item.status === "active" ? "bg-emerald-400" : "bg-brand-muted animate-pulse"}`} />
+                    <span className="text-[10px] font-bold text-brand-muted uppercase">{item.status}</span>
+                  </div>
+                  <button
+                    onClick={() => sendWebhookTest(item.provider as any)}
+                    className="rounded-lg bg-brand-bg/60 border border-brand-border px-3 py-1.5 text-[10px] font-bold text-white hover:border-brand-muted transition-all"
+                  >
+                    Test Connection
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Danger Zone (under General) */}
+      <div hidden={activeTab !== 'general'}>
+        <section id="danger-zone" className="relative overflow-hidden rounded-2xl border border-rose-500/20 bg-rose-500/5 p-8 shadow-xl backdrop-blur-xl mt-6">
+          <div className="flex items-center gap-2.5 mb-4">
+            <Trash2 className="h-5 w-5 text-rose-500" />
+            <h2 className="text-sm font-bold text-rose-500">Danger Zone</h2>
+          </div>
+          <p className="text-xs text-rose-500/80 mb-6">Permanently delete this product and all associated data including revenue history, analytics, and issues. This action cannot be undone.</p>
+          
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-rose-500/20 bg-rose-500/10 px-6 py-5">
+            <div>
+              <p className="text-sm font-bold text-rose-500">Delete {product?.name}</p>
+              <p className="text-[11px] text-rose-500/70 pt-0.5 font-medium">Type <span className="font-mono bg-rose-500/20 px-1.5 py-0.5 rounded text-rose-500">DELETE</span> to confirm.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                placeholder="DELETE"
+                className="w-28 rounded-xl border border-rose-500/30 bg-rose-500/5 px-4 py-2 text-xs font-mono font-bold text-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+              />
+              <button
+                onClick={() => deleteProduct.mutate({ id: productId })}
+                disabled={deleteConfirm !== "DELETE" || deleteProduct.isPending}
+                className="rounded-xl bg-rose-500 px-6 py-2 text-xs font-bold text-white hover:bg-rose-600 transition-all disabled:opacity-50 disabled:grayscale"
+              >
+                {deleteProduct.isPending ? "Deleting..." : "Delete Permanently"}
+              </button>
+            </div>
+          </div>
         </section>
       </div>
 
       {showEmailPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#080B12]/80 backdrop-blur-md p-4">
-          <div className="w-full max-w-4xl rounded-2xl border border-sf-border-subtle bg-sf-elevated p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-4xl rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-sf-text-primary">Dunning Email Preview & Editor</h3>
+              <h3 className="text-lg font-bold text-white">Dunning Email Preview & Editor</h3>
               <button
                 onClick={() => setShowEmailPreview(false)}
-                className="rounded-lg border border-sf-border-subtle px-3 py-1.5 text-xs font-semibold text-sf-text-secondary hover:text-sf-text-primary"
+                className="rounded-lg border border-brand-border px-3 py-1.5 text-xs font-semibold text-brand-muted hover:text-white"
               >
                 Close
               </button>
             </div>
-            <p className="text-xs text-sf-text-muted mb-4">
-              You can use placeholders <code className="rounded bg-sf-base px-1">{"{{productName}}"}</code> and <code className="rounded bg-sf-base px-1">{"{{amount}}"}</code>.
+            <p className="text-xs text-brand-muted mb-4">
+              You can use placeholders <code className="rounded bg-brand-bg px-1">{"{{productName}}"}</code> and <code className="rounded bg-brand-bg px-1">{"{{amount}}"}</code>.
             </p>
 
             {dunningEmailEditors.map((item) => (
-              <div key={item.stage} className="mb-4 rounded-xl border border-sf-border-subtle bg-sf-base/40 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-sf-text-secondary mb-3">{item.title}</p>
+              <div key={item.stage} className="mb-4 rounded-xl border border-brand-border bg-brand-bg/40 p-4">
+                <p className="text-xs font-bold uppercase tracking-wider text-brand-muted mb-3">{item.title}</p>
                 <div className="space-y-3">
                   <input
                     value={dunningForm[item.subjectKey]}
                     onChange={(e) =>
                       setDunningForm((prev) => ({ ...prev, [item.subjectKey]: e.target.value }))
                     }
-                    className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none"
+                    className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-3.5 py-2 text-sm text-white focus:border-brand-primary focus:outline-none"
                     placeholder="Subject"
                   />
                   <textarea
@@ -862,19 +754,19 @@ export default function SettingsPage() {
                       setDunningForm((prev) => ({ ...prev, [item.bodyKey]: e.target.value }))
                     }
                     rows={4}
-                    className="w-full rounded-xl border border-sf-border-subtle bg-sf-base/50 px-3.5 py-2 text-sm text-sf-text-primary focus:border-sf-accent focus:outline-none resize-y"
+                    className="w-full rounded-xl border border-brand-border bg-brand-bg/50 px-3.5 py-2 text-sm text-white focus:border-brand-primary focus:outline-none resize-y"
                     placeholder="Body"
                   />
-                  <div className="rounded-lg border border-sf-border-subtle bg-sf-base/60 p-3">
-                    <p className="text-[10px] uppercase tracking-wider text-sf-text-muted mb-1">Preview</p>
-                    <p className="text-[11px] text-sf-text-secondary">
+                  <div className="rounded-lg border border-brand-border bg-brand-bg/60 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-brand-muted mb-1">Preview</p>
+                    <p className="text-[11px] text-brand-muted">
                       From: {(dunningForm.dunningSenderName || "Indiqo").trim() || "Indiqo"} &lt;
                       {dunningForm.dunningFromEmail || "billing@yourdomain.com"}&gt;
                     </p>
-                    <p className="text-[11px] text-sf-text-secondary mt-1">
+                    <p className="text-[11px] text-brand-muted mt-1">
                       Subject: {applyPreviewTemplate(dunningForm[item.subjectKey])}
                     </p>
-                    <p className="mt-2 text-xs text-sf-text-primary whitespace-pre-wrap">
+                    <p className="mt-2 text-xs text-white whitespace-pre-wrap">
                       {applyPreviewTemplate(dunningForm[item.bodyKey])}
                     </p>
                   </div>
@@ -885,58 +777,9 @@ export default function SettingsPage() {
             <div className="flex items-center justify-end gap-2">
               <button
                 onClick={() => setShowEmailPreview(false)}
-                className="rounded-xl border border-sf-border-subtle px-4 py-2 text-sm font-semibold text-sf-text-secondary hover:text-sf-text-primary"
+                className="rounded-xl border border-brand-border px-4 py-2 text-sm font-semibold text-brand-muted hover:text-white"
               >
                 Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Danger Zone */}
-      <div hidden={activeTab !== 'danger'}>
-        <section className="relative overflow-hidden rounded-2xl border border-sf-red/30 bg-sf-red/5 p-8 shadow-xl backdrop-blur-md">
-        <h2 className="flex items-center gap-2.5 text-sm font-bold text-sf-red mb-3">
-          <AlertTriangle className="h-5 w-5" /> Danger Zone
-        </h2>
-        <p className="text-sm text-sf-text-secondary mb-6">
-          Permanently delete this product and all associated data (revenue, issues, costs, changelogs).
-        </p>
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          className="flex items-center gap-2 rounded-xl bg-sf-red px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-red/90 transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]"
-        >
-          <Trash2 className="h-4 w-4" />
-          Delete Product
-        </button>
-        </section>
-      </div>
-
-      {/* Delete confirmation modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#080B12]/80 backdrop-blur-md p-4 transition-all">
-          <div className="w-full max-w-sm rounded-2xl border border-sf-border-subtle bg-sf-elevated p-8 shadow-2xl">
-            <h3 className="text-lg font-bold text-sf-red mb-2 tracking-tight">Delete "{product?.name}"?</h3>
-            <p className="text-sm text-sf-text-secondary mb-6">
-              This will permanently delete all data. Type <strong className="text-sf-text-primary px-1">{product?.name}</strong> to confirm.
-            </p>
-            <input
-              value={deleteConfirm}
-              onChange={(e) => setDeleteConfirm(e.target.value)}
-              placeholder={product?.name}
-              className="w-full rounded-xl border border-sf-red/40 bg-sf-base/50 px-4 py-2.5 text-sm text-sf-text-primary focus:border-sf-red focus:ring-1 focus:ring-sf-red/30 focus:outline-none mb-6 transition-all"
-            />
-            <div className="flex gap-3">
-              <button onClick={() => { setShowDeleteModal(false); setDeleteConfirm(""); }} className="flex-1 rounded-xl border border-sf-border-subtle bg-sf-base/50 px-4 py-2.5 text-sm font-semibold text-sf-text-secondary hover:text-sf-text-primary hover:bg-sf-border-subtle transition-all">
-                Cancel
-              </button>
-              <button
-                onClick={() => deleteProduct.mutate({ id: productId })}
-                disabled={deleteConfirm !== product?.name || deleteProduct.isPending}
-                className="flex-1 rounded-xl bg-sf-red px-4 py-2.5 text-sm font-bold text-white hover:bg-sf-red/90 transition-all disabled:opacity-40 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
-              >
-                {deleteProduct.isPending ? "Deleting…" : "Delete Forever"}
               </button>
             </div>
           </div>

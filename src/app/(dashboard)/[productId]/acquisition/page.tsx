@@ -49,20 +49,20 @@ export default function AcquisitionPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-sf-text-primary">Acquisition Readiness Report</h1>
-          <p className="text-sm font-medium text-sf-text-secondary mt-1">AI-generated report for potential buyers</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Acquisition Readiness Report</h1>
+          <p className="text-sm font-medium text-brand-muted mt-1">AI-generated report for potential buyers</p>
         </div>
         <div className="flex items-center gap-3">
           {generateReport.data && (
             <button onClick={handleDownload}
-              className="flex items-center gap-2 rounded-xl border border-sf-border-subtle bg-sf-surface px-5 py-2.5 text-sm font-bold text-sf-text-primary hover:bg-sf-base transition-all shadow-lg hover:border-sf-border-default">
+              className="flex items-center gap-2 rounded-xl border border-brand-border bg-brand-surface px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-bg transition-all shadow-lg hover:border-brand-primary/30">
               <Download className="h-4 w-4" /> Download PDF
             </button>
           )}
           <button
             onClick={() => generateReport.mutate({ productId })}
             disabled={generateReport.isPending}
-            className="flex items-center gap-2 rounded-xl bg-sf-accent px-5 py-2.5 text-sm font-bold text-white hover:bg-sf-accent/90 transition-all shadow-[0_0_15px_rgba(var(--color-sf-accent-rgb),0.3)] disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-accent transition-all shadow-lg disabled:opacity-50"
           >
             {generateReport.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : generateReport.data ? <RefreshCw className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
             {generateReport.data ? "Regenerate" : "Generate Report"}
@@ -71,49 +71,47 @@ export default function AcquisitionPage() {
       </div>
 
       {!generateReport.data && !generateReport.isPending && (
-        <div className="relative overflow-hidden flex flex-col items-center justify-center h-96 text-center rounded-2xl border border-sf-border-subtle bg-sf-surface/50 shadow-xl backdrop-blur-md">
-          <div className="absolute inset-0 bg-sf-noise opacity-10 pointer-events-none mix-blend-overlay"></div>
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-sf-accent/10 blur-[100px] pointer-events-none"></div>
-          <FileText className="h-16 w-16 text-sf-accent/30 mb-5 relative z-10 drop-shadow-[0_0_10px_rgba(var(--color-sf-accent-rgb),0.3)]" />
-          <h2 className="text-xl font-bold tracking-tight text-sf-text-primary mb-3 relative z-10">Generate Your Report</h2>
-          <p className="text-sm font-medium text-sf-text-secondary mb-2 max-w-md relative z-10">
+        <div className="relative overflow-hidden flex flex-col items-center justify-center h-96 text-center rounded-2xl border border-brand-border bg-brand-surface shadow-xl">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-brand-primary/10 blur-[100px] pointer-events-none"></div>
+          <FileText className="h-16 w-16 text-brand-primary/30 mb-5 relative z-10" />
+          <h2 className="text-xl font-bold tracking-tight text-white mb-3 relative z-10">Generate Your Report</h2>
+          <p className="text-sm font-medium text-brand-muted mb-2 max-w-md relative z-10">
             Create a professional acquisition readiness report formatted for Acquire.com and MicroAcquire buyers.
           </p>
-          <p className="text-xs font-semibold text-sf-text-muted max-w-md relative z-10 px-4">
+          <p className="text-xs font-semibold text-brand-muted/70 max-w-md relative z-10 px-4">
             Includes MRR analysis, churn history, cost breakdown, LTV calculations, valuation indicators, and more.
           </p>
         </div>
       )}
 
       {generateReport.isPending && (
-        <div className="relative overflow-hidden flex flex-col items-center justify-center h-96 rounded-2xl border border-sf-border-subtle bg-sf-surface/50 shadow-xl backdrop-blur-md">
-          <div className="absolute inset-0 bg-sf-noise opacity-10 pointer-events-none mix-blend-overlay"></div>
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-sf-accent/10 blur-[100px] pointer-events-none"></div>
-          <Loader2 className="h-10 w-10 animate-spin text-sf-accent mb-5 relative z-10 drop-shadow-[0_0_10px_rgba(var(--color-sf-accent-rgb),0.5)]" />
-          <p className="text-base font-bold text-sf-text-primary relative z-10 tracking-tight">Analyzing your project data…</p>
-          <p className="text-xs font-bold uppercase tracking-wider text-sf-text-muted mt-2 relative z-10">This may take 10-30 seconds</p>
+        <div className="relative overflow-hidden flex flex-col items-center justify-center h-96 rounded-2xl border border-brand-border bg-brand-surface shadow-xl">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-brand-primary/10 blur-[100px] pointer-events-none"></div>
+          <Loader2 className="h-10 w-10 animate-spin text-brand-primary mb-5 relative z-10" />
+          <p className="text-base font-bold text-white relative z-10 tracking-tight">Analyzing your project data…</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-muted mt-2 relative z-10">This may take 10-30 seconds</p>
         </div>
       )}
 
       {generateReport.data && (
-        <div className="rounded-2xl border border-sf-border-subtle bg-sf-surface/80 shadow-2xl backdrop-blur-xl overflow-hidden relative">
-          <div className="border-b border-sf-border-subtle px-8 py-4 flex items-center justify-between bg-sf-base/80">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-sf-text-secondary">Report Preview</span>
-            <span className="text-[10px] font-mono text-sf-text-muted">
+        <div className="rounded-2xl border border-brand-border bg-brand-surface shadow-2xl overflow-hidden relative">
+          <div className="border-b border-brand-border px-8 py-4 flex items-center justify-between bg-brand-bg/80">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-brand-muted">Report Preview</span>
+            <span className="text-[10px] font-mono text-brand-muted/70">
               Generated {new Date(generateReport.data.generatedAt).toLocaleString()}
             </span>
           </div>
           <div
             ref={reportRef}
             className="p-8 md:p-12 prose prose-sm max-w-none
-              [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:tracking-tight [&_h1]:text-sf-text-primary [&_h1]:border-b [&_h1]:border-sf-border-subtle [&_h1]:pb-4 [&_h1]:mb-8
-              [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-sf-accent [&_h2]:mt-10 [&_h2]:mb-4
-              [&_p]:text-sm [&_p]:text-sf-text-secondary [&_p]:leading-relaxed
-              [&_table]:w-full [&_table]:text-sm [&_table]:border-collapse [&_table]:my-6 [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:border-hidden [&_table]:ring-1 [&_table]:ring-sf-border-subtle
-              [&_th]:bg-sf-base/50 [&_th]:px-5 [&_th]:py-3.5 [&_th]:text-left [&_th]:font-bold [&_th]:text-sf-text-primary [&_th]:border-b [&_th]:border-sf-border-subtle [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-[11px]
-              [&_td]:px-5 [&_td]:py-3 [&_td]:border-b [&_td]:border-sf-border-subtle/50 [&_td]:text-sf-text-secondary [&_td]:font-medium
+              [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:tracking-tight [&_h1]:text-white [&_h1]:border-b [&_h1]:border-brand-border [&_h1]:pb-4 [&_h1]:mb-8
+              [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-brand-primary [&_h2]:mt-10 [&_h2]:mb-4
+              [&_p]:text-sm [&_p]:text-brand-muted [&_p]:leading-relaxed
+              [&_table]:w-full [&_table]:text-sm [&_table]:border-collapse [&_table]:my-6 [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:border-hidden [&_table]:ring-1 [&_table]:ring-brand-border
+              [&_th]:bg-brand-bg/50 [&_th]:px-5 [&_th]:py-3.5 [&_th]:text-left [&_th]:font-bold [&_th]:text-white [&_th]:border-b [&_th]:border-brand-border [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-[11px]
+              [&_td]:px-5 [&_td]:py-3 [&_td]:border-b [&_td]:border-brand-border/50 [&_td]:text-brand-muted [&_td]:font-medium
               [&_tr:last-child_td]:border-0
-              [&_strong]:text-sf-text-primary
+              [&_strong]:text-white
             "
             dangerouslySetInnerHTML={{ __html: generateReport.data.report }}
           />
@@ -121,7 +119,7 @@ export default function AcquisitionPage() {
       )}
 
       {generateReport.error && (
-        <div className="rounded-xl border border-sf-red/20 bg-sf-red/5 px-5 py-3 text-sm text-sf-red">
+        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-5 py-3 text-sm text-rose-400">
           Error: {generateReport.error.message}
         </div>
       )}
