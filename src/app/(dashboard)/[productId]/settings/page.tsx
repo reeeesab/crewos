@@ -18,6 +18,7 @@ import {
   Circle,
   FlaskConical,
   Eye,
+  Globe,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc/provider";
 
@@ -176,6 +177,10 @@ export default function SettingsPage() {
   const dodoWebhookUrl = `${appUrl}/api/webhooks/dodopayments?productId=${productId}${
     dunningForm.dodoWebhookSecret ? `&token=${encodeURIComponent(dunningForm.dodoWebhookSecret)}` : ""
   }`;
+  const webhookCallbacks = [
+    { id: "stripe" as const, label: "Stripe", url: stripeWebhookUrl, status: "active" },
+    { id: "dodo" as const, label: "Dodo Payments", url: dodoWebhookUrl, status: "active" },
+  ];
   const recoveredUsd = ((dunningSummary?.recoveredThisMonthCents || 0) / 100);
   const assumedPlanUsd = 29;
   const roiMultiple = recoveredUsd > 0 ? recoveredUsd / assumedPlanUsd : 0;
@@ -607,36 +612,22 @@ export default function SettingsPage() {
               <h2 className="text-sm font-bold text-white">Dunning & Recover</h2>
             </div>
             <button
-              onClick={() => setDunningForm((prev) => ({ ...prev, enabled: !prev.enabled }))}
+              onClick={() => setDunningForm((prev) => ({ ...prev, dunningEnabled: !prev.dunningEnabled }))}
               className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                dunningForm.enabled ? "bg-brand-primary text-white" : "bg-brand-bg/70 text-brand-muted border border-brand-border"
+                dunningForm.dunningEnabled ? "bg-brand-primary text-white" : "bg-brand-bg/70 text-brand-muted border border-brand-border"
               }`}
             >
-              {dunningForm.enabled ? "Automated" : "Disabled"}
+              {dunningForm.dunningEnabled ? "Automated" : "Disabled"}
             </button>
           </div>
           <p className="text-xs text-brand-muted mb-6">Automatically email customers when a failed payment occurs. Each attempt includes a secure link to update payment methods.</p>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Retry Schedule</label>
-                <div className="flex items-center gap-2">
-                  <input type="number" min={1} value={dunningForm.intervalDays} onChange={(e) => setDunningForm({ ...dunningForm, intervalDays: Number(e.target.value) })} className="w-16 rounded-xl border border-brand-border bg-brand-bg/50 px-3 py-2 text-sm text-white focus:border-brand-primary focus:outline-none" />
-                  <span className="text-xs text-brand-muted font-medium">days between attempts</span>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-wider">Max Attempts</label>
-                <input type="number" min={1} max={5} value={dunningForm.maxRetries} onChange={(e) => setDunningForm({ ...dunningForm, maxRetries: Number(e.target.value) })} className="w-16 rounded-xl border border-brand-border bg-brand-bg/50 px-3 py-2 text-sm text-white focus:border-brand-primary focus:outline-none" />
-              </div>
-            </div>
-
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => updateDunning.mutate({ productId, ...dunningForm })}
                 disabled={updateDunning.isPending}
-                className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(var(--color-brand-primary-rgb),0.3)]"
+                className="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-brand-primary/90 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
               >
                 {updateDunning.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save Dunning Rules
@@ -649,7 +640,7 @@ export default function SettingsPage() {
                 Preview Emails
               </button>
             </div>
-            {dunningSaved && <p className="text-xs font-semibold text-emerald-400">✓ Dunning settings updated</p>}
+            {dunningSaved && <p className="text-xs font-semibold text-emerald-400">✓ Settings saved!</p>}
           </div>
         </section>
       </div>
@@ -664,9 +655,9 @@ export default function SettingsPage() {
           <p className="text-xs text-brand-muted mb-6">These URLs are automatically configured in your billing provider. If you see status issues, you can trigger a manual test.</p>
           <div className="space-y-3">
             {webhookCallbacks.map((item) => (
-              <div key={item.provider} className="flex items-center justify-between rounded-xl border border-brand-border bg-brand-bg/40 px-4 py-4">
+              <div key={item.id} className="flex items-center justify-between rounded-xl border border-brand-border bg-brand-bg/40 px-4 py-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">{item.provider} Callback</span>
+                  <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">{item.label} Callback</span>
                   <p className="text-xs font-mono text-brand-muted truncate max-w-[300px]">{item.url}</p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -675,7 +666,7 @@ export default function SettingsPage() {
                     <span className="text-[10px] font-bold text-brand-muted uppercase">{item.status}</span>
                   </div>
                   <button
-                    onClick={() => sendWebhookTest(item.provider as any)}
+                    onClick={() => sendWebhookTest(item.id)}
                     className="rounded-lg bg-brand-bg/60 border border-brand-border px-3 py-1.5 text-[10px] font-bold text-white hover:border-brand-muted transition-all"
                   >
                     Test Connection
@@ -686,6 +677,7 @@ export default function SettingsPage() {
           </div>
         </section>
       </div>
+
 
       {/* Danger Zone (under General) */}
       <div hidden={activeTab !== 'general'}>

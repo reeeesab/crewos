@@ -966,13 +966,10 @@ export default function RoadmapPage() {
           <DragOverlay>
             {activeIssue ? (
               <div className="w-[320px]">
-                <DraggableIssueCard
+                <IssueCard
                   issue={activeIssue}
-                  isUpdating={false}
-                  onOpen={() => {}}
-                  onStatusChange={() => {}}
-                  onDelete={() => {}}
-                  onEdit={() => {}}
+                  idx={0}
+                  onClick={() => {}}
                   draggable={false}
                 />
               </div>
