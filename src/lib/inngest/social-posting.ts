@@ -3,8 +3,10 @@ import { db } from "@/server/db";
 import { SocialService } from "@/server/services/social";
 
 export const socialPostingFunction = inngest.createFunction(
-  { id: "social-scheduled-posting" },
-  { cron: "* * * * *" }, // Every minute
+  {
+    id: "social-scheduled-posting",
+    triggers: [{ cron: "* * * * *" }],
+  },
   async ({ step }) => {
     const posts = await step.run("get-scheduled-posts", async () => {
       return db.buildInPublicPost.findMany({

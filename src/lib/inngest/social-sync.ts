@@ -1,8 +1,10 @@
 import { inngest } from "./client";
 
 export const socialSyncFunction = inngest.createFunction(
-  { id: "social-stats-sync" },
-  { cron: "0 0 * * *" }, // Daily at midnight
+  {
+    id: "social-stats-sync",
+    triggers: [{ cron: "0 0 * * *" }],
+  },
   async ({ step }) => {
     await step.run("sync-social-accounts", async () => {
       console.log("Syncing social stats for all products...");
