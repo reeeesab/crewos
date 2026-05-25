@@ -4,8 +4,7 @@ import { decryptSecret } from "@/server/services/analytics-crypto";
 import { inngest } from "./client";
 
 export const analyticsHourlySync = inngest.createFunction(
-  { id: "analytics-hourly-sync" },
-  { cron: "0 * * * *" },
+  { id: "analytics-hourly-sync", cron: "0 * * * *" },
   async ({ step }) => {
     const connectedProducts = await step.run("get-connected-products", async () => {
       return db.analyticsConfig.findMany({
