@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   SquaresFour, TrendUp, ChartBar, ChartLineUp, Compass, ListDashes,
   Briefcase, Pulse, FileText, CaretDown, Lightning, Gear, CircleNotch,
-  List, X, MagnifyingGlass, Bell, Kanban, Trophy
+  List, X, MagnifyingGlass, Bell, Kanban, Trophy, Megaphone
 } from "@phosphor-icons/react";
 import { trpc } from "@/lib/trpc/provider";
 import { IndiqoMark, IndiqoWordmark } from "@/components/ui/logo";
@@ -29,6 +29,7 @@ const navSections = [
     section: "Build",
     items: [
       { label: "Board", href: "/roadmap", icon: Kanban },
+      { label: "Build in Public", href: "/build-in-public", icon: Megaphone, badge: "AI", badgeColor: "violet" },
       { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
       { label: "Changelog", href: "/changelog", icon: ListDashes, badge: "AI", badgeColor: "violet" },
     ],

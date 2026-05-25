@@ -210,11 +210,16 @@ model SocialAccount {
   platform     String
   handle       String
   accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  scope        String?
   followers    Int       @default(0)
   engagement   Float     @default(0)
   impressions  Int       @default(0)
   lastSyncedAt DateTime?
   product      Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, platform, handle])
 }
 
 model Changelog {
@@ -242,17 +247,19 @@ enum ChangelogStatus {
 }
 
 model BuildInPublicPost {
-  id          String    @id @default(cuid())
-  productId   String
-  platform    String
-  draftText   String
-  status      String    @default("draft")
-  sourceType  String
-  sourceId    String?
-  scheduledAt DateTime?
-  postedAt    DateTime?
-  createdAt   DateTime  @default(now())
-  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id             String    @id @default(cuid())
+  productId      String
+  platform       String
+  draftText      String
+  status         String    @default("draft")
+  sourceType     String
+  sourceId       String?
+  platformPostId String?
+  errorMessage   String?
+  scheduledAt    DateTime?
+  postedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  product        Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model AnalyticsConfig {
